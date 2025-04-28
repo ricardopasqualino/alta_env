@@ -1,0 +1,22 @@
+databases:
+  - name: alta_db_geral
+    plan: free
+    databaseName: alta_db_prod_l9ea
+    user: ricardopasqualino
+
+services:
+  - type: web
+    plan: free
+    name: alta_ai_env_prod
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn core.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: alta_db_geral
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
