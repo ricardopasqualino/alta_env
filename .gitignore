@@ -1,6 +1,5 @@
 .env
 venv/
-static/files
 alta/pycache
 *.pycache
 alta/migrations
