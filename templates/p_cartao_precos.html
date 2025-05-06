@@ -26,7 +26,11 @@
               <div class="col-lg-3 mt-3">
                 <div class="form-group">
                   <label for="exampleFormControlSelect1">Escolha uma cidade:</label>
-                  <select class="form-control custom-select" id="exampleFormControlSelect1" {{ fil.form.cidade }}</ >
+                  <div class="input-group">
+                    <select class="form-control" id="exampleFormControlSelect1"
+                      {{ fil.form.cidade }} </>
+                    </select>
+                  </div>
                 </div>
               </div>
       

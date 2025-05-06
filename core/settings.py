@@ -61,11 +61,11 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='alta_db'),
-        'USER': config('DB_USER', default='alta_user'),
-        'PASSWORD': config('DB_PASSWORD', default='alta_password'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+        'NAME': 'alta_db_prod_2',
+        'USER': 'alta_db_prod_2_user',
+        'PASSWORD': '3rp700XExUxgrfqCIPgvChVMOwWUyQUB',
+        'HOST': 'dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
 
