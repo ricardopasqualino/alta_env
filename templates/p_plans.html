@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Escolha o plano ideal para você!</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Planos & Valores</li>
+          </ol>
+        </nav>
+      </div><!-- End Page Title -->
+
+        <div class="row mt-5">
+            <!-- Plano Básico -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">Plano Básico</div>
+                    <div class="card-body text-center">
+                        <h1 class="card-title text-center mt-3 pb-0 fs-2">GRÁTIS</h1>
+                        <p class="text-muted">Você está aqui!</p>
+                        <ul class="list-group">
+                            <li class="list-group-item">Até 1 usuário</li>
+                            <li class="list-group-item">Cartão de Preços</li>
+                            <li class="list-group-item">Lista de Preços</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary mt-4 w-100">Assine agora!</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Plano Intermediário -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">Plano Intermediário</div>
+                    <div class="card-body text-center"> 
+                        <h1 class="card-title text-center mt-3 pb-0 fs-2">R$ 398,90</h1>
+                        <p class="text-muted">Mensal</p>
+                        <ul class="list-group">
+                            <li class="list-group-item">Acesso Ilimitado</li>
+                            <li class="list-group-item">Cartão de Preços</li>
+                            <li class="list-group-item">Lista de Preços</li>
+                            <li class="list-group-item">Monitorar Preços</li>
+                            <li class="list-group-item text-primary bg-info-subtle"><b>Acompanhar Preços</b></li>
+                        </ul>
+                        <a href="#" class="btn btn-primary mt-4 w-100">Assine Agora!</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Plano Premium -->
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">Plano Premium</div>
+                    <div class="card-body text-center">
+                        <h1 class="card-title text-center mt-3 pb-0 fs-2">R$ 998,90</h1>
+                        <p class="text-muted">Mensal</p>
+                        <ul class="list-group">
+                            <li class="list-group-item">Acesso Ilimitado</li>
+                            <li class="list-group-item">Cartão de Preços</li>
+                            <li class="list-group-item">Lista de Preços</li>
+                            <li class="list-group-item">Monitorar Preços</li>
+                            <li class="list-group-item">Acompanhar Preços</li>
+                            <li class="list-group-item text-primary bg-info-subtle"><b>Fale com a IA</b></li>
+
+                        </ul>
+                        <a href="#" class="btn btn-primary mt-4 w-100">Assine Agora!</a>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+</main>
+{% endblock %}

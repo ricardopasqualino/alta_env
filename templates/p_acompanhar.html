@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Monitore os preços</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Lista de Preços Adicionados</li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Preencha os dados para registrar um novo preço</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <form action="#" method="POST">
+                      {% csrf_token %}
+
+                        
+                      </select> 
+
+                      <label>Data de coleta:</label>
+                      <div class="input-group date mb-3" data-provide="datepicker">
+                            <input type="text" class="form-control" placeholder="Data da coleta"
+                            oninput="this.value = this.value.replace(/[^]/g, '').replace(/(\/..*?)\..*/g, '$1');" {{ form.data_coleta }} </>
+                            <span class="input-group-append m-1">
+                                <span class="input-group-text">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </span>                
+                        </div>
+                      
+                      <div class="form-group">
+                          <label>Selecione o nome do posto:</label>
+                          <select class="form-select mb-3" aria-label="Selecione o posto" 
+                          onchange="atualizarInfosPosto(this)" {{ form.gas_station }} </>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div id="posto-info">
+                              <p>CNPJ: <span id="posto-cnpj">-</span></p>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div id="posto-info">
+                              <p>Cidade: <span id="posto-cidade">-</span></p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <label>Produto que deseja registrar o preço:</label>
+                      <select class="form-select mb-3" aria-label="Default select example" 
+                      {{ form.produto_id }}
+                    </select>
+                    
+                    
+                    
+                    <label>Preço atual:</label>
+                    <div class="input-group mb-2">
+                      <input type="text" inputmode="numeric" class="form-control priceInput" 
+                          oninput="this.value = this.value.replace(/[^0-9,.]/g, '').replace(/,/g, '.');" 
+                          minlength="4" maxlength="7" 
+                          aria-label="Preço" 
+                          placeholder="Inclua o preço atual" 
+                          required="required"
+                          {{ form.preco_revenda }} </>
+                    </div>                        
+                    <button type="submit" class="btn btn-primary w-100">Registrar Preço</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+</section>
+    
+    <!-- Script -->
+   
+    
+    </div>
+
+       <!-- Vertically centered Modal -->
+       <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" 
+       data-bs-target="#verticalycentered">Inserir Novo Preço</button>
+
+       <button type="button" class="btn btn-outline-primary mb-3"><a href="#">Ver lista de preços</a></button>       
+
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Lista de preços inseridos</h5>
+  
+                <!-- Table with stripped rows -->
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Posto</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in prices %}
+                    {% if item.data_coleta %}
+                    <tr>
+                      <td>{{ item.data_coleta|date:'d/m/y' }}</td>
+                      <td>{{ item.gas_station }}</td>
+                      <td>{{ item.produto_id }}</td>
+                      <td>R$ {{ item.preco_revenda }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+                <!-- End Table with stripped rows -->
+  
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </section>
+
+    <script>
+        $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+<script type="text/javascript">
+  $(function() {
+      $('#datepicker').datepicker();
+  })
+</script>
+
+<script type="text/javascript">
+    
+  $.fn.datepicker.dates['en'] = {
+      days: ["Domingo", "Segunda", "Terça", "Quarta", "Quita", "Sexta", "Sabado"],
+      daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      daysMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+      months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+      monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+      today: "Hoje",
+      clear: "Limpar",
+      format: "dd/mm/yyyy",
+      titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+      weekStart: 0
+  };
+
+  $('.input-group.date').datepicker({
+      todayBtn: "linked",
+      autoclose: true,
+      todayHighlight: true,
+      format: 'dd/mm/yyyy',
+      showWeekDays: false, 
+      disableTouchKeyboard: true,
+  });
+</script>
+
+
+    <script>
+      // Adicionar o evento de formatação quando o modal for mostrado
+      const modal = document.getElementById('verticalycentered');
+      modal.addEventListener('shown.bs.modal', function () {
+          // Selecionar todos os campos de input com a classe "priceInput"
+          const priceInputs = document.querySelectorAll('.priceInput');
+
+          priceInputs.forEach(priceInput => {
+              priceInput.addEventListener('input', function (e) {
+                  let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+                  
+                  // Limitar a 4 dígitos no total
+                  if (value.length > 4) {
+                      value = value.substring(0, 4);
+                  }
+
+                  // Inserir o ponto automaticamente para as últimas 2 casas decimais
+                  if (value.length > 2) {
+                      value = value.slice(0, value.length - 2) + '.' + value.slice(value.length - 2);
+                  } else if (value.length === 2) {
+                      value = '' + value; // Se tiver apenas 2 dígitos, exibir 0.XX
+                  } else if (value.length === 1) {
+                      value = '' + value; // Se tiver apenas 1 dígito, exibir 0.0X
+                  }
+
+                  e.target.value = value;
+              });
+          });
+      });
+    </script>
+
+    <!-- Adicione este script JavaScript -->
+    <script>
+    function atualizarInfosPosto(select) {
+        const stationId = select.value;
+        console.log('ID do posto selecionado:', stationId); // Debug
+
+        if (!stationId) {
+            document.getElementById('posto-cnpj').textContent = '-';
+            document.getElementById('posto-cidade').textContent = '-';
+            return;
+        }
+
+        // Usando a URL correta
+        fetch(`/get_gas_station_info/?station_id=${stationId}`)
+            .then(response => {
+                console.log('Response status:', response.status); // Debug
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados recebidos:', data); // Debug
+                document.getElementById('posto-cnpj').textContent = data.cnpj || '-';
+                document.getElementById('posto-cidade').textContent = data.cidade || '-';
+            })
+            .catch(error => {
+                console.error('Erro ao buscar informações do posto:', error);
+                document.getElementById('posto-cnpj').textContent = '-';
+                document.getElementById('posto-cidade').textContent = '-';
+            });
+    }
+    </script>
+
+</main>
+{% endblock %}

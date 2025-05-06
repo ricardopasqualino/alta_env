@@ -1,0 +1,9 @@
+.env
+venv/
+static/files
+alta/pycache
+*.pycache
+alta/migrations
+alta/tests
+alta/tests.py
+alta/tests.pyc

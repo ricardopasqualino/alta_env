@@ -1,0 +1,67 @@
+2025-04-29 21:57:32,550 - ERROR - Erro: O arquivo static\files\export_gasstation.xlsx não foi encontrado.
+2025-04-29 21:58:12,975 - INFO - Lendo arquivo Excel: ..\static\files\export_gasstation.xlsx
+2025-04-29 21:58:23,719 - INFO - Colunas encontradas no arquivo: ['Nº Autorizacao', 'Data Publicação DOU - Autorização', 'Código Instalação i-Simp', 'Razão Social', 'CNPJ', 'Endereço', 'COMPLEMENTO', 'BAIRRO', 'CEP', 'UF', 'MUNICÍPIO', 'Vinculação a Distribuidor', 'Data de Vinculação a Distribuidor', 'Delivery', 'Data Autorização Delivery', 'Número Despacho Delivery']
+2025-04-29 21:59:05,404 - INFO - Novo posto criado: 101304000145 - DIVISA AUTO POSTO LTDA
+2025-04-29 21:59:05,405 - INFO - Processados 100 registros. Salvos: 100, Atualizados: 0
+2025-04-29 21:59:46,142 - INFO - Novo posto criado: 174722000162 - V M PIVETA COMBUSTIVEIS
+2025-04-29 21:59:46,143 - INFO - Processados 200 registros. Salvos: 200, Atualizados: 0
+2025-04-29 22:00:26,654 - INFO - Novo posto criado: 256893002699 - SETE ESTRELAS COMERCIO DE DERIVADOS DE PETROLEO LTDA
+2025-04-29 22:00:26,655 - INFO - Processados 300 registros. Salvos: 300, Atualizados: 0
+2025-04-29 22:01:07,210 - INFO - Novo posto criado: 306597007614 - CASCOL COMBUSTIVEIS PARA VEICULOS LTDA
+2025-04-29 22:01:07,210 - INFO - Processados 400 registros. Salvos: 400, Atualizados: 0
+2025-04-29 22:01:47,230 - INFO - Novo posto criado: 406548000136 - PETRORADIO COMERCIO DERIVADOS DE PETROLEO LTDA
+2025-04-29 22:01:47,231 - INFO - Processados 500 registros. Salvos: 500, Atualizados: 0
+2025-04-29 22:02:27,469 - INFO - Novo posto criado: 547721000116 - SQUIZZATO COMERCIO DE COMBUSTIVEIS LTDA
+2025-04-29 22:02:27,470 - INFO - Processados 600 registros. Salvos: 600, Atualizados: 0
+2025-04-29 22:03:07,589 - INFO - Novo posto criado: 678834000150 - POSTO FURACAO LTDA
+2025-04-29 22:03:07,589 - INFO - Processados 700 registros. Salvos: 700, Atualizados: 0
+2025-04-29 22:03:47,439 - INFO - Novo posto criado: 787742000109 - AUTO POSTO AIWA LTDA
+2025-04-29 22:03:47,439 - INFO - Processados 800 registros. Salvos: 800, Atualizados: 0
+2025-04-29 22:04:27,615 - INFO - Novo posto criado: 907431000136 - ÁGUIA COMERCIO COMBUSTÍVEIS E DERIVADOS PETRÓLEO LTDA
+2025-04-29 22:04:27,615 - INFO - Processados 900 registros. Salvos: 900, Atualizados: 0
+2025-04-29 22:05:07,606 - INFO - Novo posto criado: 1020625000188 - SILVA & FRARE LTDA
+2025-04-29 22:05:07,607 - INFO - Processados 1000 registros. Salvos: 1000, Atualizados: 0
+2025-04-29 22:05:47,965 - INFO - Novo posto criado: 1128420000110 - H DUARTE & FILHO LTDA
+2025-04-29 22:05:47,965 - INFO - Processados 1100 registros. Salvos: 1100, Atualizados: 0
+2025-04-29 22:06:27,797 - INFO - Novo posto criado: 1242690000310 - IBN PINTO E SILVA & CIA LTDA
+2025-04-29 22:06:27,797 - INFO - Processados 1200 registros. Salvos: 1200, Atualizados: 0
+2025-04-29 22:07:08,871 - INFO - Novo posto criado: 1311723000174 - FERNANDES & FERNANDES COMERCIO DE COMBUSTIVEIS E LUBRIFICANTES LTDA
+2025-04-29 22:07:08,872 - INFO - Processados 1300 registros. Salvos: 1300, Atualizados: 0
+2025-04-29 22:07:50,490 - INFO - Novo posto criado: 1395632000164 - ANDERSON GLAUCIO ANDRADE & CIA LTDA
+2025-04-29 22:07:50,490 - INFO - Processados 1400 registros. Salvos: 1400, Atualizados: 0
+2025-04-29 22:08:31,886 - INFO - Novo posto criado: 1481248000184 - AEROPOSTO UMUARAMA LTDA.
+2025-04-29 22:08:31,886 - INFO - Processados 1500 registros. Salvos: 1500, Atualizados: 0
+2025-04-29 22:09:13,813 - INFO - Novo posto criado: 1559338000140 - POSTO E MOTEL RODOBELO LTDA
+2025-04-29 22:09:13,814 - INFO - Processados 1600 registros. Salvos: 1600, Atualizados: 0
+2025-04-29 22:09:54,590 - INFO - Novo posto criado: 1628563000191 - FERLIM COMERCIO DE COMBUSTIVEIS LTDA
+2025-04-29 22:09:54,591 - INFO - Processados 1700 registros. Salvos: 1700, Atualizados: 0
+2025-04-29 22:10:35,624 - INFO - Novo posto criado: 1687534000109 - POSTO MISSISSIPPI LTDA
+2025-04-29 22:10:35,625 - INFO - Processados 1800 registros. Salvos: 1800, Atualizados: 0
+2025-04-29 22:11:16,677 - INFO - Novo posto criado: 1760430000255 - MARCELO ROCHA DA COSTA - ME
+2025-04-29 22:11:16,678 - INFO - Processados 1900 registros. Salvos: 1900, Atualizados: 0
+2025-04-29 22:11:57,680 - INFO - Novo posto criado: 1828198000169 - POSTO DE SERVICOS CIDADE DO MAR LTDA - EPP
+2025-04-29 22:11:57,681 - INFO - Processados 2000 registros. Salvos: 2000, Atualizados: 0
+2025-04-29 22:12:37,653 - INFO - Novo posto criado: 1944415000186 - AUTO POSTO PORTUGA I LTDA
+2025-04-29 22:12:37,653 - INFO - Processados 2100 registros. Salvos: 2100, Atualizados: 0
+2025-04-29 22:13:17,397 - INFO - Novo posto criado: 2024746001728 - POSTO SUPER TIGRE LTDA
+2025-04-29 22:13:17,397 - INFO - Processados 2200 registros. Salvos: 2200, Atualizados: 0
+2025-04-29 22:13:57,762 - INFO - Novo posto criado: 2096539000111 - AUTO POSTO PEDRAO LTDA
+2025-04-29 22:13:57,763 - INFO - Processados 2300 registros. Salvos: 2300, Atualizados: 0
+2025-04-29 22:14:37,440 - INFO - Novo posto criado: 2182534000101 - TRI-ZYME REPRESENTACOES COMERCIAIS LTDA
+2025-04-29 22:14:37,441 - INFO - Processados 2400 registros. Salvos: 2400, Atualizados: 0
+2025-04-29 22:15:17,665 - INFO - Novo posto criado: 2249582000170 - P.O.COMERCIO DE DERIVADOS DE PETROLEO LTDA
+2025-04-29 22:15:17,666 - INFO - Processados 2500 registros. Salvos: 2500, Atualizados: 0
+2025-04-29 22:15:57,997 - INFO - Novo posto criado: 2281881000191 - POSTO DE COMBUSTIVEIS E LUBRIFICANTES N.SRA.DAS DORES LTDA
+2025-04-29 22:15:57,997 - INFO - Processados 2600 registros. Salvos: 2600, Atualizados: 0
+2025-04-29 22:16:37,683 - INFO - Novo posto criado: 2349580000152 - M A DA SILVA COMERCIO
+2025-04-29 22:16:37,683 - INFO - Processados 2700 registros. Salvos: 2700, Atualizados: 0
+2025-04-29 22:17:17,314 - INFO - Novo posto criado: 2415584000191 - SERGIO SATO & CIA LTDA
+2025-04-29 22:17:17,314 - INFO - Processados 2800 registros. Salvos: 2800, Atualizados: 0
+2025-04-29 22:17:56,883 - INFO - Novo posto criado: 2485580000180 - GSDM COMERCIO DE COMBUSTIVEIS LTDA
+2025-04-29 22:17:56,883 - INFO - Processados 2900 registros. Salvos: 2900, Atualizados: 0
+2025-04-29 22:18:36,531 - INFO - Novo posto criado: 2535628000117 - ANGELA APARECIDA MENDES SILVA DOS REIS LTDA
+2025-04-29 22:18:36,532 - INFO - Processados 3000 registros. Salvos: 3000, Atualizados: 0
+2025-04-29 22:19:16,026 - INFO - Novo posto criado: 2586371000122 - OLIVEIRA E FURTADO LTDA
+2025-04-29 22:19:16,027 - INFO - Processados 3100 registros. Salvos: 3100, Atualizados: 0
+2025-04-29 22:19:55,886 - INFO - Novo posto criado: 2670376000139 - ABASTECEDORA DE COMBUSTIVEIS ENGENHO VELHO LTDA
+2025-04-29 22:19:55,887 - INFO - Processados 3200 registros. Salvos: 3200, Atualizados: 0

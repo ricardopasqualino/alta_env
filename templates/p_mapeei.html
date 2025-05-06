@@ -1,0 +1,339 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Mapear concorrentes</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Mapeei seus concorrentes</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="row">
+      <form method="GET" id="filtroForm">
+          <div class="row">
+
+              <div class="col-lg-2 col-sm-12 col-md-6">
+                  <div class="input-group date mt-2" data-provide="datepicker">
+                      <input type="text" class="form-control" placeholder="Início" 
+                      name="data_inicio" value="{{ filter.data_inicio.value|default:'' }}" />
+                      <span class="input-group-append m-1">
+                          <span class="input-group-text">
+                              <i class="fa fa-calendar"></i>
+                          </span>
+                      </span>                
+                  </div>
+              </div>
+
+              <div class="col-lg-2 col-sm-12 col-md-6">
+                  <div class="input-group date mt-2" data-provide="datepicker">
+                      <input type="text" class="form-control" placeholder="Fim"
+                      name="data_fim" value="{{ filter.data_fim.value|default:'' }}" />
+                      <span class="input-group-append m-1">
+                          <span class="input-group-text">
+                              <i class="fa fa-calendar"></i>
+                          </span>
+                      </span>                
+                  </div>
+              </div> 
+
+              <div class="col-lg-3 col-sm-12 col-md-6">
+                <div class="form-floating">
+                  <select class="form-select" id="gas_station" name="gas_station"
+                    {{ filter.form.gas_station }} </>
+                  <label for="gas_station">Selecione o posto</label>
+                </div>
+              </div> 
+
+              <div class="col-lg-3 col-sm-12 col-md-6">
+                <div class="form-floating">
+                  <select class="form-select" id="produto" name="produto"
+                    {{ filter.form.produto }} </>
+                  <label for="produto">Selecione o produto</label>
+                </div>
+              </div>
+                       
+              <div class="col-lg-2 col-sm-12 col-md-6">
+                  <button class="btn btn-primary m-1" type="submit">Filtrar</button>
+              </div>        
+          </div>
+      </form>
+  </div>
+
+  <section class="section contact">
+    <div class="row pagetitle">
+      <h1 class="mt-3">{{ gas_station_info.razao }}</h1>
+    </div>
+    
+    <div class="breadcrumb">  
+      {% if gas_station_info %}
+        <p class="breadcrumb-item">
+              {{ gas_station_info.razao }} | 
+              {{ gas_station_info.cnpj }} | 
+              {{ gas_station_info.endereco }} | 
+              {{ gas_station_info.cidade }} | 
+              {{ gas_station_info.bandeira }}
+        </p>
+      {% else %}
+        <p class="breadcrumb-item">CONSULTA CONSIDERANDO TODOS OS POSTOS</p>
+      {% endif %}
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+              <!-- Primeiro card -->
+              <!-- <div class="col-lg-6 mb-4">
+                  <div class="info-box card">
+                      <h3>Último Preço</h3>
+                      <h2>R$ {{ ultimo_preco|floatformat:2 }}</h2>
+                      <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
+                  </div>
+              </div> -->
+
+              <!-- <div class="col-lg-6 mb-4">
+                  <div class="info-box card">
+                      <h3>Menor preço</h3>
+                      <h2>R$ {{ menor_preco|default:'-' }}</h2>
+                      <p>{% if menor_preco_date %}{{ menor_preco_date|date:'d/m/Y' }}{% else %}nenhuma data encontrada{% endif %}</p>
+                  </div>
+              </div> -->
+
+              <!-- <div class="col-lg-6 mb-4">
+                  <div class="info-box card">
+                      <h3>Preço Médio</h3>
+                      <h2>R$ {{ media_preco|default:'-'|floatformat:2 }}</h2>
+                      <p>no período</p>
+                  </div>
+              </div> -->
+
+              <!-- <div class="col-lg-6 mb-4 justify-content-center">
+                  <div class="info-box card">
+                      <h3>Maior Preço</h3>
+                      <h2>R$ {{ maior_preco|floatformat:2 }}</h2>
+                      <p>{{ maior_preco_date|date:'d/m/Y' }}</p>
+                  </div>
+              </div> -->
+          </div>
+        </div>
+            <div class="col-lg-12">
+              <div class="card">
+                  <div class="row gy-4">
+                      <div class="col-lg-12 info-box">
+                        <h3 class="m-3">Preço de revenda pela data da coleta</h3>
+                        <div style="height: 400px; position: relative;">
+                            <canvas id="graficoPrecoRevenda"></canvas>
+                        </div>
+                      </div>
+                  </div>                    
+              </div>  
+            </div>            
+          </div>
+        </div>
+      </div>   
+    </div>
+    </div>
+  </div>       
+</section>
+
+    <script>
+      let graficoPrecoRevenda = null;
+
+      // Função para atualizar as informações do card
+      async function atualizarInformacoesPagina() {
+          try {
+              const form = document.querySelector('#filtroForm');
+              const formData = new FormData(form);
+              const params = new URLSearchParams(formData);
+              
+              const response = await fetch(window.location.pathname + '?' + params.toString());
+              const html = await response.text();
+              
+              // Criar DOM temporário
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = html;
+              
+              // Atualizar informações do posto
+              const tituloPost = tempDiv.querySelector('.pagetitle h1');
+              const breadcrumbInfo = tempDiv.querySelector('.breadcrumb p');
+              
+              if (tituloPost) {
+                  document.querySelector('.pagetitle h1').textContent = tituloPost.textContent;
+              }
+              if (breadcrumbInfo) {
+                  document.querySelector('.breadcrumb p').textContent = breadcrumbInfo.textContent;
+              }
+              
+              // Atualizar cards de preços
+              const infoBoxes = document.querySelectorAll('.info-box.card');
+              const newInfoBoxes = tempDiv.querySelectorAll('.info-box.card');
+              
+              infoBoxes.forEach((box, index) => {
+                  if (newInfoBoxes[index]) {
+                      const newH1 = newInfoBoxes[index].querySelector('h1');
+                      const newP = newInfoBoxes[index].querySelector('p');
+                      
+                      if (newH1) box.querySelector('h1').textContent = newH1.textContent;
+                      if (newP) box.querySelector('p').textContent = newP.textContent;
+                  }
+              });
+              
+              console.log('Informações da página atualizadas');
+          } catch (error) {
+              console.error('Erro ao atualizar informações:', error);
+          }
+      }
+
+      // Função para buscar dados do gráfico
+      async function fetchPrecoRevendaData() {
+          try {
+              const form = document.querySelector('#filtroForm');
+              const formData = new FormData(form);
+              const params = new URLSearchParams(formData);
+              
+              const response = await fetch(`#?${params.toString()}`);
+              const data = await response.json();
+              
+              console.log('Dados do gráfico recebidos:', data);
+              return data;
+          } catch (error) {
+              console.error('Erro ao buscar dados:', error);
+              return { labels: [], precos: [] };
+          }
+      }
+
+      // Função para atualizar o gráfico
+      async function atualizarGrafico() {
+          try {
+              const data = await fetchPrecoRevendaData();
+              
+              if (!data.precos || data.precos.length === 0) {
+                  console.log('Sem dados para exibir no gráfico');
+                  return;
+              }
+
+              if (graficoPrecoRevenda) {
+                  graficoPrecoRevenda.destroy();
+              }
+
+              const ctx = document.getElementById('graficoPrecoRevenda').getContext('2d');
+              graficoPrecoRevenda = new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                      labels: data.labels,
+                      datasets: [{
+                          label: 'Preço Médio de Revenda (R$)',
+                          data: data.precos,
+                          backgroundColor: 'rgba(65, 84, 241, 0.8)',
+                          borderColor: 'rgba(65, 84, 241, 1)',
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                          y: {
+                              beginAtZero: false,
+                              ticks: {
+                                  callback: (value) => `R$ ${value.toFixed(2)}`
+                              }
+                          }
+                      },
+                      plugins: {
+                          legend: {
+                              display: true,
+                              position: 'top'
+                          }
+                      }
+                  }
+              });
+
+              console.log('Gráfico atualizado com sucesso');
+          } catch (error) {
+              console.error('Erro ao atualizar gráfico:', error);
+          }
+      }
+
+      // Evento de submit do formulário
+      document.querySelector('#filtroForm').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          try {
+              // Adicionar classe de loading
+              document.body.classList.add('loading');
+              
+              // Atualizar tudo em sequência
+              await atualizarInformacoesPagina();
+              await atualizarGrafico();
+              
+              // Remover classe de loading
+              document.body.classList.remove('loading');
+              
+          } catch (error) {
+              console.error('Erro ao processar filtros:', error);
+              document.body.classList.remove('loading');
+          }
+      });
+
+      // Inicialização
+      document.addEventListener('DOMContentLoaded', function() {
+          console.log('Inicializando página...');
+          atualizarGrafico();
+      });
+    </script>
+
+    <script type="text/javascript">
+      $(function() {
+          $('#datepicker').datepicker();
+      })
+    </script>
+
+    <script type="text/javascript">
+        
+      $.fn.datepicker.dates['pt-BR'] = {
+          days: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+          daysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+          daysMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+          months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+          monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+          today: "Hoje",
+          clear: "Limpar",
+          format: "dd/mm/yyyy",
+          titleFormat: "MM yyyy",
+          weekStart: 0
+      };
+
+      $('.input-group.date').datepicker({
+          language: 'pt-BR',
+          todayBtn: "linked",
+          autoclose: true,
+          todayHighlight: true,
+          format: 'dd/mm/yyyy',
+          showWeekDays: true,
+          disableTouchKeyboard: true,
+          clearBtn: true
+      });
+    </script>
+
+    <!-- Opcional: Adicionar estilo para loading -->
+    <style>
+        .loading {
+            cursor: wait;
+        }
+        .loading button[type="submit"] {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
+
+    </div>
+  </div>
+</main>  
+{% endblock %}

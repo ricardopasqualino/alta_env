@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Lista de Preços</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="">Home</a></li>
+            <li class="breadcrumb-item active">Lista de preços</li>
+          </ol>
+        </nav>
+      </div>
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <form method="get">
+                <div class="mt-3 mb-3">
+                  <div class="row">
+
+                    <!-- <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2" for="postoSelect">Digite o posto:</label>
+                        <input class="form-control" id="postoSelect"
+                          {{ filter.form.posto }} </>
+                        </input>
+                      </div>                               
+                    </div> -->
+
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2" for="cidadeSelect">Escolha a cidade:</label>
+                        <select class="form-select" id="cidadeSelect"
+                          {{ filter.form.cidade }} </>
+                        </select>
+                      </div>
+                    </div>
+                    
+                        
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2">Selecione o produto:</label>
+                        <select class="form-select" id="produtoSelect"
+                          {{ filter.form.produto }} </>
+                        </select>
+                      </div>                                        
+                    </div>                                                                                          
+                    
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2">Selecione a bandeira:</label>
+                        <select class="form-select" id="bandeiraSelect"
+                          {{ filter.form.bandeira }} </>
+                        </select>
+                      </div>                                         
+                    </div>
+                    
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2">Selecione o mês:</label>
+                        <select class="form-select" id="mesSelect"
+                          {{ filter.form.mes }} </>
+                        </select>
+                      </div>                               
+                    </div>
+                    
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2">Selecione o ano:</label>
+                        <select class="form-select" id="anoSelect"
+                          {{ filter.form.ano }} </>
+                        </select>
+                      </div>                               
+                    </div>                                                                        
+      
+                    <div class='mt-3'>                                                                                                    
+                        <button class="btn btn-primary" type="submit">Enviar</button>
+                    </div>
+                  </form>
+
+                <div class="row">
+                  <table class="table mt-5">
+                    <thead>
+                      <tr>
+                        <th>Posto</th>
+                        <th>Cidade</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Data Coleta</th>
+                        <th>Bandeira</th>
+                      </tr>
+                    </thead>
+                    
+                      {% for obj in filter.qs %}
+                          <tr>
+                            <td>{{ obj.gasstation_id.razao }}</td>
+                            <td>{{ obj.gasstation_id.cidade }}</td>
+                            <td>{{ obj.produto_id.produto }}</td>
+                            <td>R$ {{ obj.preco_revenda }}</td>
+                            <td>{{ obj.data_coleta|date:'d/m/Y' }}</td>
+                            <td>{{ obj.gasstation_id.bandeira }}</td>
+                          </tr>
+                      {% empty %}
+                        <tr>
+                          <td colspan="6" class="text-center">Nenhum registro encontrado.</td>
+                        </tr>
+                      {% endfor %}
+
+                  </table>  
+              </div>
+
+            </div>
+          </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}

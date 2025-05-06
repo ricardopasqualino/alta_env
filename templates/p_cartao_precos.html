@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Cartão de Preços</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">Cartão de preços</li>
+        </ol>
+      </nav>
+    </div>  
+
+    <section>
+      <div class="row">
+          <form method="GET">
+            <div class="row align-items-end">
+
+              <div class="col-lg-3 mt-3">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Escolha uma cidade:</label>
+                  <select class="form-control custom-select" id="exampleFormControlSelect1" {{ fil.form.cidade }}</ >
+                </div>
+              </div>
+      
+              <div class="col-lg-3 mt-3">
+                <button class="btn btn-primary" type="submit">Enviar</button>
+                <a href="#" class="btn btn-outline-primary">Limpar</a>
+              </div>
+
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="col-lg-12 mt-3">
+        <div class="row align-items-center">
+          {% if cidade is null or blank %}
+          <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-9">
+              <h1 class="card-title text-left mt-3 fs-2">Preços atualizados de postos em todo o Brasil!</h1>
+              <p class="mt-2">Escolha uma cidade e comece a mapear sua região.</p>
+            </div>
+          </div>
+          {% else %}
+          
+          <div class="row d-flex">
+            <p class="justify-align-left text-align-left">Última atualização em {{ ultima_data|date:'d/m/Y' }}</p>
+          </div>   
+
+          <div class="col-lg-4 mt-3">
+            <h1 class="p-2 card-title mb-3">Preço Mínimo</h1>
+              <div class="card">
+                <div class="card-body">
+                  <div class="list-group mt-3">
+                  {% for item in preco_min %}
+                    <button type="button" class="list-group-item list-group-item-action">{{ item.produto }} - R$ {{ item.preco_minimo|floatformat:2 }}</button>
+                  {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+                        
+          <div class="col-lg-4 mt-3">
+          <h1 class="p-2 card-title mb-3">Preço Médio</h1>
+            <div class="card">
+              <div class="card-body">
+                <div class="list-group mt-3">
+                {% for item in preco_avg %}
+                  <button type="button" class="list-group-item list-group-item-action">{{ item.produto }} - R$ {{ item.preco_medio|floatformat:2 }}</button>
+                {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+          <h1 class="p-2 card-title mb-3">Preço Máximo</h1>
+            <div class="card">
+              <div class="card-body">
+                <div class="list-group mt-3">
+                {% for item in preco_max %}
+                  <button type="button" class="list-group-item list-group-item-action">{{ item.produto }} - R$ {{ item.preco_maximo|floatformat:2 }}</button>
+                {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>   
+      {% endif %}
+    </div>
+   <!-- Script -->
+   <script>
+    // Adicionar o evento de formatação quando o modal for mostrado
+    const modal = document.getElementById('verticalycentered');
+    modal.addEventListener('shown.bs.modal', function () {
+        // Selecionar todos os campos de input com a classe "priceInput"
+        const priceInputs = document.querySelectorAll('.priceInput');
+
+        priceInputs.forEach(priceInput => {
+            priceInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não for dígito
+                
+                // Limitar a 4 dígitos no total
+                if (value.length > 4) {
+                    value = value.substring(0, 4);
+                }
+
+                // Inserir o ponto automaticamente para as últimas 2 casas decimais
+                if (value.length > 2) {
+                    value = value.slice(0, value.length - 2) + '.' + value.slice(value.length - 2);
+                } else if (value.length === 2) {
+                    value = '' + value; // Se tiver apenas 2 dígitos, exibir 0.XX
+                } else if (value.length === 1) {
+                    value = '' + value; // Se tiver apenas 1 dígito, exibir 0.0X
+                }
+
+                e.target.value = value;
+            });
+        });
+    });
+</script>
+
+</div>
+<script>
+    $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+    })
+</script>
+
+    
+  </div>
+</div>
+</section>
+<div class="modal fade" id="verticalycentered" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Detalhes do posto</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+            {% for item in preco_min %}
+              <h6>{{ item.razao }}</h6>
+              <h6>{{ item.data_coleta }}</h6>
+              <h6>{{ item.preco_revenda }}</h6>
+              <h6>{{ item.produto }}</h6>
+            {% endfor %}
+          </div>
+      </div>
+  </div>       
+</main>
+{% endblock %}
