@@ -1,0 +1,12 @@
+{% extends 'base_clean.html' %}
+
+{% load static %}
+
+{% block main %}
+  <h5>Logout</h5>
+  <p>Clique no botão abaixo para sair do sistema</p>
+    <form method="POST" action="{% url 'logout_view' %}">
+      {% csrf_token %}
+      <button class="btn btn-outline-primary w-100" type="submit">Sair</button>
+    </form>
+{% endblock %}

@@ -25,11 +25,10 @@ class AddPriceFilter(django_filters.FilterSet):
 
 class MainFilter(django_filters.FilterSet):
 
-    posto = django_filters.ChoiceFilter(
+    posto = django_filters.CharFilter(
         label='Posto',
-        choices=lambda: [(razao, razao) for razao in GasStation.objects.filter(razao__isnull=False).values_list('razao', flat=True).distinct()],
         field_name='gasstation_id__razao',
-        lookup_expr='exact'
+        lookup_expr='icontains'
     )
 
     cidade = django_filters.ChoiceFilter(

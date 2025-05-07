@@ -5,97 +5,24 @@
 {% block main %}
 
 <main id="main" class="main">
-
     <div class="pagetitle">
         <h1>Monitore os preços</h1>
+        
         <nav>
           <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
             <li class="breadcrumb-item active">Lista de Preços Adicionados</li>
           </ol>
         </nav>
-      </div>
-
-      <div class="modal fade" id="verticalycentered" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Preencha os dados para registrar um novo preço</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                
-                <div class="modal-body">
-                    <form action="#" method="POST">
-                      {% csrf_token %}
-
-                        
-                      </select> 
-
-                      <label>Data de coleta:</label>
-                      <div class="input-group date mb-3" data-provide="datepicker">
-                            <input type="text" class="form-control" placeholder="Data da coleta"
-                            oninput="this.value = this.value.replace(/[^]/g, '').replace(/(\/..*?)\..*/g, '$1');" {{ form.data_coleta }} </>
-                            <span class="input-group-append m-1">
-                                <span class="input-group-text">
-                                    <i class="fa fa-calendar"></i>
-                                </span>
-                            </span>                
-                        </div>
-                      
-                      <div class="form-group">
-                          <label>Selecione o nome do posto:</label>
-                          <select class="form-select mb-3" aria-label="Selecione o posto" 
-                          onchange="atualizarInfosPosto(this)" {{ form.gas_station }} </>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div id="posto-info">
-                              <p>CNPJ: <span id="posto-cnpj">-</span></p>
-                          </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div id="posto-info">
-                              <p>Cidade: <span id="posto-cidade">-</span></p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <label>Produto que deseja registrar o preço:</label>
-                      <select class="form-select mb-3" aria-label="Default select example" 
-                      {{ form.produto_id }}
-                    </select>
-                    
-                    
-                    
-                    <label>Preço atual:</label>
-                    <div class="input-group mb-2">
-                      <input type="text" inputmode="numeric" class="form-control priceInput" 
-                          oninput="this.value = this.value.replace(/[^0-9,.]/g, '').replace(/,/g, '.');" 
-                          minlength="4" maxlength="7" 
-                          aria-label="Preço" 
-                          placeholder="Inclua o preço atual" 
-                          required="required"
-                          {{ form.preco_revenda }} </>
-                    </div>                        
-                    <button type="submit" class="btn btn-primary w-100">Registrar Preço</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-</section>
-    
-    <!-- Script -->
-   
     
     </div>
 
-       <!-- Vertically centered Modal -->
-       <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" 
-       data-bs-target="#verticalycentered">Inserir Novo Preço</button>
+      <form action="{% url 'new_price' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">Enviar</button>
+      </form>
 
-       <button type="button" class="btn btn-outline-primary mb-3"><a href="#">Ver lista de preços</a></button>       
 
 
       <section class="section">

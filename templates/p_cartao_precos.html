@@ -23,14 +23,12 @@
           <form method="GET">
             <div class="row align-items-end">
 
-              <div class="col-lg-3 mt-3">
+              <div class="col-lg-4 mt-3">
                 <div class="form-group">
-                  <label for="exampleFormControlSelect1">Escolha uma cidade:</label>
-                  <div class="input-group">
-                    <select class="form-control" id="exampleFormControlSelect1"
-                      {{ fil.form.cidade }} </>
-                    </select>
-                  </div>
+                  <label class="mb-2" for="cidadeSelect">Escolha a cidade:</label>
+                  <select class="form-select" id="cidadeSelect"
+                    {{ fil.form.cidade }} </>
+                  </select>
                 </div>
               </div>
       

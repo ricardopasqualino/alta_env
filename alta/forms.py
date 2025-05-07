@@ -37,14 +37,14 @@ class NewPrice(forms.ModelForm):
     class Meta:
         model = AddPrice
         fields = [
-            'gas_station',
+            'gasstation_id',
             'produto_id',
             'preco_revenda',
             'data_coleta',
             'pesquisa_origem',
         ]
         widgets = {
-            'gas_station': forms.Select(attrs={
+            'gasstation_id': forms.Select(attrs={
                 'class': 'form-select mb-3',
                 'onchange': 'atualizarInfosPosto(this)'
             })
@@ -55,7 +55,7 @@ class PriceForm(forms.ModelForm):
     class Meta:
         model = AddPrice
         fields = [
-            'gas_station',
+            'gasstation_id',
             'produto_id',
             'preco_revenda',
             ] 
@@ -65,23 +65,11 @@ class AddPriceForm(forms.ModelForm):
     class Meta:
         model = AddPrice
         fields = [
-            'gas_station', 
-            'produto', 
+            'gasstation_id',
+            'produto_id',
             'pesquisa_origem',
-            'regiao', 
-            'preco_revenda', 
-            'preco_compra', 
-            'unidade_medida', 
-            'cnpj', 
-            'razao', 
-            'fantasia', 
-            'bandeira', 
-            'endereco', 
-            'numero', 
-            'complemento', 
-            'cep', 
-            'estado', 
-            'cidade', 
-            'bairro', 
+            'preco_revenda',
+            'preco_compra',
+            'unidade_medida',
             'user'
-            ]
+        ]

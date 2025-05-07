@@ -10,7 +10,7 @@
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="">Home</a></li>
-            <li class="breadcrumb-item active">Lista de preços</li>
+            <!-- <li class="breadcrumb-item active">Lista de preços</li> -->
           </ol>
         </nav>
       </div>
@@ -24,14 +24,13 @@
                 <div class="mt-3 mb-3">
                   <div class="row">
 
-                    <!-- <div class="col-lg-2 mt-3">
+                    <div class="col-lg-2 mt-3">
                       <div class="form-group">
                         <label class="mb-2" for="postoSelect">Digite o posto:</label>
-                        <input class="form-control" id="postoSelect"
-                          {{ filter.form.posto }} </>
-                        </input>
+                        <input type="text" class="form-control" id="postoSelect" name="posto" value="{{ filter.form.posto.value|default_if_none:'' }}">
                       </div>                               
-                    </div> -->
+                    </div>
+
 
                     <div class="col-lg-2 mt-3">
                       <div class="form-group">
@@ -85,7 +84,7 @@
                   </form>
 
                 <div class="row">
-                  <table class="table mt-5">
+                  <table class="table mt-3">
                     <thead>
                       <tr>
                         <th>Posto</th>
@@ -96,8 +95,8 @@
                         <th>Bandeira</th>
                       </tr>
                     </thead>
-                    
-                      {% for obj in filter.qs %}
+                    <tbody>
+                      {% for obj in page_obj %}
                           <tr>
                             <td>{{ obj.gasstation_id.razao }}</td>
                             <td>{{ obj.gasstation_id.cidade }}</td>
@@ -111,10 +110,79 @@
                           <td colspan="6" class="text-center">Nenhum registro encontrado.</td>
                         </tr>
                       {% endfor %}
+                    </tbody>
+                  </table>
 
-                  </table>  
+                  <!-- Paginação e Seletor de itens por página -->
+                  <div class="row align-items-center mt-3">
+                    <!-- Seletor de itens por página -->
+                    <div class="col-md-4">
+                      <form method="get" class="form-inline">
+                        <label for="itens_por_pagina" class="me-2">Itens por página:</label>
+                        <select name="itens_por_pagina" id="itens_por_pagina" class="form-select" onchange="this.form.submit()">
+                          <option value="10" {% if itens_por_pagina == '10' %}selected{% endif %}>10</option>
+                          <option value="25" {% if itens_por_pagina == '25' %}selected{% endif %}>25</option>
+                          <option value="50" {% if itens_por_pagina == '50' %}selected{% endif %}>50</option>
+                          <option value="100" {% if itens_por_pagina == '100' %}selected{% endif %}>100</option>
+                        </select>
+                        <!-- Manter os outros parâmetros do filtro -->
+                        {% for key, value in request.GET.items %}
+                          {% if key != 'itens_por_pagina' and key != 'page' %}
+                            <input type="hidden" name="{{ key }}" value="{{ value }}">
+                          {% endif %}
+                        {% endfor %}
+                      </form>
+                    </div>
+
+                    <!-- Paginação -->
+                    {% if page_obj.paginator.num_pages > 1 %}
+                    <div class="col-md-8">
+                      <nav aria-label="Navegação de páginas">
+                        <ul class="pagination justify-content-end mb-0">
+                          {% if page_obj.has_previous %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page=1{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Primeira">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                              </a>
+                            </li>
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Anterior">
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
+                          {% endif %}
+
+                          {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                              <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                              </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                              <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                              </li>
+                            {% endif %}
+                          {% endfor %}
+
+                          {% if page_obj.has_next %}
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Próxima">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                            </li>
+                            <li class="page-item">
+                              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Última">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                              </a>
+                            </li>
+                          {% endif %}
+                        </ul>
+                      </nav>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
               </div>
-
             </div>
           </div>
         </div>

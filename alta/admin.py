@@ -10,9 +10,14 @@ from .models import (
     Contato 
     )
 
+class AddPriceAdmin(admin.ModelAdmin):
+    list_display = ('gasstation_id', 'produto_id', 'preco_revenda', 'data_coleta')
+    list_filter = ('gasstation_id', 'produto_id')
+    search_fields = ('gasstation_id__razao', 'produto_id__produto')
+
+admin.site.register(AddPrice, AddPriceAdmin)
 admin.site.register(Produto)
 admin.site.register(GasStation)
-admin.site.register(AddPrice)
 admin.site.register(PesquisaOrigem)
 admin.site.register(FAQ)
 admin.site.register(Profile)
