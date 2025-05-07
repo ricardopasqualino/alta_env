@@ -80,10 +80,16 @@ def p_lista_preco(request):
     cached_data = cache.get(cache_key)
     
     if not cached_data:
+        # Importar datetime para calcular os últimos 3 dias
+        from datetime import datetime, timedelta
+        
+        # Calcular a data de 3 dias atrás
+        data_inicio = datetime.now() - timedelta(days=3)
+        
         # Otimização: Usar select_related para carregar as relações em uma única query
         # Otimização: Usar only() para selecionar apenas os campos necessários
         base_queryset = AddPrice.objects.filter(
-            preco_revenda__isnull=False
+            data_coleta__gte=data_inicio
         ).select_related(
             'gasstation_id',
             'produto_id',
