@@ -72,7 +72,6 @@ def p_mapeei(request):
     return render(request, 'p_mapeei.html')
 
 
-@login_required
 def p_lista_preco(request):
     # Gerar uma chave de cache única para a lista de preços
     cache_key = "lista_preco_cache"
