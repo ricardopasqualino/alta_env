@@ -9,7 +9,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 'localhost', '127.0.0.1']
 
@@ -59,30 +59,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# # Bando de dados Render
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'alta_db_prod_2',
-#         'USER': 'alta_db_prod_2_user',
-#         'PASSWORD': '3rp700XExUxgrfqCIPgvChVMOwWUyQUB',
-#         'HOST': 'dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com',
-#         'PORT': '5432',
-#     }
-# }
-
-
-# Bando de dados Local
+# Bando de dados Render
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'altalocal',
-        'USER': 'postgres',
-        'PASSWORD': 'Pzq@515027',
-        'HOST': 'localhost',
+        'NAME': 'alta_db_prod_2',
+        'USER': 'alta_db_prod_2_user',
+        'PASSWORD': '3rp700XExUxgrfqCIPgvChVMOwWUyQUB',
+        'HOST': 'dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com',
         'PORT': '5432',
     }
 }
+
+
+# # Bando de dados Local
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'altalocal',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Pzq@515027',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation
