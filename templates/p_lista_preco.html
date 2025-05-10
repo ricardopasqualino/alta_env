@@ -10,7 +10,7 @@
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="">Home</a></li>
-            <!-- <li class="breadcrumb-item active">Lista de preços</li> -->
+            <li class="breadcrumb-item active">Lista de preços</li>
           </ol>
         </nav>
       </div>
@@ -84,6 +84,13 @@
                   </form>
 
                 <div class="row">
+                  {% if not filter.form.posto.value and not filter.form.cidade.value and not filter.form.produto.value and not filter.form.bandeira.value and not filter.form.mes.value and not filter.form.ano.value %}
+                  <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Exibindo dados dos últimos 30 dias. Use os filtros acima para buscar em todo o histórico.
+                  </div>
+                  {% endif %}
+                  
                   <table class="table mt-3">
                     <thead>
                       <tr>
@@ -96,7 +103,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {% for obj in page_obj %}
+                      {% for obj in list_price %}
                           <tr>
                             <td>{{ obj.gasstation_id.razao }}</td>
                             <td>{{ obj.gasstation_id.cidade }}</td>
@@ -112,75 +119,6 @@
                       {% endfor %}
                     </tbody>
                   </table>
-
-                  <!-- Paginação e Seletor de itens por página -->
-                  <div class="row align-items-center mt-3">
-                    <!-- Seletor de itens por página -->
-                    <div class="col-md-4">
-                      <form method="get" class="form-inline">
-                        <label for="itens_por_pagina" class="me-2">Itens por página:</label>
-                        <select name="itens_por_pagina" id="itens_por_pagina" class="form-select" onchange="this.form.submit()">
-                          <option value="10" {% if itens_por_pagina == '10' %}selected{% endif %}>10</option>
-                          <option value="25" {% if itens_por_pagina == '25' %}selected{% endif %}>25</option>
-                          <option value="50" {% if itens_por_pagina == '50' %}selected{% endif %}>50</option>
-                          <option value="100" {% if itens_por_pagina == '100' %}selected{% endif %}>100</option>
-                        </select>
-                        <!-- Manter os outros parâmetros do filtro -->
-                        {% for key, value in request.GET.items %}
-                          {% if key != 'itens_por_pagina' and key != 'page' %}
-                            <input type="hidden" name="{{ key }}" value="{{ value }}">
-                          {% endif %}
-                        {% endfor %}
-                      </form>
-                    </div>
-
-                    <!-- Paginação -->
-                    {% if page_obj.paginator.num_pages > 1 %}
-                    <div class="col-md-8">
-                      <nav aria-label="Navegação de páginas">
-                        <ul class="pagination justify-content-end mb-0">
-                          {% if page_obj.has_previous %}
-                            <li class="page-item">
-                              <a class="page-link" href="?page=1{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Primeira">
-                                <span aria-hidden="true">&laquo;&laquo;</span>
-                              </a>
-                            </li>
-                            <li class="page-item">
-                              <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Anterior">
-                                <span aria-hidden="true">&laquo;</span>
-                              </a>
-                            </li>
-                          {% endif %}
-
-                          {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                              <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                              </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                              <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
-                              </li>
-                            {% endif %}
-                          {% endfor %}
-
-                          {% if page_obj.has_next %}
-                            <li class="page-item">
-                              <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Próxima">
-                                <span aria-hidden="true">&raquo;</span>
-                              </a>
-                            </li>
-                            <li class="page-item">
-                              <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if itens_por_pagina %}&itens_por_pagina={{ itens_por_pagina }}{% endif %}{% for key, value in request.GET.items %}{% if key != 'page' and key != 'itens_por_pagina' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" aria-label="Última">
-                                <span aria-hidden="true">&raquo;&raquo;</span>
-                              </a>
-                            </li>
-                          {% endif %}
-                        </ul>
-                      </nav>
-                    </div>
-                    {% endif %}
-                  </div>
                 </div>
               </div>
             </div>

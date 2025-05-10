@@ -33,40 +33,54 @@ class MainFilter(django_filters.FilterSet):
 
     cidade = django_filters.ChoiceFilter(
         label='cidade',
-        choices=lambda: [(cidade, cidade) for cidade in AddPrice.objects.filter(gasstation_id__cidade__isnull=False).values_list('gasstation_id__cidade', flat=True).distinct()],
+        choices=lambda: [(cidade, cidade) for cidade in AddPrice.objects.filter(
+            gasstation_id__cidade__isnull=False
+        ).values_list('gasstation_id__cidade', flat=True).distinct().order_by('gasstation_id__cidade')],
         field_name='gasstation_id__cidade',
         lookup_expr='exact'
     )
 
     produto = django_filters.ChoiceFilter(
         label='produto',
-        choices=lambda: [(produto, produto) for produto in AddPrice.objects.filter(produto_id__isnull=False).values_list('produto_id__produto', flat=True).distinct()],
+        choices=lambda: [(produto, produto) for produto in AddPrice.objects.filter(
+            produto_id__isnull=False
+        ).values_list('produto_id__produto', flat=True).distinct().order_by('produto_id__produto')],
         field_name='produto_id__produto',
         lookup_expr='exact'
     )
 
     bandeira = django_filters.ChoiceFilter(
         label='bandeira',
-        choices=lambda: [(bandeira, bandeira) for bandeira in AddPrice.objects.filter(gasstation_id__bandeira__isnull=False).values_list('gasstation_id__bandeira', flat=True).distinct()],
+        choices=lambda: [(bandeira, bandeira) for bandeira in AddPrice.objects.filter(
+            gasstation_id__bandeira__isnull=False
+        ).values_list('gasstation_id__bandeira', flat=True).distinct().order_by('gasstation_id__bandeira')],
         field_name='gasstation_id__bandeira',
         lookup_expr='exact'
     )
     
     razao = django_filters.ChoiceFilter(
         label='razao',
-        choices=lambda: [(cat, cat) for cat in AddPrice.objects.values_list('razao', flat=True).distinct()]
+        choices=lambda: [(razao, razao) for razao in AddPrice.objects.filter(
+            gasstation_id__razao__isnull=False
+        ).values_list('gasstation_id__razao', flat=True).distinct().order_by('gasstation_id__razao')],
+        field_name='gasstation_id__razao',
+        lookup_expr='exact'
     )                  
         
     ano = django_filters.ChoiceFilter(
         field_name='data_coleta__year',
         label='Ano Coleta',
-        choices=lambda: [(cat, cat) for cat in AddPrice.objects.values_list('data_coleta__year', flat=True).distinct() if cat is not None]
+        choices=lambda: [(cat, cat) for cat in AddPrice.objects.values_list(
+            'data_coleta__year', flat=True
+        ).distinct().order_by('-data_coleta__year') if cat is not None]
     )
 
     mes = django_filters.ChoiceFilter(
         field_name='data_coleta__month',
         label='Mes Coleta',
-        choices=lambda: [(cat, cat) for cat in AddPrice.objects.values_list('data_coleta__month', flat=True).distinct() if cat is not None]
+        choices=lambda: [(cat, cat) for cat in AddPrice.objects.values_list(
+            'data_coleta__month', flat=True
+        ).distinct().order_by('data_coleta__month') if cat is not None]
     )
 
     class Meta:

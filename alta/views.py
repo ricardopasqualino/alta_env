@@ -5,6 +5,8 @@ from django.db.models import Sum, Avg, Count, Max, Min, Q
 from django.core.cache import cache
 from django.conf import settings
 from django.core.paginator import Paginator
+from datetime import datetime, timedelta
+
 
 
 from django.db.models import OuterRef, Subquery, Min, F
@@ -73,73 +75,52 @@ def p_mapeei(request):
 
 
 def p_lista_preco(request):
-    # Gerar uma chave de cache única para a lista de preços
-    cache_key = "lista_preco_cache"
-    
-    # Tentar obter os dados do cache
-    cached_data = cache.get(cache_key)
-    
-    if not cached_data:
-        # Importar datetime para calcular os últimos 3 dias
-        from datetime import datetime, timedelta
-        
-        # Calcular a data de 3 dias atrás
-        data_inicio = datetime.now() - timedelta(days=3)
-        
-        # Otimização: Usar select_related para carregar as relações em uma única query
-        # Otimização: Usar only() para selecionar apenas os campos necessários
-        base_queryset = AddPrice.objects.filter(
-            data_coleta__gte=data_inicio
-        ).select_related(
-            'gasstation_id',
-            'produto_id',
-            'pesquisa_origem_id'
-        ).only(
-            'data_coleta',
-            'preco_revenda',
-            'preco_compra',
-            'gasstation_id__razao',
-            'gasstation_id__cidade',
-            'gasstation_id__bandeira',
-            'produto_id__produto',
-            'pesquisa_origem_id__origem'
-        ).distinct(
-            'gasstation_id__razao',
-            'produto_id__produto',
-            'data_coleta'
-        ).order_by('-data_coleta')
+    # Query base otimizada
+    base_queryset = AddPrice.objects.all()
 
-        # Armazenar apenas os dados necessários no cache
-        cached_data = {
-            'list_price': list(base_queryset.values()),
-        }
-        
-        # Armazenar os dados no cache por 7 dias (604800 segundos)
-        cache.set(cache_key, cached_data, 604800)
-    
-    # Criar o filtro com os dados do cache
-    queryset = AddPrice.objects.filter(id__in=[item['id'] for item in cached_data['list_price']])
-    f = MainFilter(request.GET, queryset=queryset)
-    
-    # Configuração da paginação
-    itens_por_pagina = request.GET.get('itens_por_pagina', 10)  # Padrão: 10 itens por página
-    pagina_atual = request.GET.get('page', 1)
-    
-    # Criar o paginador
-    paginator = Paginator(f.qs, itens_por_pagina)
-    
-    try:
-        # Obter a página atual
-        page_obj = paginator.get_page(pagina_atual)
-    except:
-        # Se houver erro na paginação, mostrar a primeira página
-        page_obj = paginator.get_page(1)
+    # Se não houver filtros aplicados pelo usuário, filtra apenas os últimos 30 dias
+    if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
+        base_queryset = base_queryset.filter(
+            data_coleta__gte=datetime.now() - timedelta(days=30)
+        )
 
+    base_queryset = base_queryset.select_related(
+        'gasstation_id',
+        'produto_id',
+        'pesquisa_origem'
+    ).only(
+        'id',
+        'data_coleta',
+        'preco_revenda',
+        'cnpj',
+        'gasstation_id__razao',
+        'gasstation_id__cidade',
+        'gasstation_id__estado',
+        'gasstation_id__bairro',
+        'gasstation_id__endereco',
+        'gasstation_id__complemento',
+        'gasstation_id__cep',
+        'gasstation_id__bandeira',
+        'produto_id__produto',
+        'pesquisa_origem__origem'
+    ).order_by('-data_coleta')
+
+    # Aplicar filtros
+    f = MainFilter(request.GET, queryset=base_queryset)
+    
+    # Adicionar paginação
+    paginator = Paginator(f.qs, 10)  # 10 itens por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Log para debug
+    logger.info(f"Total de registros: {f.qs.count()}")
+    logger.info(f"Registros na página atual: {len(page_obj)}")
+    
     data = {
-        'list_price': queryset,
+        'list_price': f.qs,
         'filter': f,
         'page_obj': page_obj,
-        'itens_por_pagina': itens_por_pagina,
     }
     
     return render(request, 'p_lista_preco.html', data)
