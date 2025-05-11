@@ -170,26 +170,20 @@ def extract_and_save_data(file_path):
     print(f"Total de registros salvos: {registros_salvos}")
 
 if __name__ == "__main__":
-    # Diretório onde estão os arquivos Excel
-    files_dir = os.path.join("static", "files", "2024","2")
+    # Caminho específico para o arquivo
+    file_path = os.path.join("static", "files", "2025", "revendas_lpc_2025-04-20_2025-04-26.xlsx")
     
-    # Encontrar todos os arquivos Excel na pasta
-    excel_files = glob.glob(os.path.join(files_dir, "*.xlsx"))
-    
-    if not excel_files:
-        print(f"Nenhum arquivo Excel encontrado em {files_dir}")
+    # Verificar se o arquivo existe
+    if not os.path.exists(file_path):
+        print(f"Erro: O arquivo {file_path} não foi encontrado.")
         sys.exit(1)
     
-    print(f"Encontrados {len(excel_files)} arquivos Excel para processamento")
+    print(f"\n{'='*50}")
+    print(f"Iniciando processamento do arquivo: {os.path.basename(file_path)}")
+    print(f"{'='*50}")
     
-    # Processar cada arquivo em sequência
-    for file_path in excel_files:
-        print(f"\n{'='*50}")
-        print(f"Iniciando processamento do arquivo: {os.path.basename(file_path)}")
-        print(f"{'='*50}")
-        
-        extract_and_save_data(file_path)
-        
-        print(f"\n{'='*50}")
-        print(f"Processamento concluído para: {os.path.basename(file_path)}")
-        print(f"{'='*50}\n")
+    extract_and_save_data(file_path)
+    
+    print(f"\n{'='*50}")
+    print(f"Processamento concluído para: {os.path.basename(file_path)}")
+    print(f"{'='*50}\n")

@@ -6,6 +6,20 @@ from .models import (
     GasStation
     )
 
+MESES = {
+    1: 'Janeiro',
+    2: 'Fevereiro',
+    3: 'Março',
+    4: 'Abril',
+    5: 'Maio',
+    6: 'Junho',
+    7: 'Julho',
+    8: 'Agosto',
+    9: 'Setembro',
+    10: 'Outubro',
+    11: 'Novembro',
+    12: 'Dezembro'
+}
 
 class AddPriceFilter(django_filters.FilterSet):
     nome = django_filters.CharFilter(lookup_expr='icontains')
@@ -78,7 +92,7 @@ class MainFilter(django_filters.FilterSet):
     mes = django_filters.ChoiceFilter(
         field_name='data_coleta__month',
         label='Mes Coleta',
-        choices=lambda: [(cat, cat) for cat in AddPrice.objects.values_list(
+        choices=lambda: [(cat, MESES[cat]) for cat in AddPrice.objects.values_list(
             'data_coleta__month', flat=True
         ).distinct().order_by('data_coleta__month') if cat is not None]
     )
