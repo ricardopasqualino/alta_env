@@ -6,21 +6,24 @@ from django.core.cache import cache
 from django.conf import settings
 from django.core.paginator import Paginator
 from datetime import datetime, timedelta
-
-
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 from django.db.models import OuterRef, Subquery, Min, F
 from django.db.models.functions import TruncMonth
 from django.conf import settings as config
-from .models import AddPrice
+from .models import AddPrice, GasStation
 from .filters import MainFilter
-from .forms import NewPrice
+from .forms import NewPrice, CreateUserForm
 from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def index(request):
     return render(request, 'index.html')
 
 
+@login_required
 def p_cartao_precos(request):
     fil = MainFilter(request.GET, queryset=AddPrice.objects.all())
     cidade = request.GET.get('cidade', '').strip().lower()
@@ -62,18 +65,22 @@ def p_cartao_precos(request):
     return render(request, 'p_cartao_precos.html', data)
 
 
+@login_required
 def p_plans(request):
     return render(request, 'p_plans.html')
 
 
+@login_required
 def p_ia(request):
     return render(request, 'p_ia.html')
 
 
+@login_required
 def p_mapeei(request):
     return render(request, 'p_mapeei.html')
 
 
+@login_required
 def p_lista_preco(request):
     # Query base otimizada
     base_queryset = AddPrice.objects.all()
@@ -126,7 +133,7 @@ def p_lista_preco(request):
     return render(request, 'p_lista_preco.html', data)
 
 
-
+@login_required
 def add_price(request):
     form = NewPrice(request.POST or None)
 
@@ -144,6 +151,7 @@ def add_price(request):
     return render(request, 'p_acompanhar.html', data)
 
 
+@login_required
 def new_price(request):
     form = NewPrice(request.POST or None)
     if form.is_valid():
@@ -156,3 +164,58 @@ def new_price(request):
         return redirect('p_acompanhar')
     else:
         return redirect('p_acompanhar')
+    
+
+@login_required
+def p_profile(request):
+    return render(request, 'p_profile.html')
+
+
+@login_required
+def login_page(request):
+    return render(request, 'registration/login.html')
+
+
+@login_required
+def login_view(request):    
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return redirect('p_plans')
+    else:
+        return redirect('p_plans')
+
+
+def logout(request):
+    return render(request, 'registration/logout.html')
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+
+def new_register(request):
+    form = CreateUserForm()
+
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.email
+            user.save()
+            messages.success(request, 'Conta criada com sucesso! Você já pode fazer login.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Erro no cadastro. Este email já está em uso.')
+
+    context = {'form': form}
+    return render(request, 'p_register.html', context)
+
+
+
+def password_reset(request):
+    return render(request, 'registration/password_form.html')
+

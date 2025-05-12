@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Perfil</h1>
+    </div>
+
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+            {% if user.profile.cargo is None %}
+            <div class="col-lg-4 text-left mb-3">
+                <h1 class="card-title text-left mt-3 pb-0 fs-2">{{ user.first_name }} {{ user.last_name }}</h1>
+                <p class="fs-6">{{ user.email }}</p>
+                <ul class="list-group">
+                    <li class="list-group-item">Data da criação: {{ user.date_joined|date:'d/m/y - G:i' }}</li>
+                    <li class="list-group-item">Último acesso: {{ user.last_login|date:'d/m/y - G:i' }}</li>
+                </ul>
+            </div>                                
+            {% else %}
+            <div class="col-lg-8 text-left mb-3">
+                <h1 class="card-title text-left mt-3 pb-0 fs-2">{{ user.first_name }} {{ user.last_name }}</h1>
+                <p class="fs-4">{{ user.profile.cargo }} na {{ user.profile.empresa }}</p>
+                <ul class="list-group">
+                    <li class="list-group-item">Telefone: {{ user.profile.telefone }}</li>
+                    <li class="list-group-item">E-mail: {{ user.email }}</li>
+                    <li class="list-group-item">Data da criação do login: {{ user.date_joined|date:'d/m/y - G:i' }}</li>
+                    <li class="list-group-item">Último acesso: {{ user.last_login|date:'d/m/y - G:i' }}</li>
+                </ul>
+            </div>            
+            {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/datatables-demo.js"></script>
+
+</body>
+
+</main>
+{% endblock %}

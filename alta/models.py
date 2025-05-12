@@ -96,6 +96,7 @@ class Profile(models.Model):
     cargo = models.CharField(max_length=100, null=True, blank=True, verbose_name='Cargo')
     cpf = models.CharField(max_length=100, null=True, blank=True, verbose_name='CPF')
 
+
     def __str__(self):
         return self.telefone
  

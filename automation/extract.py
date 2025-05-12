@@ -171,7 +171,7 @@ def extract_and_save_data(file_path):
 
 if __name__ == "__main__":
     # Caminho específico para o arquivo
-    file_path = os.path.join("static", "files", "2025", "revendas_lpc_2025-04-20_2025-04-26.xlsx")
+    file_path = os.path.join("static", "files", "2025", "revendas_lpc_2025-04-13_2025-04-19.xlsx")
     
     # Verificar se o arquivo existe
     if not os.path.exists(file_path):

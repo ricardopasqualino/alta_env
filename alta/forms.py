@@ -10,6 +10,8 @@ from .models import (
 )
 
 
+
+
 class CreateUserForm(UserCreationForm):
     class Meta:
         model = User
