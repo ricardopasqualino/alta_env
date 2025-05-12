@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from alta.views import (
     index, 
@@ -21,16 +21,18 @@ from alta.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', index, name='index'),
     
     path('cartao-precos/', p_cartao_precos, name='p_cartao_precos'),
-    path('planos/', p_plans, name='p_plans'),
+    path('mapear-precos/', p_mapeei, name='p_mapeei'),
+    path('listar-precos/', p_lista_preco, name='p_lista_preco'),
+    path('acompanhar-precos/', add_price, name='p_acompanhar'),
+    path('adicionar-novo-preco/', new_price, name='new_price'),
+    path('perfil/', p_profile, name='p_profile'),
+
     path('ia/', p_ia, name='p_ia'),
-    path('mapeei/', p_mapeei, name='p_mapeei'),
-    path('lista-preco/', p_lista_preco, name='p_lista_preco'),
-    path('acompanhar/', add_price, name='p_acompanhar'),
-    path('new-price/', new_price, name='new_price'),
-    path('profile/', p_profile, name='p_profile'),
+    path('planos/', p_plans, name='p_plans'),
 
     path('login/', login_page, name='login'),
     path('login_view/', login_view, name='login_view'),
@@ -40,3 +42,7 @@ urlpatterns = [
     path('password_reset/', password_reset, name='password_reset'),
 
 ]
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'login'

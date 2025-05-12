@@ -12,7 +12,7 @@
       <h1>Cartão de Preços</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
           <li class="breadcrumb-item active">Cartão de preços</li>
         </ol>
       </nav>
@@ -26,15 +26,14 @@
               <div class="col-lg-4 mt-3">
                 <div class="form-group">
                   <label class="mb-2" for="cidadeSelect">Escolha a cidade:</label>
-                  <select class="form-select" id="cidadeSelect"
+                  <select class="form-select" id="cidadeSelect" name="cidade"
                     {{ fil.form.cidade }} </>
-                  </select>
                 </div>
               </div>
       
               <div class="col-lg-3 mt-3">
                 <button class="btn btn-primary" type="submit">Enviar</button>
-                <a href="#" class="btn btn-outline-primary">Limpar</a>
+                <a href="{% url 'p_cartao_precos' %}" class="btn btn-outline-primary">Limpar</a>
               </div>
 
             </div>
@@ -47,7 +46,7 @@
     <section>
       <div class="col-lg-12 mt-3">
         <div class="row align-items-center">
-          {% if cidade is null or blank %}
+          {% if not cidade %}
           <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-9">
               <h1 class="card-title text-left mt-3 fs-2">Preços atualizados de postos em todo o Brasil!</h1>
@@ -66,7 +65,12 @@
                 <div class="card-body">
                   <div class="list-group mt-3">
                   {% for item in preco_min %}
-                    <button type="button" class="list-group-item list-group-item-action">{{ item.produto }} - R$ {{ item.preco_minimo|floatformat:2 }}</button>
+                    <button type="button" class="list-group-item list-group-item-action" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#verticalycentered"
+                            data-produto="{{ item.produto_id__produto }}">
+                      {{ item.produto_id__produto }} - R$ {{ item.preco_minimo|floatformat:3 }}
+                    </button>
                   {% endfor %}
                   </div>
                 </div>
@@ -79,7 +83,9 @@
               <div class="card-body">
                 <div class="list-group mt-3">
                 {% for item in preco_avg %}
-                  <button type="button" class="list-group-item list-group-item-action">{{ item.produto }} - R$ {{ item.preco_medio|floatformat:2 }}</button>
+                  <button type="button" class="list-group-item list-group-item-action">
+                    {{ item.produto_id__produto }} - R$ {{ item.preco_medio|floatformat:3 }}
+                  </button>
                 {% endfor %}
                 </div>
               </div>
@@ -92,7 +98,9 @@
               <div class="card-body">
                 <div class="list-group mt-3">
                 {% for item in preco_max %}
-                  <button type="button" class="list-group-item list-group-item-action">{{ item.produto }} - R$ {{ item.preco_maximo|floatformat:2 }}</button>
+                  <button type="button" class="list-group-item list-group-item-action">
+                    {{ item.produto_id__produto }} - R$ {{ item.preco_maximo|floatformat:3 }}
+                  </button>
                 {% endfor %}
                 </div>
               </div>
@@ -149,19 +157,41 @@
   <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title">Detalhes do posto</h5>
+              <h5 class="modal-title">Detalhes do Posto</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           
           <div class="modal-body">
-            {% for item in preco_min %}
-              <h6>{{ item.razao }}</h6>
-              <h6>{{ item.data_coleta }}</h6>
-              <h6>{{ item.preco_revenda }}</h6>
-              <h6>{{ item.produto }}</h6>
+            {% for posto in detalhes_postos %}
+              <div class="posto-detalhe" data-produto="{{ posto.produto_id__produto }}" style="display: none;">
+                <h6>Posto: {{ posto.gasstation_id__razao }}</h6>
+                <p>Data da Coleta: {{ posto.data_coleta|date:"d/m/Y" }}</p>
+                <p>Preço: R$ {{ posto.preco_revenda|floatformat:3 }}</p>
+                <hr>
+              </div>
             {% endfor %}
           </div>
       </div>
   </div>       
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('verticalycentered');
+    modal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const produto = button.getAttribute('data-produto');
+        
+        // Esconde todos os detalhes
+        document.querySelectorAll('.posto-detalhe').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Mostra apenas os detalhes do produto selecionado
+        document.querySelectorAll(`.posto-detalhe[data-produto="${produto}"]`).forEach(el => {
+            el.style.display = 'block';
+        });
+    });
+});
+</script>
 {% endblock %}

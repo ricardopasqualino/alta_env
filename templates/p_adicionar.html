@@ -6,24 +6,72 @@
 
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Monitore os preços</h1>
+        <h1>Adicionar preços</h1>
         
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
-            <li class="breadcrumb-item active">Lista de Preços Adicionados</li>
+            <li class="breadcrumb-item active">Adicionar preços</li>
           </ol>
         </nav>
     
     </div>
 
-      <form action="{% url 'new_price' %}" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">Enviar</button>
-      </form>
+    <div class="row">
+      <div class="col-lg-12">
+        
+        <!-- Button to trigger modal -->
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPriceModal">
+          Adicionar preços
+        </button>
 
+        <!-- Modal -->
+        <div class="modal fade" id="addPriceModal" tabindex="-1" aria-labelledby="addPriceModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addPriceModalLabel">Adicionar Preço</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="{% url 'new_price' %}" method="POST">
 
+                  {% csrf_token %}
+
+                    <div class="col-md-12 mb-3">
+                      <label>Selecione o posto</label>
+                      <select class="form-control"
+                        {{ form.gasstation_id }} </>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                      <label>Selecione o produto</label>
+                      <select class="form-control"
+                        {{ form.produto_id }} </>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                      <label>Selecione o produto</label>
+                      <input class="form-control"
+                        {{ form.preco_revenda }} </>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                      <label>Data da coleta</label>
+                      <input type="text" class="form-control datepicker" data-provide="datepicker" data-date-format="dd/mm/yyyy"
+                        {{ form.data_coleta }} </>
+                    </div>
+
+                  <button class="btn btn-primary w-100" type="submit">Enviar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+
+      </div>
+    </div>
 
       <section class="section">
         <div class="row">
@@ -38,20 +86,22 @@
                     <tr>
                         <th>Data</th>
                         <th>Posto</th>
+                        <th>Cidade/UF</th>
                         <th>Produto</th>
                         <th>Preço</th>
+                        <th>Bandeira</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for item in prices %}
-                    {% if item.data_coleta %}
-                    <tr>
-                      <td>{{ item.data_coleta|date:'d/m/y' }}</td>
-                      <td>{{ item.gas_station }}</td>
-                      <td>{{ item.produto_id }}</td>
-                      <td>R$ {{ item.preco_revenda }}</td>
-                    </tr>
-                    {% endif %}
+                      <tr>
+                        <td>{{ item.data_coleta|date:'d/m/y' }}</td>
+                        <td>{{ item.gasstation_id.razao }} / {{ item.gasstation_id.cnpj }}</td>
+                        <td>{{ item.gasstation_id.cidade }}/{{ item.gasstation_id.estado }}</td>
+                        <td>{{ item.produto_id.produto }}</td>
+                        <td>R$ {{ item.preco_revenda }}</td>
+                        <td>{{ item.gasstation_id.bandeira }}</td>
+                      </tr>
                     {% endfor %}
                   </tbody>
                 </table>

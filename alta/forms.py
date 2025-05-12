@@ -43,14 +43,8 @@ class NewPrice(forms.ModelForm):
             'produto_id',
             'preco_revenda',
             'data_coleta',
-            'pesquisa_origem',
         ]
-        widgets = {
-            'gasstation_id': forms.Select(attrs={
-                'class': 'form-select mb-3',
-                'onchange': 'atualizarInfosPosto(this)'
-            })
-        }
+
 
 
 class PriceForm(forms.ModelForm):

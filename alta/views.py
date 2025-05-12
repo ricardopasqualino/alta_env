@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.db.models import OuterRef, Subquery, Min, F
 from django.db.models.functions import TruncMonth
 from django.conf import settings as config
-from .models import AddPrice, GasStation
+from .models import AddPrice, GasStation, PesquisaOrigem
 from .filters import MainFilter
 from .forms import NewPrice, CreateUserForm
 from django.contrib.auth.decorators import login_required
@@ -39,27 +39,86 @@ def p_cartao_precos(request):
     preco_max = cache.get(cache_key_max)
     
     if not preco_min:
-        preco_min = AddPrice.objects.filter(gasstation_id__cidade=cidade).only('gasstation_id__cidade', 'preco_revenda').values('produto').annotate(preco_minimo=Min('preco_revenda'))
-        cache.set(cache_key_avg, preco_min, 3600)
+        preco_min = AddPrice.objects.filter(
+            gasstation_id__cidade=cidade
+        ).select_related(
+            'produto_id__produto',
+            'gasstation_id__razao',
+            'data_coleta',
+            'preco_revenda'
+        ).values(
+            'produto_id__produto',
+            'gasstation_id__razao',
+            'data_coleta',
+            'preco_revenda'
+        ).annotate(
+            preco_minimo=Min('preco_revenda')
+        ).order_by('produto_id__produto')
+        cache.set(cache_key_min, preco_min, 3600)
     
     if not preco_avg:
-        preco_avg = AddPrice.objects.filter(gasstation_id__cidade=cidade).only('gasstation_id__cidade', 'preco_revenda').values('produto').annotate(preco_medio=Avg('preco_revenda'))
+        preco_avg = AddPrice.objects.filter(
+            gasstation_id__cidade=cidade
+        ).select_related(
+            'produto_id__produto',
+            'gasstation_id__razao',
+            'data_coleta',
+            'preco_revenda'
+        ).values(
+            'produto_id__produto',
+            'gasstation_id__razao',
+            'data_coleta',
+            'preco_revenda'
+        ).annotate(
+            preco_medio=Avg('preco_revenda')
+        ).order_by('produto_id__produto')
         cache.set(cache_key_avg, preco_avg, 3600)
 
     if not preco_max:
-        preco_max = AddPrice.objects.filter(gasstation_id__cidade=cidade).only('gasstation_id__cidade', 'preco_revenda').values('produto').annotate(preco_maximo=Max('preco_revenda'))
+        preco_max = AddPrice.objects.filter(
+            gasstation_id__cidade=cidade
+        ).select_related(
+            'produto_id__produto',
+            'gasstation_id__razao',
+            'data_coleta',
+            'preco_revenda'
+        ).values(
+            'produto_id__produto',
+            'gasstation_id__razao',
+            'data_coleta',
+            'preco_revenda'
+        ).annotate(
+            preco_maximo=Max('preco_revenda')
+        ).order_by('produto_id__produto')
         cache.set(cache_key_max, preco_max, 3600)
 
+    # Buscar a última data de coleta
     ultima_coleta = AddPrice.objects.aggregate(ultima_data_coleta=Max('data_coleta'))
     ultima_data = ultima_coleta['ultima_data_coleta']
+
+    # Buscar detalhes dos postos com preço mínimo
+    detalhes_postos = AddPrice.objects.filter(
+        gasstation_id__cidade=cidade
+    ).select_related(
+        'produto_id__produto',
+        'data_coleta',
+        'gasstation_id__razao',
+        'preco_revenda'
+    ).values(
+        'produto_id__produto',
+        'gasstation_id__razao',
+        'data_coleta',
+        'preco_revenda'
+    ).order_by('produto_id__produto', 'preco_revenda')
 
     data = {
         'fil': fil,
         'cidade': cidade,
         'preco_min': preco_min,
-        'preco_max': preco_max,
         'preco_avg': preco_avg,
-        'ultima_data':ultima_data
+        'preco_max': preco_max,
+        'detalhes_postos': detalhes_postos,
+        'ultima_data': ultima_data
     }
 
     return render(request, 'p_cartao_precos.html', data)
@@ -148,7 +207,7 @@ def add_price(request):
         'form': form,
         'prices': prices,
     }
-    return render(request, 'p_acompanhar.html', data)
+    return render(request, 'p_adicionar.html', data)
 
 
 @login_required
@@ -158,11 +217,25 @@ def new_price(request):
         addprice = form.save(commit=False)  
         addprice.user = request.user 
         
-        # Usando o objeto PesquisaOrigem diretamente do form
-        addprice.pesquisa_origem = form.cleaned_data['pesquisa_origem']
+        # Buscar a instância de PesquisaOrigem com id=1
+        pesquisa_origem = PesquisaOrigem.objects.get(id=1)
+        addprice.pesquisa_origem = pesquisa_origem
+
+        # Converter a data do formato dd/mm/yyyy para yyyy-mm-dd
+        data_coleta = request.POST.get('data_coleta')
+        if data_coleta:
+            try:
+                data_coleta = datetime.strptime(data_coleta, '%d/%m/%Y').strftime('%Y-%m-%d')
+                addprice.data_coleta = data_coleta
+            except ValueError:
+                messages.error(request, 'Formato de data inválido')
+                return redirect('p_acompanhar')
+
         addprice.save() 
+        messages.success(request, 'Preço adicionado com sucesso!')
         return redirect('p_acompanhar')
     else:
+        messages.error(request, 'Erro ao adicionar preço. Verifique os dados.')
         return redirect('p_acompanhar')
     
 
@@ -173,19 +246,29 @@ def p_profile(request):
 
 @login_required
 def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('index')
     return render(request, 'registration/login.html')
 
 
-@login_required
 def login_view(request):    
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return redirect('p_plans')
-    else:
-        return redirect('p_plans')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Login realizado com sucesso!')
+                return redirect('index')
+            else:
+                messages.error(request, 'Usuário ou senha inválidos.')
+                return redirect('login')
+        else:
+            messages.error(request, 'Por favor, preencha todos os campos.')
+            return redirect('login')
+    return redirect('login')
 
 
 def logout(request):
