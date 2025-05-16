@@ -38,8 +38,6 @@
 
             </div>
           </form>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -59,6 +57,20 @@
             <p class="justify-align-left text-align-left">Última atualização em {{ ultima_data|date:'d/m/Y' }}</p>
           </div>   
 
+          <!-- Debug info -->
+          {% if debug %}
+          <div class="row">
+            <div class="col-12">
+              <pre>
+                Cidade: {{ cidade }}
+                Preços mínimos: {{ preco_min|length }}
+                Preços médios: {{ preco_avg|length }}
+                Preços máximos: {{ preco_max|length }}
+              </pre>
+            </div>
+          </div>
+          {% endif %}
+
           <div class="col-lg-4 mt-3">
             <h1 class="p-2 card-title mb-3">Preço Mínimo</h1>
               <div class="card">
@@ -69,8 +81,10 @@
                             data-bs-toggle="modal" 
                             data-bs-target="#verticalycentered"
                             data-produto="{{ item.produto_id__produto }}">
-                      {{ item.produto_id__produto }} - R$ {{ item.preco_minimo|floatformat:3 }}
+                      {{ item.produto_id__produto }} - R$ {{ item.preco_minimo|floatformat:2 }}
                     </button>
+                  {% empty %}
+                    <p class="text-center">Nenhum preço mínimo encontrado para esta cidade.</p>
                   {% endfor %}
                   </div>
                 </div>
@@ -84,8 +98,10 @@
                 <div class="list-group mt-3">
                 {% for item in preco_avg %}
                   <button type="button" class="list-group-item list-group-item-action">
-                    {{ item.produto_id__produto }} - R$ {{ item.preco_medio|floatformat:3 }}
+                    {{ item.produto_id__produto }} - R$ {{ item.preco_medio|floatformat:2 }}
                   </button>
+                {% empty %}
+                  <p class="text-center">Nenhum preço médio encontrado para esta cidade.</p>
                 {% endfor %}
                 </div>
               </div>
@@ -99,8 +115,10 @@
                 <div class="list-group mt-3">
                 {% for item in preco_max %}
                   <button type="button" class="list-group-item list-group-item-action">
-                    {{ item.produto_id__produto }} - R$ {{ item.preco_maximo|floatformat:3 }}
+                    {{ item.produto_id__produto }} - R$ {{ item.preco_maximo|floatformat:2 }}
                   </button>
+                {% empty %}
+                  <p class="text-center">Nenhum preço máximo encontrado para esta cidade.</p>
                 {% endfor %}
                 </div>
               </div>
@@ -109,7 +127,8 @@
         </div>
       </div>   
       {% endif %}
-    </div>
+    </section>
+
    <!-- Script -->
    <script>
     // Adicionar o evento de formatação quando o modal for mostrado

@@ -26,7 +26,10 @@ def index(request):
 @login_required
 def p_cartao_precos(request):
     fil = MainFilter(request.GET, queryset=AddPrice.objects.all())
-    cidade = request.GET.get('cidade', '').strip().lower()
+    cidade = request.GET.get('cidade')
+    
+    # Log para debug
+    print(f"Cidade selecionada: {cidade}")
     
     # Gerar uma chave de cache única baseada na cidade
     cache_key_min = f"preco_min_{cidade}"
@@ -41,85 +44,58 @@ def p_cartao_precos(request):
     if not preco_min:
         preco_min = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).select_related(
-            'produto_id__produto',
-            'gasstation_id__razao',
-            'data_coleta',
+        ).only(
+            'gasstation_id__cidade', 
             'preco_revenda'
         ).values(
-            'produto_id__produto',
-            'gasstation_id__razao',
-            'data_coleta',
-            'preco_revenda'
+            'produto_id__produto'
         ).annotate(
             preco_minimo=Min('preco_revenda')
-        ).order_by('produto_id__produto')
+        )
+        print(f"Preços mínimos: {list(preco_min)}")
         cache.set(cache_key_min, preco_min, 3600)
     
     if not preco_avg:
         preco_avg = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).select_related(
-            'produto_id__produto',
-            'gasstation_id__razao',
-            'data_coleta',
+        ).only(
+            'gasstation_id__cidade', 
             'preco_revenda'
         ).values(
-            'produto_id__produto',
-            'gasstation_id__razao',
-            'data_coleta',
-            'preco_revenda'
+            'produto_id__produto'
         ).annotate(
-            preco_medio=Avg('preco_revenda')
-        ).order_by('produto_id__produto')
+            preco_medio=Avg('preco_revenda')  # Corrigido de preco_minimo para preco_medio
+        )
+        print(f"Preços médios: {list(preco_avg)}")
         cache.set(cache_key_avg, preco_avg, 3600)
 
     if not preco_max:
         preco_max = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).select_related(
-            'produto_id__produto',
-            'gasstation_id__razao',
-            'data_coleta',
+        ).only(
+            'gasstation_id__cidade', 
             'preco_revenda'
         ).values(
-            'produto_id__produto',
-            'gasstation_id__razao',
-            'data_coleta',
-            'preco_revenda'
+            'produto_id__produto'
         ).annotate(
-            preco_maximo=Max('preco_revenda')
-        ).order_by('produto_id__produto')
+            preco_maximo=Max('preco_revenda')  # Corrigido de preco_minimo para preco_maximo
+        )
+        print(f"Preços máximos: {list(preco_max)}")
         cache.set(cache_key_max, preco_max, 3600)
 
-    # Buscar a última data de coleta
     ultima_coleta = AddPrice.objects.aggregate(ultima_data_coleta=Max('data_coleta'))
     ultima_data = ultima_coleta['ultima_data_coleta']
-
-    # Buscar detalhes dos postos com preço mínimo
-    detalhes_postos = AddPrice.objects.filter(
-        gasstation_id__cidade=cidade
-    ).select_related(
-        'produto_id__produto',
-        'data_coleta',
-        'gasstation_id__razao',
-        'preco_revenda'
-    ).values(
-        'produto_id__produto',
-        'gasstation_id__razao',
-        'data_coleta',
-        'preco_revenda'
-    ).order_by('produto_id__produto', 'preco_revenda')
 
     data = {
         'fil': fil,
         'cidade': cidade,
         'preco_min': preco_min,
-        'preco_avg': preco_avg,
         'preco_max': preco_max,
-        'detalhes_postos': detalhes_postos,
+        'preco_avg': preco_avg,
         'ultima_data': ultima_data
     }
+
+    print(f"Dados enviados ao template: {data}")
 
     return render(request, 'p_cartao_precos.html', data)
 
@@ -147,7 +123,7 @@ def p_lista_preco(request):
     # Se não houver filtros aplicados pelo usuário, filtra apenas os últimos 30 dias
     if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
         base_queryset = base_queryset.filter(
-            data_coleta__gte=datetime.now() - timedelta(days=30)
+            data_coleta__gte=datetime.now() - timedelta(days=10)
         )
 
     base_queryset = base_queryset.select_related(

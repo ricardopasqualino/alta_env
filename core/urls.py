@@ -22,7 +22,7 @@ from alta.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', index, name='index'),
+    path('', p_cartao_precos, name='index'),
     
     path('cartao-precos/', p_cartao_precos, name='p_cartao_precos'),
     path('mapear-precos/', p_mapeei, name='p_mapeei'),

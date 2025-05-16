@@ -39,27 +39,37 @@
                   {% csrf_token %}
 
                     <div class="col-md-12 mb-3">
-                      <label>Selecione o posto</label>
-                      <select class="form-control"
+                      <label class="form-label">Selecione o posto</label>
+                      <select class="form-select"
                         {{ form.gasstation_id }} </>
                     </div>
 
-                    <div class="col-md-12 mb-3">
-                      <label>Selecione o produto</label>
-                      <select class="form-control"
-                        {{ form.produto_id }} </>
-                    </div>
+                    <label class="form-label">Preço de revenda</label>
+                    <div class="input-group mb-3 col-12">
+                      <input type="text" inputmode="numeric" class="form-control priceInput" 
+                          oninput="this.value = this.value.replace(/[^0-9,.]/g, '').replace(/,/g, '.');" 
+                          minlength="2" maxlength="4" 
+                          aria-label="Preço" 
+                          placeholder="Inclua o preço atual 5.35" 
+                          required="required"
+                          {{ form.preco_revenda }} </>
+                    </div>   
 
-                    <div class="col-md-12 mb-3">
-                      <label>Selecione o produto</label>
-                      <input class="form-control"
-                        {{ form.preco_revenda }} </>
-                    </div>
+                    <div class="row">
 
-                    <div class="col-md-12 mb-3">
-                      <label>Data da coleta</label>
-                      <input type="text" class="form-control datepicker" data-provide="datepicker" data-date-format="dd/mm/yyyy"
-                        {{ form.data_coleta }} </>
+                      <div class="col-6 mb-3">
+                        <label class="form-label">Selecione o produto</label>
+                        <select class="form-select"
+                          {{ form.produto_id }} </>
+                      </div>
+
+
+                      <div class="col-6 mb-3">
+                        <label class="form-label">Data da coleta</label>
+                        <input type="text" class="form-control datepicker" data-provide="datepicker" data-date-format="dd/mm/yyyy"
+                          {{ form.data_coleta }} </>
+                      </div>
+
                     </div>
 
                   <button class="btn btn-primary w-100" type="submit">Enviar</button>
