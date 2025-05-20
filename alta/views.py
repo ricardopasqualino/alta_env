@@ -25,7 +25,7 @@ def index(request):
 
 @login_required
 def p_cartao_precos(request):
-    fil = MainFilter(request.GET, queryset=AddPrice.objects.all())
+    fil = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3))
     cidade = request.GET.get('cidade')
     
     # Log para debug
@@ -44,7 +44,7 @@ def p_cartao_precos(request):
     if not preco_min:
         preco_min = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).only(
+        ).exclude(produto_id=3).only(
             'gasstation_id__cidade', 
             'preco_revenda'
         ).values(
@@ -58,7 +58,7 @@ def p_cartao_precos(request):
     if not preco_avg:
         preco_avg = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).only(
+        ).exclude(produto_id=3).only(
             'gasstation_id__cidade', 
             'preco_revenda'
         ).values(
@@ -72,7 +72,7 @@ def p_cartao_precos(request):
     if not preco_max:
         preco_max = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).only(
+        ).exclude(produto_id=3).only(
             'gasstation_id__cidade', 
             'preco_revenda'
         ).values(
@@ -118,12 +118,16 @@ def p_mapeei(request):
 @login_required
 def p_lista_preco(request):
     # Query base otimizada
-    base_queryset = AddPrice.objects.all()
+    base_queryset = AddPrice.objects.exclude(
+        produto_id=3
+    )
 
     # Se não houver filtros aplicados pelo usuário, filtra apenas os últimos 30 dias
     if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
         base_queryset = base_queryset.filter(
-            data_coleta__gte=datetime.now() - timedelta(days=10)
+            gasstation_id__cidade=request.user.profile.cidade,
+            data_coleta__gte=datetime.now() - timedelta(days=30),
+            produto_id=1
         )
 
     base_queryset = base_queryset.select_related(
@@ -252,7 +256,9 @@ def logout(request):
 
 
 def logout_view(request):
-    logout(request)
+    from django.contrib.auth import logout as auth_logout
+    auth_logout(request)
+    messages.success(request, 'Você saiu com sucesso.')
     return redirect('login')
 
 

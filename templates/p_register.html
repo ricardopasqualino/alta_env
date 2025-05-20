@@ -55,7 +55,7 @@
               <div class="card mb-3">
                 <div class="card-body">
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4">Crie sua conta! É grátis!</h5>
+                    <h5 class="card-title text-center pb-0 fs-4 mb-3">Crie sua conta! É grátis!</h5>
                   </div>
 
                   <form class="row g-3 needs-validation" action="{% url 'new_register' %}" method="POST">
@@ -65,8 +65,8 @@
                     <div class="input-group">
                       <span class="input-group-text" id="basic-addon1">Nome</span>
                       <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '');"
-                      placeholder="Inclua o seu nome" required="required" maxlength="20"
+                      oninput="this.value = this.value.replace(/[0-9]/g, '');"
+                      placeholder="João" required="required" maxlength="50"
                       {{ form.first_name }} </>
                       <div class="input-group">
                         {{ form.first_name.errors }}
@@ -76,8 +76,8 @@
                     <div class="input-group">
                       <span class="input-group-text" id="basic-addon1">Sobrenome</span>
                       <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '');"
-                      placeholder="Inclua o seu nome" required="required" maxlength="20"
+                      oninput="this.value = this.value.replace(/[0-9]/g, '');"
+                      placeholder="da Silva" required="required" maxlength="50"
                       {{ form.last_name }} </>
                       <div class="input-group">
                         {{ form.last_name.errors }}
@@ -87,7 +87,7 @@
                     <div class="input-group">
                       <span class="input-group-text" id="basic-addon1">E-mail Corporativo:</span>
                       <input type="email" class="form-control" aria-label="email" aria-describedby="basic-addon1" 
-                      placeholder="inclua o seu e-mail corporativo" required="required" maxlength="60"
+                      placeholder="joao.silva@empresa.com.br" required="required" maxlength="60"
                       {{ form.email }} </>
                       <div class="input-group">
                         {{ form.email.errors }}
@@ -95,86 +95,93 @@
 
                     </div>
                       
+                    <div class="input-group">
+                      <span class="input-group-text" id="basic-addon1">Empresa</span>
+                      <input type="text" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
+                      placeholder="Posto da Silva" required="required" maxlength="50"
+                      {{ form.posto }}>
                       <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1">DDD + Telefone</span>
-                        <input type="tel" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                        placeholder="Inclua o seu DDD + telefone" required="required" maxlength="13"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
-                        {{ form.telefone }} </>
-                        <div class="input-group">
-                          {{ form.telefone.errors }}
-                        </div>
+                        {{ form.profile.posto.errors }}
                       </div>
+                    </div>
+
+
+
+                          <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">DDD + Telefone</span>
+                            <input type="tel" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                            placeholder="11919596478" required="required" maxlength="13"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
+                            {{ form.telefone }} </>
+                            <div class="input-group">
+                              {{ form.telefone.errors }}
+                            </div>
+                          </div>
+
+                          <div class="input-group">
+                            <span class="input-group-text" id="basic-addon1">Cargo</span>
+                            <select class="form-select" aria-label="Cargo" aria-describedby="basic-addon1" required="required"
+                              {{ form.cargo }}>
+                              <option value="proprietario">Proprietário</option>
+                              <option value="diretor">Diretor</option>
+                              <option value="gerente">Gerente</option>
+                              <option value="supervisor/coordenador">Supervisor/Coordenador</option>
+                              <option value="operador">Operador</option>
+                              <option value="analista">Analista</option>
+                              <option value="administrador">Administrador</option>
+                              <option value="outro">Outro</option>
+                            </select>
+                            <div class="input-group">
+                              {{ form.cargo.errors }}
+                            </div>
+                          </div>
+
 
                       <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1">Empresa</span>
+                        <span class="input-group-text" id="basic-addon1">E-mail de sua conta</span>
                         <input type="text" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                        placeholder="Inclua o nome da sua empresa" required="required" maxlength="20"
-                        {{ form.posto }} </>
+                        placeholder="joao.silva@empresa.com.br" required="required" maxlength="100"
+                        {{ form.username }} </>
                         <div class="input-group">
-                          {{ form.profile.posto.errors }}
+                          {{ form.username.errors }}
                         </div>
                       </div>
 
                       <div class="input-group">
-                        <span class="input-group-text" id="basic-addon1">Cargo</span>
-                        <input type="text" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                        placeholder="Inclua o seu cargo" required="required" maxlength="30"
-                        {{ form.cargo }} </>
+                        <span class="input-group-text" id="basic-addon1">Digite a senha</span>
+                        <input type="password" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                        placeholder="Crie uma senha" required="required" maxlength="10"
+                        {{ form.password1 }} </>
                         <div class="input-group">
-                          {{ form.cargo.errors }}
+                          {{ form.password1.errors }}
                         </div>
                       </div>
 
-
-                    <div class="input-group">
-                      <span class="input-group-text" id="basic-addon1">Usuário</span>
-                      <input type="text" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      placeholder="Inclua o seu usuário até 10 caracteres" required="required" maxlength="10"
-                      {{ form.username }} </>
                       <div class="input-group">
-                        {{ form.username.errors }}
+                        <span class="input-group-text" id="basic-addon1">Repita a senha</span>
+                        <input type="password" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                        placeholder="Repita a mesma senha" required="required" maxlength="10"
+                        {{ form.password2 }} </>
                       </div>
-                    </div>
+                      <div class="row mt-3">
+                        <div class="col-12">
+                          <ul>
+                            <li class="text-danger">Sua senha deve conter 10 caracteres</li>
+                            <li class="text-danger">Sua senha deve conter letras maiúsculas e minúsculas</li>
+                            <li class="text-danger">Sua senha deve conter caracteres especiais</li>
+                          </ul>
+                        </div>
+                      </div>
 
-                    <div class="input-group">
-                      <span class="input-group-text" id="basic-addon1">Digite a senha</span>
-                      <input type="password" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      placeholder="Inclua a sua senha" required="required" maxlength="10"
-                      {{ form.password1 }} </>
-                      <div class="input-group">
-                        {{ form.password1.errors }}
-                      </div>
-                    </div>
-
-                    <div class="input-group">
-                      <span class="input-group-text" id="basic-addon1">Repita a senha</span>
-                      <input type="password" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      placeholder="Inclua a sua senha" required="required" maxlength="10"
-                      {{ form.password2 }} </>
-                      <div class="input-group">
-                        {{ form.password2.errors }}
-                      </div>
-                    </div>
                     
-                    <div class="input-group">
-                      <ul class="help-text">
-                          <small class="text-danger ">{{ form.password2.errors }}</small>
-                      </ul>
-                    </div>
-      <div class="input-group">
-        <ul class="help-text">
-          <small class="text-danger">{{ form.errors }}</small>
-        </ul>
-      </div>
                     
-      <div class="col-12">
-        <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
-      </div> 
+                  <div class="col-12">
+                    <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
+                  </div> 
 
-    </form>
-  </div>
-</div>
+                </form>
+            </div>
+          </div>
 
 </div>
 </div>

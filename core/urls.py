@@ -38,7 +38,7 @@ urlpatterns = [
     path('login_view/', login_view, name='login_view'),
     path('logout/', logout, name='logout'),
     path('logout_view/', logout_view, name='logout_view'),
-    path('new_register/', new_register, name='new_register'),
+    path('criar-conta/', new_register, name='new_register'),
     path('password_reset/', password_reset, name='password_reset'),
 
 ]

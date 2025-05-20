@@ -88,17 +88,6 @@ class FAQ(models.Model):
     def __str__(self):
         return self.title
     
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Usuário')
-    telefone = models.CharField(max_length=20, null=True, blank=True, verbose_name='Telefone')
-    empresa = models.CharField(max_length=100, null=True, blank=True, verbose_name='Empresa')
-    cargo = models.CharField(max_length=100, null=True, blank=True, verbose_name='Cargo')
-    cpf = models.CharField(max_length=100, null=True, blank=True, verbose_name='CPF')
-
-
-    def __str__(self):
-        return self.telefone
  
     
 class Contato(models.Model):
@@ -126,3 +115,16 @@ class Cidade(models.Model):
     def __str__(self):
         return self.cidade
     
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='Usuário')
+    cidade = models.ForeignKey(Cidade, on_delete=models.CASCADE, verbose_name='Cidade')
+    estado = models.ForeignKey(Estado, on_delete=models.CASCADE, verbose_name='Estado')
+    telefone = models.CharField(max_length=20, null=True, blank=True, verbose_name='Telefone')
+    empresa = models.CharField(max_length=100, null=True, blank=True, verbose_name='Empresa')
+    cargo = models.CharField(max_length=50, null=True, blank=True, verbose_name='Cargo')
+    cpf = models.CharField(max_length=100, null=True, blank=True, verbose_name='CPF')
+
+
+    def __str__(self):
+        return self.user.first_name

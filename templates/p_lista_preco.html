@@ -35,7 +35,7 @@
                     <div class="col-lg-2 mt-3">
                       <div class="form-group">
                         <label class="mb-2" for="cidadeSelect">Escolha a cidade:</label>
-                        <select class="form-select" id="cidadeSelect"
+                        <select class="form-select select2" id="cidadeSelect"
                           {{ filter.form.cidade }} </>
                         </select>
                       </div>
@@ -94,22 +94,24 @@
                   <table class="table mt-3">
                     <thead>
                       <tr>
+                        <th>Data da coleta</th>
                         <th>Posto</th>
-                        <th>Cidade</th>
+                        <th>Cidade/UF</th>
+                        <th>Bairro</th>
                         <th>Produto</th>
-                        <th>Preço</th>
-                        <th>Data Coleta</th>
+                        <th>Preço (R$)</th>
                         <th>Bandeira</th>
                       </tr>
                     </thead>
                     <tbody>
                       {% for obj in list_price %}
                           <tr>
-                            <td>{{ obj.gasstation_id.razao }}</td>
-                            <td>{{ obj.gasstation_id.cidade }}</td>
+                            <td>{{ obj.data_coleta|date:'d/m/Y' }}</td>
+                            <td><strong>{{ obj.gasstation_id.cnpj }}</strong> | {{ obj.gasstation_id.razao }}</td>
+                            <td>{{ obj.gasstation_id.cidade }}/{{ obj.gasstation_id.estado }}</td>
+                            <td>{{ obj.gasstation_id.bairro }}</td>
                             <td>{{ obj.produto_id.produto }}</td>
                             <td>R$ {{ obj.preco_revenda }}</td>
-                            <td>{{ obj.data_coleta|date:'d/m/Y' }}</td>
                             <td>{{ obj.gasstation_id.bandeira }}</td>
                           </tr>
                       {% empty %}
@@ -127,4 +129,26 @@
     </section>
 </main>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('.select2').select2({
+      placeholder: "Digite para buscar...",
+      allowClear: true,
+      language: {
+        noResults: function() {
+          return "Nenhum resultado encontrado";
+        },
+        searching: function() {
+          return "Buscando...";
+        }
+      }
+    });
+  });
+</script>
 {% endblock %}

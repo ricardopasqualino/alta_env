@@ -58,7 +58,7 @@ class MainFilter(django_filters.FilterSet):
         label='produto',
         choices=lambda: [(produto, produto) for produto in AddPrice.objects.filter(
             produto_id__isnull=False
-        ).values_list('produto_id__produto', flat=True).distinct().order_by('produto_id__produto')],
+        ).exclude(produto_id=3).values_list('produto_id__produto', flat=True).distinct().order_by('produto_id__produto')],
         field_name='produto_id__produto',
         lookup_expr='exact'
     )

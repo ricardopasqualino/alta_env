@@ -7,7 +7,9 @@ from .models import (
     PesquisaOrigem, 
     FAQ, 
     Profile, 
-    Contato 
+    Contato,
+    Cidade,
+    Estado
     )
 
 class AddPriceAdmin(admin.ModelAdmin):
@@ -17,6 +19,8 @@ class AddPriceAdmin(admin.ModelAdmin):
 
 admin.site.register(AddPrice, AddPriceAdmin)
 admin.site.register(Produto)
+admin.site.register(Cidade)
+admin.site.register(Estado)
 admin.site.register(GasStation)
 admin.site.register(PesquisaOrigem)
 admin.site.register(FAQ)
