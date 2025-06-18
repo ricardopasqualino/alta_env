@@ -1,0 +1,8 @@
+.env
+venv/
+alta/migrations
+alta/tests
+alta/tests.py
+alta/tests.pyc
+static/files/*
+progresso_temp.json

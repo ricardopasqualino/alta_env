@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Lista de Preços</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="">Home</a></li>
+            <li class="breadcrumb-item active">Lista de preços</li>
+          </ol>
+        </nav>
+      </div>
+
+      <section class="section">
+
+        <div class="row">
+
+          <div class="col-lg-12">
+
+            <div class="card">
+
+              <div class="card-body">
+
+                <form method="get">
+
+                <div class="mt-3 mb-3">
+
+                  <div class="row">
+
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2" for="postoSelect">Posto/Razão</label>
+                        <input type="text" class="form-control" id="postoSelect" name="posto" value="{{ filter.form.posto.value|default_if_none:'' }}">
+                      </div>                               
+                    </div>
+
+
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2"><strong>*Mês</strong></label>
+                        <select class="form-select" id="mesSelect" required
+                          {{ filter.form.cidade }} </>
+                        </select>
+                      </div>                               
+                    </div>
+                    
+                        
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2"><strong>*Produto</strong></label>
+                        <select class="form-select" id="produtoSelect" required 
+                          {{ filter.form.produto }} </>
+                        </select>
+                      </div>                                        
+                    </div>                                                                                          
+                    
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2">Bandeira</label>
+                        <select class="form-select" id="bandeiraSelect"
+                          {{ filter.form.bandeira }} </>
+                        </select>
+                      </div>                                         
+                    </div>
+                    
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2"><strong>*Mês</strong></label>
+                        <select class="form-select" id="mesSelect" required
+                          {{ filter.form.mes }} </>
+                        </select>
+                      </div>                               
+                    </div>
+                    
+                    <div class="col-lg-2 mt-3">
+                      <div class="form-group">
+                        <label class="mb-2"><strong>*Ano</strong></label>
+                        <select class="form-select" id="anoSelect" required
+                          {{ filter.form.ano }} </>
+                        </select>
+                      </div>                               
+                    </div>                                                                        
+      
+                    <div class='row mt-3 justify-content-start align-items-center d-none d-lg-flex'>     
+                        <div class='col-auto'>
+                            <button class="btn btn-primary" type="submit">Enviar</button>
+                        </div>
+                        <div class='col-auto'>
+                            <p class="mb-0">Total de registros encontrados: <span class="badge bg-primary">{{ total_linhas_pesquisa }}</span></p>
+                        </div>
+                    </div>
+
+                    <div class='row mt-3 d-lg-none'>     
+                      <div class='col-4'>
+                          <button class="btn btn-primary mt-1 mb-3" type="submit">Enviar</button>
+                      </div>
+                      <div class='col-8'>
+                          <p class="mt-2 justify-content-end align-items-end d-flex">Registros<span class="badge bg-primary mx-1">{{ total_linhas_pesquisa }}</span></p>
+                      </div>
+                    </div>
+                  </div>
+                  </form>
+                  
+
+                <div class="row d-none d-md-block justify-content-center">
+                  {% if not filter.form.posto.value and not filter.form.cidade.value and not filter.form.produto.value and not filter.form.bandeira.value and not filter.form.mes.value and not filter.form.ano.value %}
+                  <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Exibindo dados dos últimos 15 dias. Use os filtros acima para buscar em todo o histórico.
+                  </div>
+                  {% endif %}
+                  
+                  <table class="table mt-3">
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Posto</th>
+                        <th>Cidade/UF</th>
+                        <th>Bairro</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Bandeira</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for obj in list_price %}
+                          <tr>
+                            <td>{{ obj.data_coleta|date:'d/m/Y' }}</td>
+                            <td><strong>{{ obj.gasstation_id.cnpj }}</strong> | {{ obj.gasstation_id.razao }}</td>
+                            <td>{{ obj.gasstation_id.cidade }}/{{ obj.gasstation_id.estado }}</td>
+                            <td>{{ obj.gasstation_id.bairro }}</td>
+                            <td>{{ obj.produto_id.produto }}</td>
+                            <td>R$ {{ obj.preco_revenda }}</td>
+                            <td>{{ obj.gasstation_id.bandeira }}</td>
+                          </tr>
+                      {% empty %}
+                        <tr>
+                          <td colspan="6" class="text-center">Nenhum registro encontrado.</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="row d-block d-md-none">
+                  {% if not filter.form.posto.value and not filter.form.cidade.value and not filter.form.produto.value and not filter.form.bandeira.value and not filter.form.mes.value and not filter.form.ano.value %}
+                  <div class="alert alert-info mt-3">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Exibindo dados dos últimos 15 dias. Use os filtros acima para buscar em todo o histórico.
+                  </div>
+                  {% endif %}
+                  
+                    {% for obj in list_price %}
+
+                    <div class="card mt-3 justify-content-center">
+                      <div class="card-header">
+                        {{ obj.data_coleta|date:'d/m/Y' }} - R$ {{ obj.preco_revenda }}
+                      </div>
+                      <ul class="list-group list-group-flush">
+                        <li class="list-group-item">{{ obj.gasstation_id.razao }}</li>
+                        <li class="list-group-item">{{ obj.produto_id.produto }}</li>
+                      </ul>
+                    </div>
+
+                    {% empty %}
+                      <tr>
+                        <td colspan="6" class="text-center">Nenhum registro encontrado.</td>
+                      </tr>
+                    {% endfor %}
+                  
+   
+                  
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+</main>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#cidadeSelect').select2({
+      placeholder: "Digite para buscar...",
+      allowClear: true,
+      language: {
+        noResults: function() {
+          return "Nenhum resultado encontrado";
+        }
+      },
+      matcher: function(params, data) {
+        // Se não houver termo de busca, retorna todos os resultados
+        if ($.trim(params.term) === '') {
+          return data;
+        }
+
+        // Converte o termo de busca e o texto do item para minúsculas
+        var searchStr = params.term.toLowerCase();
+        var text = data.text.toLowerCase();
+
+        // Verifica se o texto contém o termo de busca
+        if (text.indexOf(searchStr) > -1) {
+          return data;
+        }
+
+        // Se não encontrar correspondência, retorna null
+        return null;
+      }
+    });
+  });
+</script>
+{% endblock %}

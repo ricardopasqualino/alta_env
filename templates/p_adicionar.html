@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Adicionar preços</h1>
+        
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+            <li class="breadcrumb-item active">Adicionar preços</li>
+          </ol>
+        </nav>
+    
+    </div>
+
+    {% if messages %}
+    <div class="messages" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="transition: opacity 0.5s;">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <script>
+        setTimeout(function() {
+          var alert = document.querySelector('.alert');
+          if (alert) {
+            alert.style.opacity = '0';
+            setTimeout(function() {
+              alert.remove();
+            }, 500);
+          }
+        }, 3000);
+      </script>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row">
+      <div class="col-lg-12">
+        
+        <!-- Button to trigger modal -->
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addPriceModal">
+          Adicionar preços
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="addPriceModal" tabindex="-1" aria-labelledby="addPriceModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addPriceModalLabel">Adicione um novo preço</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="{% url 'new_price' %}" method="POST">
+
+                  {% csrf_token %}
+
+                    <div class="col-md-12 mb-3">
+                      <label class="form-label">Selecione o posto</label>
+                      <select class="form-select" id="postoSelect" name="gasstation_id" 
+                      {{ form.gasstation_id }} </>
+                      </select>
+                    </div>
+
+                    <div class="row">
+
+                      <div class="col-6 mb-3">
+                        <label class="form-label">Selecione o Produto</label>
+                        <select class="form-select"
+                          {{ form.produto_id }} </>
+                      </div>
+
+
+                      <div class="col-6 mb-3">
+                        <label class="form-label">Data de coleta</label>
+                        <div class="input-group date" id="datepicker">
+                          <input type="text" class="form-control" name="data_coleta" placeholder="dd/mm/aaaa" required value="{{ hoje|date:'d/m/Y' }}">
+                          <span class="input-group-append">
+                            <span class="input-group-text bg-white mt-1 mx-2">
+                              <i class="fa fa-calendar"></i>
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <script type="text/javascript">
+                        $(function () {
+                          $('#datepicker').datepicker({
+                            format: 'dd/mm/yyyy',
+                            todayHighlight: true,
+                            autoclose: true
+                          });
+                        });
+                      </script>
+
+                    </div>
+
+                    <label class="form-label">Preço de Revenda (R$)</label>
+                    <div class="input-group mb-3 col-12">
+                      <input type="text" inputmode="numeric" class="form-control priceInput" 
+                          oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^(\d{1,2})(\d{2})$/, '$1.$2');" 
+                          minlength="4" maxlength="5" 
+                          aria-label="Preço" 
+                          placeholder="Inclua o preço atual 5.35" 
+                          required="required"
+                          {{ form.preco_revenda }} </>
+                    </div>   
+
+
+                  <button class="btn btn-primary w-100" type="submit">Enviar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+
+      </div>
+    </div>
+
+      <section class="section">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Lista de preços inseridos</h5>
+
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Posto</th>
+                        <th>Cidade/UF</th>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Bandeira</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in prices %}
+                      <tr>
+                        <td>{{ item.data_coleta|date:'d/m/y' }}</td>
+                        <td><strong>{{ item.gasstation_id.cnpj }}</strong> | {{ item.gasstation_id.razao }}</td>
+                        <td>{{ item.gasstation_id.cidade }}/{{ item.gasstation_id.estado }}</td>
+                        <td>{{ item.produto_id.produto }}</td>
+                        <td>R$ {{ item.preco_revenda }}</td>
+                        <td>{{ item.gasstation_id.bandeira }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+  
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </section>
+
+    <script>
+        $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+
+
+    <script type="text/javascript">
+      $(function() {
+          $('#datepicker').datepicker();
+      })
+    </script>
+
+    <script type="text/javascript">
+        
+      $.fn.datepicker.dates['en'] = {
+          days: ["Domingo", "Segunda", "Terça", "Quarta", "Quita", "Sexta", "Sabado"],
+          daysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          daysMin: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+          months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+          monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+          today: "Hoje",
+          clear: "Limpar",
+          format: "dd/mm/yyyy",
+          titleFormat: "MM yyyy", /* Leverages same syntax as 'format' */
+          weekStart: 0
+      };
+
+      $('.input-group.date').datepicker({
+          todayBtn: "linked",
+          autoclose: true,
+          todayHighlight: true,
+          format: 'dd/mm/yyyy',
+          showWeekDays: false, 
+          disableTouchKeyboard: true,
+      });
+    </script>
+
+</main>
+{% endblock %}

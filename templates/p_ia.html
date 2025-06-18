@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Falar com a IA</h1>
+        <!-- <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Especialista AddPrice</li>
+          </ol>
+        </nav> -->
+      </div>    
+    <section class="section">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="pagetitle mb-5 mt-5">
+                    <h1 class="pagetitle mb-5 mt-5">Sistema de IA para análise de preços de combustíveis</h1>
+                </div>
+                <div class="search-container mb-5 mt-5">
+                    {% csrf_token %}
+                    <form id="perguntaForm" class="d-flex align-items-center" action="" method="POST" onsubmit="event.preventDefault(); enviarPergunta(document.getElementById('pergunta').value);">
+                        <input type="text" id="pergunta" name="pergunta" class="form-control me-2" required placeholder="Digite sua pergunta sobre a base AddPrice...">
+                        <button type="submit" class="btn btn-primary" id="submitButton">
+                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="loadingSpinner"></span>
+                            Consultar
+                        </button>
+                    </form>
+                </div>
+
+                <div class="mt-4" id="resposta-container">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-robot fs-4 text-primary m-3"></i>
+                                <h6 class="mb-0">IA especialista em preços de combustíveis</h6>
+                            </div>
+                            <div id="resposta-texto" class="text-start">
+                                <p class="mb-4">
+                                    Sua resposta irá aparecer aqui. O especialista responderá apenas com base nas informações disponíveis na base de dados AddPrice.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% block scripts %}
+<!-- Adicionar Marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Configurar o Marked para sanitizar o HTML
+marked.setOptions({
+    sanitize: true,
+    breaks: true
+});
+
+function mostrarLoading(mostrar) {
+    const spinner = document.getElementById('loadingSpinner');
+    const button = document.getElementById('submitButton');
+    if (mostrar) {
+        spinner.classList.remove('d-none');
+        button.disabled = true;
+    } else {
+        spinner.classList.add('d-none');
+        button.disabled = false;
+    }
+}
+
+function mostrarErro(mensagem) {
+    const respostaContainer = document.getElementById('resposta-texto');
+    respostaContainer.innerHTML = `
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            ${mensagem}
+        </div>
+    `;
+}
+
+function enviarPergunta(pergunta) {
+    if (!pergunta || pergunta.trim() === '') {
+        alert('Por favor, digite uma pergunta.');
+        return;
+    }
+
+    const respostaContainer = document.getElementById('resposta-texto');
+    respostaContainer.innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="spinner-border text-primary me-3" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mb-0">Consultando a base AddPrice...</p>
+        </div>
+    `;
+    
+    mostrarLoading(true);
+
+    const dados = {
+        pergunta: pergunta.trim()
+    };
+
+    console.log('Enviando pergunta:', dados);
+
+    fetch('/processar_pergunta/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(dados)
+    })
+    .then(async response => {
+        const text = await response.text();
+        console.log('Resposta bruta da API:', text);
+        
+        if (!response.ok) {
+            throw new Error(`Erro ${response.status}: ${text}`);
+        }
+        
+        try {
+            const data = JSON.parse(text);
+            console.log('Dados processados:', data);
+            
+            if (data.erro) {
+                console.error('Erro na resposta:', data.erro);
+                mostrarErro(data.erro);
+            } else if (data.resposta) {
+                console.log('Convertendo resposta markdown para HTML...');
+                // Converter a resposta markdown para HTML
+                const html = marked.parse(data.resposta);
+                console.log('HTML gerado:', html);
+                respostaContainer.innerHTML = html;
+            } else {
+                console.error('Resposta vazia do servidor');
+                mostrarErro('Nenhuma resposta recebida do servidor.');
+            }
+        } catch (e) {
+            console.error('Erro ao processar resposta:', e);
+            mostrarErro(`Erro ao processar resposta: ${e.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Erro detalhado:', error);
+        mostrarErro(`Ocorreu um erro ao processar sua pergunta: ${error.message}`);
+    })
+    .finally(() => {
+        mostrarLoading(false);
+        document.getElementById('pergunta').value = '';
+    });
+}
+
+// Função auxiliar para pegar o token CSRF
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Corrige o evento de tecla Enter
+document.getElementById('pergunta').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const pergunta = this.value;
+        enviarPergunta(pergunta);
+    }
+});
+</script>
+{% endblock %}
+
+{% endblock main %}

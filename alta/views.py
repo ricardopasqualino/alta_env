@@ -1,0 +1,503 @@
+from datetime import datetime, timedelta
+from django.shortcuts import render, redirect
+from django.db.models import Sum, Avg, Count, Max, Min, Q
+from django.core.cache import cache
+from django.contrib import messages
+import json
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import cache_page
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .filters import MainFilter
+from .forms import NewPrice, CreateUserForm
+from .openai_utils import generate_price_embedding, calculate_similarity
+from .ia_utils import processar_pergunta_ia, vetorizar_texto
+from django.contrib.auth import authenticate, login
+
+
+from .models import (
+    AddPrice, 
+    PesquisaOrigem, 
+    Profile,
+    Cidade,
+    Estado,
+    GasStation,
+    Produto,
+    PriceEmbedding
+)
+
+
+@login_required
+def index(request):
+    return render(request, 'index.html')
+
+
+@login_required
+def p_cartao_precos(request):
+    fil = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3))
+    cidade = request.GET.get('cidade')
+    
+    # Log para debug
+    print(f"Cidade selecionada: {cidade}")
+    
+    # Gerar uma chave de cache única baseada na cidade
+    cache_key_min = f"preco_min_{cidade}"
+    cache_key_avg = f"preco_avg_{cidade}"
+    cache_key_max = f"preco_max_{cidade}"
+    
+    # Verificar se os valores já estão no cache
+    preco_min = cache.get(cache_key_min)
+    preco_avg = cache.get(cache_key_avg)
+    preco_max = cache.get(cache_key_max)
+    
+    if not preco_min:
+        preco_min = AddPrice.objects.filter(
+            gasstation_id__cidade=cidade
+        ).exclude(produto_id=3).only(
+            'gasstation_id__cidade', 
+            'preco_revenda'
+        ).values(
+            'produto_id__produto'
+        ).annotate(
+            preco_minimo=Min('preco_revenda')
+        )
+        print(f"Preços mínimos: {list(preco_min)}")
+        cache.set(cache_key_min, preco_min, 3600)
+    
+    if not preco_avg:
+        preco_avg = AddPrice.objects.filter(
+            gasstation_id__cidade=cidade
+        ).exclude(produto_id=3).only(
+            'gasstation_id__cidade', 
+            'preco_revenda'
+        ).values(
+            'produto_id__produto'
+        ).annotate(
+            preco_medio=Avg('preco_revenda')  # Corrigido de preco_minimo para preco_medio
+        )
+        print(f"Preços médios: {list(preco_avg)}")
+        cache.set(cache_key_avg, preco_avg, 3600)
+
+    if not preco_max:
+        preco_max = AddPrice.objects.filter(
+            gasstation_id__cidade=cidade
+        ).exclude(produto_id=3).only(
+            'gasstation_id__cidade', 
+            'preco_revenda'
+        ).values(
+            'produto_id__produto'
+        ).annotate(
+            preco_maximo=Max('preco_revenda')  # Corrigido de preco_minimo para preco_maximo
+        )
+        print(f"Preços máximos: {list(preco_max)}")
+        cache.set(cache_key_max, preco_max, 3600)
+
+    ultima_coleta = AddPrice.objects.aggregate(ultima_data_coleta=Max('data_coleta'))
+    ultima_data = ultima_coleta['ultima_data_coleta']
+
+    data = {
+        'fil': fil,
+        'cidade': cidade,
+        'preco_min': preco_min,
+        'preco_max': preco_max,
+        'preco_avg': preco_avg,
+        'ultima_data': ultima_data
+    }
+
+    print(f"Dados enviados ao template: {data}")
+
+    return render(request, 'p_cartao_precos.html', data)
+
+
+@login_required
+def p_plans(request):
+    return render(request, 'p_plans.html')
+
+
+@login_required
+def p_ia(request):
+    return render(request, 'p_ia.html')
+
+
+@login_required
+def p_mapeei(request):
+    return render(request, 'p_mapeei.html')
+
+
+@login_required
+def p_lista_preco(request):
+    # Query base otimizada
+    base_queryset = AddPrice.objects.exclude(
+        produto_id=3,
+        pesquisa_origem_id=2
+    )
+
+    # Aplicar filtros padrão se nenhum filtro específico for fornecido
+    if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
+        base_queryset = base_queryset.filter(
+            data_coleta__gte=datetime.now() - timedelta(days=15),
+            produto_id=1,
+            pesquisa_origem_id=1,
+            gasstation_id__cidade=request.user.profile.cidade,
+        )
+
+    # Otimizar a query usando select_related e only
+    base_queryset = base_queryset.select_related(
+        'gasstation_id',
+        'produto_id',
+        'pesquisa_origem'
+    ).only(
+        'id',
+        'data_coleta',
+        'preco_revenda',
+        'cnpj',
+        'gasstation_id__razao',
+        'gasstation_id__cidade',
+        'gasstation_id__estado',
+        'gasstation_id__bairro',
+        'gasstation_id__bandeira',
+        'produto_id__produto',
+        'pesquisa_origem__origem'
+    ).order_by('-data_coleta')
+
+    # Aplicar filtros
+    f = MainFilter(request.GET, queryset=base_queryset)
+
+    # Otimizar contagem usando count() com distinct
+    total_linhas_pesquisa = f.qs.distinct().count()
+    
+    # Preparar dados para o template
+    data = {
+        'list_price': f.qs,
+        'filter': f,
+        'total_linhas_pesquisa': total_linhas_pesquisa
+    }
+    
+    return render(request, 'p_lista_preco.html', data)
+
+
+
+@login_required
+def add_price(request):
+    form = NewPrice(request.POST or None)
+    form.fields['gasstation_id'].queryset = GasStation.objects.filter(cidade=request.user.profile.cidade)
+
+    prices = AddPrice.objects.filter(user=request.user).only(
+            'gasstation_id', 
+            'produto_id', 
+            'preco_revenda', 
+            'data_coleta'
+        ).order_by('-data_coleta')
+
+    data = {
+        'form': form,
+        'prices': prices,
+    }
+    return render(request, 'p_adicionar.html', data)
+
+
+@login_required
+def new_price(request):
+    form = NewPrice(request.POST or None)
+    if form.is_valid():
+        addprice = form.save(commit=False)  
+        addprice.user = request.user 
+        
+        pesquisa_origem = PesquisaOrigem.objects.get(id=2)
+        addprice.pesquisa_origem = pesquisa_origem
+
+        if addprice.produto_id_id == 3:
+            addprice.unidade_medida = "R$ / 13 kg"
+        elif addprice.produto_id_id == 7:
+            addprice.unidade_medida = "R$ / m³"
+        else:
+            addprice.unidade_medida = "R$ / litro"
+
+        gasstation = GasStation.objects.get(id=addprice.gasstation_id_id)
+        addprice.cnpj = gasstation.cnpj
+
+        produto = Produto.objects.get(id=addprice.produto_id_id)
+        addprice.produto = produto.produto
+
+        data_coleta = request.POST.get('data_coleta')
+        if data_coleta:
+            try:
+                data_coleta = datetime.strptime(data_coleta, '%d/%m/%Y').strftime('%Y-%m-%d')
+                addprice.data_coleta = data_coleta
+            except ValueError:
+                messages.error(request, 'Formato de data inválido')
+                return redirect('p_acompanhar')
+
+        addprice.save()
+
+        # Gerar e salvar o embedding
+        embedding_data = generate_price_embedding(addprice)
+        if embedding_data:
+            PriceEmbedding.objects.create(
+                addprice=addprice,
+                embedding=embedding_data['embedding']
+            )
+
+        messages.success(request, 'Preço adicionado com sucesso!')
+        return redirect('p_acompanhar')
+    else:
+        messages.error(request, 'Erro ao adicionar preço. Verifique os dados.')
+        return redirect('p_acompanhar')
+    
+
+@login_required
+def p_profile(request):
+    return render(request, 'p_profile.html')
+
+
+@login_required
+def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    return render(request, 'registration/login.html')
+
+
+def login_view(request):    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        if username and password:
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Login realizado com sucesso!')
+                return redirect('index')
+            else:
+                messages.error(request, 'Usuário ou senha inválidos.')
+                return redirect('login')
+        else:
+            messages.error(request, 'Por favor, preencha todos os campos.')
+            return redirect('login')
+    return redirect('login')
+
+
+@login_required
+def logout(request):
+    return render(request, 'registration/logout.html')
+
+
+@login_required
+def logout_view(request):
+    from django.contrib.auth import logout as auth_logout
+    auth_logout(request)
+    messages.success(request, 'Você saiu com sucesso.')
+    return redirect('login')
+
+
+def new_register(request):
+    form = CreateUserForm()
+
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = form.cleaned_data.get('username')
+            user.email = form.cleaned_data.get('email')
+            user.save()
+            
+            # Verifica se o usuário já possui um perfil
+            if hasattr(user, 'profile'):
+                user.profile.telefone = form.cleaned_data.get('telefone')
+                user.profile.cargo = form.cleaned_data.get('cargo')
+                user.profile.empresa = form.cleaned_data.get('empresa')  # Certifica-se de que o campo empresa é atualizado
+                user.profile.cidade = Cidade.objects.get(id=form.cleaned_data.get('cidade').id)
+                user.profile.estado = Estado.objects.get(id=form.cleaned_data.get('estado').id)
+                user.profile.save()
+            else:
+                # Cria um novo perfil se não existir
+                novo_perfil = Profile.objects.create(
+                    user=user,
+                    telefone=form.cleaned_data.get('telefone'),
+                    cargo=form.cleaned_data.get('cargo'),
+                    cidade=Cidade.objects.get(id=form.cleaned_data.get('cidade').id),
+                    estado=Estado.objects.get(id=form.cleaned_data.get('estado').id),
+                )
+                novo_perfil.empresa = form.cleaned_data.get('empresa')  # Corrige a gravação do dado de empresa
+                novo_perfil.save()
+            
+            messages.success(request, 'Conta criada com sucesso! Você já pode fazer login.')
+            return redirect('login')
+        else:
+            # Verifica especificamente os erros de cada campo
+            if 'username' in form.errors:
+                messages.error(request, 'Este nome de usuário já está em uso. Por favor, escolha outro.')
+            elif 'email' in form.errors:
+                messages.error(request, 'Este email já está cadastrado. Por favor, use outro email ou faça login.')
+            elif 'posto' in form.errors:
+                messages.error(request, 'Por favor, informe o nome da sua empresa.')
+            else:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'Erro no campo {field}: {error}')
+
+    context = {'form': form}
+    return render(request, 'p_register.html', context)
+
+
+def password_reset(request):
+    return render(request, 'registration/password_form.html')
+
+
+def enviar_email_recuperacao_senha(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            try:
+                def send_password_reset_email(email):
+                    from django.core.mail import send_mail
+                    from django.conf import settings
+                    from django.template.loader import render_to_string
+                    from django.utils.html import strip_tags
+
+                    subject = 'Redefinição de senha'
+                    html_message = render_to_string('registration/password_email.html', {'email': email})
+                    plain_message = strip_tags(html_message)
+                    from_email = settings.DEFAULT_FROM_EMAIL
+                    to = email
+
+                    send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+                send_password_reset_email(email)
+                messages.success(request, 'Email de recuperação de senha enviado com sucesso.')
+                return redirect('confirmacao_email_recuperacao')
+            except Exception as e:
+                messages.error(request, f'Erro ao enviar email: {str(e)}')
+                return redirect('password_reset')
+        else:
+            messages.error(request, 'Por favor, insira um email válido.')
+            return redirect('password_reset')
+
+    return render(request, 'registration/password_form.html')
+
+
+def confirmacao_email_recuperacao(request):
+    return render(request, 'registration/password_done.html')
+
+
+@login_required
+@require_http_methods(["POST"])
+def processar_pergunta(request):
+    try:
+        data = json.loads(request.body)
+        pergunta = data.get('pergunta', '')
+        
+        print(f"Pergunta recebida: {pergunta}")
+        
+        if not pergunta:
+            return JsonResponse({'erro': 'Pergunta não fornecida'}, status=400)
+
+        # Extrair cidade e produto da pergunta
+        cidade = None
+        produto = None
+        
+        # Lista de variações comuns de cidades
+        cidades_variacoes = {
+            'COLOMBO': ['COLOMBO', 'COLOMBÓ'],
+            'JUNDIAI': ['JUNDIAI', 'JUNDIAÍ', 'JUNDIAÍ'],
+            # Adicione mais cidades conforme necessário
+        }
+        
+        # Lista de variações comuns de produtos
+        produtos_variacoes = {
+            'ETANOL': ['ETANOL', 'ETANOL HIDRATADO', 'ETANOL COMUM'],
+            'GASOLINA': ['GASOLINA', 'GASOLINA COMUM', 'GASOLINA ADITIVADA'],
+            'DIESEL': ['DIESEL', 'DIESEL S10', 'DIESEL S500'],
+            # Adicione mais produtos conforme necessário
+        }
+        
+        # Buscar cidade na pergunta
+        pergunta_upper = pergunta.upper()
+        for cidade_base, variacoes in cidades_variacoes.items():
+            if any(var in pergunta_upper for var in variacoes):
+                cidade = cidade_base
+                break
+        
+        # Buscar produto na pergunta
+        for produto_base, variacoes in produtos_variacoes.items():
+            if any(var in pergunta_upper for var in variacoes):
+                produto = produto_base
+                break
+        
+        print(f"Cidade identificada: {cidade}")
+        print(f"Produto identificado: {produto}")
+
+        # Buscar preços com filtros
+        precos = AddPrice.objects.select_related(
+            'gasstation_id',
+            'produto_id'
+        )
+        
+        # Aplicar filtros
+        if cidade:
+            precos = precos.filter(gasstation_id__cidade__iexact=cidade)
+        if produto:
+            precos = precos.filter(produto__icontains=produto)
+            
+        # Ordenar por data mais recente e limitar a 100 registros
+        precos = precos.order_by('-data_coleta')[:100]
+
+        print(f"Total de preços encontrados após filtros: {precos.count()}")
+
+        # Verificar se há preços
+        if precos.count() == 0:
+            print("Nenhum preço encontrado")
+            return JsonResponse({
+                'erro': 'Não foram encontrados dados para processar sua pergunta.'
+            }, status=404)
+
+        # Preparar o contexto com os dados relevantes
+        contexto = []
+        for preco in precos:
+            if preco.gasstation_id:  # Verificar se o posto existe
+                try:
+                    dados_preco = {
+                        'data_coleta': preco.data_coleta.strftime('%d/%m/%Y'),
+                        'produto': preco.produto_id.produto if preco.produto_id else preco.produto,
+                        'preco_revenda': float(preco.preco_revenda),
+                        'posto': preco.gasstation_id.razao,
+                        'cidade': preco.gasstation_id.cidade.upper(),
+                        'estado': preco.gasstation_id.estado,
+                        'bandeira': preco.gasstation_id.bandeira
+                    }
+                    contexto.append(dados_preco)
+                    print(f"Adicionado ao contexto: {dados_preco['posto']} - {dados_preco['cidade']} - R$ {dados_preco['preco_revenda']}")
+                except Exception as e:
+                    print(f"Erro ao processar preço {preco.id}: {str(e)}")
+                    continue
+
+        print(f"Total de registros no contexto: {len(contexto)}")
+        
+        if not contexto:
+            print("Contexto vazio após processamento")
+            return JsonResponse({
+                'erro': 'Não foram encontrados dados para processar sua pergunta.'
+            }, status=404)
+
+        # Processar a pergunta usando a IA
+        print("Iniciando processamento da pergunta com a IA...")
+        resposta = processar_pergunta_ia(pergunta, contexto)
+        print(f"Resposta gerada: {resposta[:200]}...")  # Mostrar os primeiros 200 caracteres da resposta
+
+        if not resposta:
+            print("Resposta vazia da IA")
+            return JsonResponse({
+                'erro': 'Não foi possível gerar uma resposta para sua pergunta.'
+            }, status=500)
+
+        return JsonResponse({
+            'resposta': resposta
+        })
+
+    except json.JSONDecodeError:
+        print("Erro: Dados inválidos no JSON")
+        return JsonResponse({'erro': 'Dados inválidos'}, status=400)
+    except Exception as e:
+        print(f"Erro ao processar pergunta: {str(e)}")
+        return JsonResponse({'erro': str(e)}, status=500)
