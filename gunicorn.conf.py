@@ -21,7 +21,8 @@ errorlog = '-'
 loglevel = 'info'
 
 # Configurações de worker
-worker_class = 'uvicorn.workers.UvicornWorker'
+worker_class = 'gthread'  # Usando worker thread ao invés de uvicorn
+threads = 4
 worker_connections = 1000
 
 # Configurações de segurança
