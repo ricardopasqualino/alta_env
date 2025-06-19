@@ -3,6 +3,7 @@ databases:
     plan: free
     databaseName: alta_db_prod_l9ea
     user: ricardopasqualino
+    ipAllowList: []
 
 services:
   - type: web
@@ -11,6 +12,8 @@ services:
     runtime: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn core.asgi:application -c gunicorn.conf.py"
+    healthCheckPath: /health/
+    autoDeploy: true
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -19,8 +22,14 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: WEB_CONCURRENCY
-        value: 4
+        value: 2
       - key: DEBUG
         value: false
       - key: PORT
         value: 8000
+      - key: DJANGO_SETTINGS_MODULE
+        value: core.settings
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: DJANGO_LOG_LEVEL
+        value: INFO

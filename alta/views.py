@@ -37,60 +37,46 @@ def p_cartao_precos(request):
     fil = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3))
     cidade = request.GET.get('cidade')
     
-    # Log para debug
-    print(f"Cidade selecionada: {cidade}")
-    
     # Gerar uma chave de cache única baseada na cidade
-    cache_key_min = f"preco_min_{cidade}"
-    cache_key_avg = f"preco_avg_{cidade}"
-    cache_key_max = f"preco_max_{cidade}"
+    cache_key = f"precos_cidade_{cidade}"
     
-    # Verificar se os valores já estão no cache
-    preco_min = cache.get(cache_key_min)
-    preco_avg = cache.get(cache_key_avg)
-    preco_max = cache.get(cache_key_max)
+    # Tentar obter todos os dados do cache
+    cached_data = cache.get(cache_key)
     
-    if not preco_min:
-        preco_min = AddPrice.objects.filter(
+    if cached_data:
+        preco_min, preco_avg, preco_max = cached_data
+    else:
+        # Otimizar a query base
+        base_query = AddPrice.objects.filter(
             gasstation_id__cidade=cidade
-        ).exclude(produto_id=3).only(
-            'gasstation_id__cidade', 
+        ).exclude(produto_id=3).select_related(
+            'produto_id'
+        ).only(
+            'produto_id__produto',
             'preco_revenda'
-        ).values(
+        )
+        
+        # Calcular todos os valores em uma única query
+        preco_min = base_query.values(
             'produto_id__produto'
         ).annotate(
             preco_minimo=Min('preco_revenda')
         )
-        print(f"Preços mínimos: {list(preco_min)}")
-        cache.set(cache_key_min, preco_min, 3600)
-    
-    if not preco_avg:
-        preco_avg = AddPrice.objects.filter(
-            gasstation_id__cidade=cidade
-        ).exclude(produto_id=3).only(
-            'gasstation_id__cidade', 
-            'preco_revenda'
-        ).values(
+        
+        preco_avg = base_query.values(
             'produto_id__produto'
         ).annotate(
-            preco_medio=Avg('preco_revenda')  # Corrigido de preco_minimo para preco_medio
+            preco_medio=Avg('preco_revenda')
         )
-        print(f"Preços médios: {list(preco_avg)}")
-        cache.set(cache_key_avg, preco_avg, 3600)
-
-    if not preco_max:
-        preco_max = AddPrice.objects.filter(
-            gasstation_id__cidade=cidade
-        ).exclude(produto_id=3).only(
-            'gasstation_id__cidade', 
-            'preco_revenda'
-        ).values(
+        
+        preco_max = base_query.values(
             'produto_id__produto'
         ).annotate(
-            preco_maximo=Max('preco_revenda')  # Corrigido de preco_minimo para preco_maximo
+            preco_maximo=Max('preco_revenda')
         )
-        print(f"Preços máximos: {list(preco_max)}")
-        cache.set(cache_key_max, preco_max, 3600)
+        
+        # Armazenar no cache
+        cache.set(cache_key, (preco_min, preco_avg, preco_max), 3600)
 
     ultima_coleta = AddPrice.objects.aggregate(ultima_data_coleta=Max('data_coleta'))
     ultima_data = ultima_coleta['ultima_data_coleta']
@@ -103,8 +89,6 @@ def p_cartao_precos(request):
         'preco_avg': preco_avg,
         'ultima_data': ultima_data
     }
-
-    print(f"Dados enviados ao template: {data}")
 
     return render(request, 'p_cartao_precos.html', data)
 
@@ -120,29 +104,33 @@ def p_ia(request):
 
 
 @login_required
-def p_mapeei(request):
-    return render(request, 'p_mapeei.html')
+def p_monitorar_concorrentes(request):
+    return render(request, 'p_monitorar_concorrentes.html')
+
+
+@login_required
+def p_monitorar_produtos(request):
+    profile = Profile.objects.all()
+
+    cidade_usuario = request.user.profile.cidade
+    uf_usuario = request.user.profile.estado
+
+    data = {
+        'profile': profile,
+        'cidade_usuario': cidade_usuario,
+        'uf_usuario': uf_usuario
+    }
+
+    return render(request, 'p_mapeei.html', data)
 
 
 @login_required
 def p_lista_preco(request):
-    # Query base otimizada
+    # Query base otimizada com select_related e only
     base_queryset = AddPrice.objects.exclude(
         produto_id=3,
         pesquisa_origem_id=2
-    )
-
-    # Aplicar filtros padrão se nenhum filtro específico for fornecido
-    if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
-        base_queryset = base_queryset.filter(
-            data_coleta__gte=datetime.now() - timedelta(days=15),
-            produto_id=1,
-            pesquisa_origem_id=1,
-            gasstation_id__cidade=request.user.profile.cidade,
-        )
-
-    # Otimizar a query usando select_related e only
-    base_queryset = base_queryset.select_related(
+    ).select_related(
         'gasstation_id',
         'produto_id',
         'pesquisa_origem'
@@ -158,7 +146,16 @@ def p_lista_preco(request):
         'gasstation_id__bandeira',
         'produto_id__produto',
         'pesquisa_origem__origem'
-    ).order_by('-data_coleta')
+    )
+
+    # Aplicar filtros padrão se nenhum filtro específico for fornecido
+    if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
+        base_queryset = base_queryset.filter(
+            data_coleta__gte=datetime.now() - timedelta(days=15),
+            produto_id=1,
+            pesquisa_origem_id=1,
+            gasstation_id__cidade=request.user.profile.cidade,
+        )
 
     # Aplicar filtros
     f = MainFilter(request.GET, queryset=base_queryset)

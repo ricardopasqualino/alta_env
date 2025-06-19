@@ -6,332 +6,720 @@
 
 <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Adicionar preços</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Mapeei seus concorrentes</li>
-        </ol>
-      </nav>
-    </div>
-
-    <div class="row">
-      <form method="GET" id="filtroForm">
-          <div class="row">
-
-              <div class="col-lg-2 col-sm-12 col-md-6">
-                  <div class="input-group date mt-2" data-provide="datepicker">
-                      <input type="text" class="form-control" placeholder="Início" 
-                      name="data_inicio" value="{{ filter.data_inicio.value|default:'' }}" />
-                      <span class="input-group-append m-1">
-                          <span class="input-group-text">
-                              <i class="fa fa-calendar"></i>
-                          </span>
-                      </span>                
-                  </div>
-              </div>
-
-              <div class="col-lg-2 col-sm-12 col-md-6">
-                  <div class="input-group date mt-2" data-provide="datepicker">
-                      <input type="text" class="form-control" placeholder="Fim"
-                      name="data_fim" value="{{ filter.data_fim.value|default:'' }}" />
-                      <span class="input-group-append m-1">
-                          <span class="input-group-text">
-                              <i class="fa fa-calendar"></i>
-                          </span>
-                      </span>                
-                  </div>
-              </div> 
-
-              <div class="col-lg-3 col-sm-12 col-md-6">
-                <div class="form-floating">
-                  <select class="form-select" id="gas_station" name="gas_station"
-                    {{ filter.form.gas_station }} </>
-                  <label for="gas_station">Selecione o posto</label>
-                </div>
-              </div> 
-
-              <div class="col-lg-3 col-sm-12 col-md-6">
-                <div class="form-floating">
-                  <select class="form-select" id="produto" name="produto"
-                    {{ filter.form.produto }} </>
-                  <label for="produto">Selecione o produto</label>
-                </div>
-              </div>
-                       
-              <div class="col-lg-2 col-sm-12 col-md-6">
-                  <button class="btn btn-primary m-1" type="submit">Filtrar</button>
-              </div>        
-          </div>
-      </form>
-  </div>
-
-  <section class="section contact">
-    <div class="row pagetitle">
-      <h1 class="mt-3">{{ gas_station_info.razao }}</h1>
+    <div class="pagetitle mb-3">
+        <h1>Monitorar produtos</h1>
     </div>
     
-    <div class="breadcrumb">  
-      {% if gas_station_info %}
-        <p class="breadcrumb-item">
-              {{ gas_station_info.razao }} | 
-              {{ gas_station_info.cnpj }} | 
-              {{ gas_station_info.endereco }} | 
-              {{ gas_station_info.cidade }} | 
-              {{ gas_station_info.bandeira }}
-        </p>
-      {% else %}
-        <p class="breadcrumb-item">CONSULTA CONSIDERANDO TODOS OS POSTOS</p>
-      {% endif %}
+    <div class="row">
+        <form method="GET" id="filtroForm">
+
+            <div class="row">    
+                <div class="col-lg-2 col-sm-12 col-md-6">
+                    <div class="input-group date mt-2" data-provide="datepicker">
+                        <input type="text" class="form-control" placeholder="Início" 
+                        name="data_inicio" value="{{ filter.data_inicio.value|default:'' }}" />
+                        <span class="input-group-append m-1">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </span>                
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-sm-12 col-md-6">
+                    <div class="input-group date mt-2" data-provide="datepicker">
+                        <input type="text" class="form-control" placeholder="Fim"
+                        name="data_fim" value="{{ filter.data_fim.value|default:'' }}" />
+                        <span class="input-group-append m-1">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </span>                
+                    </div>
+                </div> 
+
+                <div class="col-lg-2 col-sm-12 col-md-6">
+                    <div class="form-floating">
+                    <select class="form-select" id="gas_station" name="gas_station"
+                        {{ filter.form.gas_station }} </>
+                    <label for="gas_station">Selecione o posto</label>
+                    </div>
+                </div> 
+
+                <div class="col-lg-3 col-sm-12 col-md-6">
+                    <div class="form-floating">
+                    <select class="form-select" id="produto" name="produto"
+                        {{ filter.form.produto }} </>
+                    <label for="produto">Selecione o produto</label>
+                    </div>
+                </div>
+                       
+            <div class="col-lg-2 col-sm-12 col-md-6">
+                <button class="btn btn-primary m-1" type="submit">Filtrar</button>
+            </div>        
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <p class="mb-0 mt-3">Os dados estão sendo exibidos são da sua cidade
+    <a href="{% url 'p_profile' %}" class="breadcrumb-item">{{ cidade_usuario }}/{{ uf_usuario }}</a></p>
+  </div>
+
+<section class="section contact">
+    <div class="row pagetitle">
+        <h1 class="mt-3">{{ gas_station_info.razao }}</h1>
+    </div>
+    
+    <div class="row d-flex">
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">Últimos 12 meses</p>
+                <h4 class="text-danger"><strong>+57%</strong></h4>
+                <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">Últimos 6 meses</p>
+                <h4 class="text-danger"><strong>+44%</strong></h4>
+                <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
+            </div>
+        </div>
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">Últimos 30 dias</p>
+                <h4 class="text-danger"><strong>+35%</strong></h4>
+                <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
+            </div>
+        </div>                
+
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">Menor preço</p>
+                <h4 class="text-success"><strong>R$ 3,79</strong></h4>
+                <p>{% if menor_preco_date %}{{ menor_preco_date|date:'d/m/Y' }}{% else %}{% endif %}</p>
+            </div>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">Preço Médio</p>
+                <h4 class="text-primary"><strong>R$ 4,11</strong></h4>
+            </div>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">Maior Preço</p>
+                <h4 class="text-danger"><strong>R$ 6,19</strong></h4>
+                <!-- <p>{{ maior_preco_date|date:'d/m/Y' }}</p> -->
+            </div> 
+        </div> 
     </div>
 
     <div class="row">
-      <div class="col-lg-4">
-              <!-- Primeiro card -->
-              <!-- <div class="col-lg-6 mb-4">
-                  <div class="info-box card">
-                      <h3>Último Preço</h3>
-                      <h2>R$ {{ ultimo_preco|floatformat:2 }}</h2>
-                      <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
-                  </div>
-              </div> -->
-
-              <!-- <div class="col-lg-6 mb-4">
-                  <div class="info-box card">
-                      <h3>Menor preço</h3>
-                      <h2>R$ {{ menor_preco|default:'-' }}</h2>
-                      <p>{% if menor_preco_date %}{{ menor_preco_date|date:'d/m/Y' }}{% else %}nenhuma data encontrada{% endif %}</p>
-                  </div>
-              </div> -->
-
-              <!-- <div class="col-lg-6 mb-4">
-                  <div class="info-box card">
-                      <h3>Preço Médio</h3>
-                      <h2>R$ {{ media_preco|default:'-'|floatformat:2 }}</h2>
-                      <p>no período</p>
-                  </div>
-              </div> -->
-
-              <!-- <div class="col-lg-6 mb-4 justify-content-center">
-                  <div class="info-box card">
-                      <h3>Maior Preço</h3>
-                      <h2>R$ {{ maior_preco|floatformat:2 }}</h2>
-                      <p>{{ maior_preco_date|date:'d/m/Y' }}</p>
-                  </div>
-              </div> -->
-          </div>
-        </div>
-            <div class="col-lg-12">
-              <div class="card">
-                  <div class="row gy-4">
-                      <div class="col-lg-12 info-box">
-                        <h3 class="m-3">Preço de revenda pela data da coleta</h3>
-                        <div style="height: 400px; position: relative;">
-                            <canvas id="graficoPrecoRevenda"></canvas>
-                        </div>
-                      </div>
-                  </div>                    
-              </div>  
-            </div>            
-          </div>
-        </div>
-      </div>   
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="row gy-4">
+                    <div class="col-lg-12 info-box">
+                    <h3 class="m-3">Preço médio de revenda por mês</h3>
+                        <div class="col-lg-12 col-sm-12 p-3">
+                            <div style="position: relative; height: 400px; width: 100%;">
+                                <canvas id="TotalPrecoRevenda" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>   
+                    </div>
+                </div>                    
+            </div>  
+        </div>  
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="row gy-4">
+                    <div class="col-lg-12 info-box">
+                    <h3 class="m-3">10 postos mais baratos</h3>
+                        <div class="col-lg-12 col-sm-12 p-3">
+                            <div style="position: relative; height: 400px; width: 100%;">
+                                <canvas id="TotalPrecoRevenda2" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>   
+                    </div>
+                </div>                    
+            </div>  
+        </div>          
     </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="row gy-4">
+                    <div class="col-lg-12 info-box">
+                    <h3 class="m-3">Visão mensal por posto</h3>
+                        <div class="col-lg-12 col-sm-12 p-3">
+                            <div style="position: relative; height: 400px; width: 100%;">
+                                <canvas id="VisaoMensalPosto" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>   
+                    </div>
+                </div>                    
+            </div>  
+        </div> 
     </div>
-  </div>       
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="row gy-4">
+                    <div class="col-lg-12 info-box">
+                    <h3 class="m-3">(R$) Variação do maior preço</h3>
+                        <div class="col-lg-12 col-sm-12 p-3">
+                            <div style="position: relative; height: 400px; width: 100%;">
+                                <canvas id="TotalPrecoRevenda2" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>   
+                    </div>
+                </div>                    
+            </div>  
+        </div>    
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="row gy-4">
+                    <div class="col-lg-12 info-box">
+                    <h3 class="m-3">(R$) Variação do menor preço</h3>
+                        <div class="col-lg-12 col-sm-12 p-3">
+                            <div style="position: relative; height: 400px; width: 100%;">
+                                <canvas id="TotalPrecoRevenda2" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>   
+                    </div>
+                </div>                    
+            </div>  
+        </div>        
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="row gy-4">
+                    <div class="col-lg-12 info-box">
+                    <h3 class="m-3">(R$) Variação de preço médio</h3>
+                        <div class="col-lg-12 col-sm-12 p-3">
+                            <div style="position: relative; height: 400px; width: 100%;">
+                                <canvas id="TotalPrecoRevenda2" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>   
+                    </div>
+                </div>                    
+            </div>  
+        </div>        
+    
+    </div>
 </section>
 
-    <script>
-      let graficoPrecoRevenda = null;
+<script>
+    // Verificar se Chart.js está disponível
+    console.log('Chart.js disponível:', typeof Chart !== 'undefined');
+    
+    // Dados fictícios para o gráfico
+    const dadosFicticios = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        datasets: [{
+            label: 'Preço de Revenda (R$)',
+            data: [5.20, 5.35, 5.45, 5.30, 5.50, 5.60, 5.40, 5.55, 5.65, 5.70, 5.80, 5.90],
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    };
 
-      // Função para atualizar as informações do card
-      async function atualizarInformacoesPagina() {
-          try {
-              const form = document.querySelector('#filtroForm');
-              const formData = new FormData(form);
-              const params = new URLSearchParams(formData);
-              
-              const response = await fetch(window.location.pathname + '?' + params.toString());
-              const html = await response.text();
-              
-              // Criar DOM temporário
-              const tempDiv = document.createElement('div');
-              tempDiv.innerHTML = html;
-              
-              // Atualizar informações do posto
-              const tituloPost = tempDiv.querySelector('.pagetitle h1');
-              const breadcrumbInfo = tempDiv.querySelector('.breadcrumb p');
-              
-              if (tituloPost) {
-                  document.querySelector('.pagetitle h1').textContent = tituloPost.textContent;
-              }
-              if (breadcrumbInfo) {
-                  document.querySelector('.breadcrumb p').textContent = breadcrumbInfo.textContent;
-              }
-              
-              // Atualizar cards de preços
-              const infoBoxes = document.querySelectorAll('.info-box.card');
-              const newInfoBoxes = tempDiv.querySelectorAll('.info-box.card');
-              
-              infoBoxes.forEach((box, index) => {
-                  if (newInfoBoxes[index]) {
-                      const newH1 = newInfoBoxes[index].querySelector('h1');
-                      const newP = newInfoBoxes[index].querySelector('p');
-                      
-                      if (newH1) box.querySelector('h1').textContent = newH1.textContent;
-                      if (newP) box.querySelector('p').textContent = newP.textContent;
-                  }
-              });
-              
-              console.log('Informações da página atualizadas');
-          } catch (error) {
-              console.error('Erro ao atualizar informações:', error);
-          }
-      }
+    async function fetchPrecoRevenda() {
+        // Simulando uma chamada de API
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(dadosFicticios);
+            }, 100);
+        });
+    }
 
-      // Função para buscar dados do gráfico
-      async function fetchPrecoRevendaData() {
-          try {
-              const form = document.querySelector('#filtroForm');
-              const formData = new FormData(form);
-              const params = new URLSearchParams(formData);
-              
-              const response = await fetch(`#?${params.toString()}`);
-              const data = await response.json();
-              
-              console.log('Dados do gráfico recebidos:', data);
-              return data;
-          } catch (error) {
-              console.error('Erro ao buscar dados:', error);
-              return { labels: [], precos: [] };
-          }
-      }
+    async function TotalPrecoRevenda() {
+        try {
+            console.log('Iniciando carregamento do gráfico...');
+            const data = await fetchPrecoRevenda();
+            console.log('Dados carregados:', data);
+            
+            const canvas = document.getElementById('TotalPrecoRevenda');
+            console.log('Canvas encontrado:', canvas);
+            
+            if (!canvas) {
+                console.error('Canvas não encontrado');
+                return;
+            }
 
-      // Função para atualizar o gráfico
-      async function atualizarGrafico() {
-          try {
-              const data = await fetchPrecoRevendaData();
-              
-              if (!data.precos || data.precos.length === 0) {
-                  console.log('Sem dados para exibir no gráfico');
-                  return;
-              }
+            const ctx = canvas.getContext('2d');
+            console.log('Contexto 2D obtido:', ctx);
+            
+            // Verificar se Chart está disponível
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js não está carregado');
+                return;
+            }
 
-              if (graficoPrecoRevenda) {
-                  graficoPrecoRevenda.destroy();
-              }
-
-              const ctx = document.getElementById('graficoPrecoRevenda').getContext('2d');
-              graficoPrecoRevenda = new Chart(ctx, {
-                  type: 'bar',
-                  data: {
-                      labels: data.labels,
-                      datasets: [{
-                          label: 'Preço Médio de Revenda (R$)',
-                          data: data.precos,
-                          backgroundColor: 'rgba(65, 84, 241, 0.8)',
-                          borderColor: 'rgba(65, 84, 241, 1)',
-                          borderWidth: 1
-                      }]
-                  },
-                  options: {
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                          y: {
-                              beginAtZero: false,
-                              ticks: {
-                                  callback: (value) => `R$ ${value.toFixed(2)}`
-                              }
-                          }
-                      },
-                      plugins: {
-                          legend: {
-                              display: true,
-                              position: 'top'
-                          }
-                      }
-                  }
-              });
-
-              console.log('Gráfico atualizado com sucesso');
-          } catch (error) {
-              console.error('Erro ao atualizar gráfico:', error);
-          }
-      }
-
-      // Evento de submit do formulário
-      document.querySelector('#filtroForm').addEventListener('submit', async function(e) {
-          e.preventDefault();
-          
-          try {
-              // Adicionar classe de loading
-              document.body.classList.add('loading');
-              
-              // Atualizar tudo em sequência
-              await atualizarInformacoesPagina();
-              await atualizarGrafico();
-              
-              // Remover classe de loading
-              document.body.classList.remove('loading');
-              
-          } catch (error) {
-              console.error('Erro ao processar filtros:', error);
-              document.body.classList.remove('loading');
-          }
-      });
-
-      // Inicialização
-      document.addEventListener('DOMContentLoaded', function() {
-          console.log('Inicializando página...');
-          atualizarGrafico();
-      });
-    </script>
-
-    <script type="text/javascript">
-      $(function() {
-          $('#datepicker').datepicker();
-      })
-    </script>
-
-    <script type="text/javascript">
-        
-      $.fn.datepicker.dates['pt-BR'] = {
-          days: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
-          daysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
-          daysMin: ["D", "S", "T", "Q", "Q", "S", "S"],
-          months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
-          monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-          today: "Hoje",
-          clear: "Limpar",
-          format: "dd/mm/yyyy",
-          titleFormat: "MM yyyy",
-          weekStart: 0
-      };
-
-      $('.input-group.date').datepicker({
-          language: 'pt-BR',
-          todayBtn: "linked",
-          autoclose: true,
-          todayHighlight: true,
-          format: 'dd/mm/yyyy',
-          showWeekDays: true,
-          disableTouchKeyboard: true,
-          clearBtn: true
-      });
-    </script>
-
-    <!-- Opcional: Adicionar estilo para loading -->
-    <style>
-        .loading {
-            cursor: wait;
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Preço: R$ ' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Preço (R$)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mês'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000
+                    }
+                }
+            });
+            
+            console.log('Gráfico criado com sucesso:', chart);
+        } catch (error) {
+            console.error('Erro ao carregar o gráfico:', error);
         }
-        .loading button[type="submit"] {
-            opacity: 0.7;
-            pointer-events: none;
+    }
+
+    // Função para tentar carregar o gráfico
+    function tentarCarregarGrafico() {
+        if (typeof Chart !== 'undefined' && document.getElementById('TotalPrecoRevenda')) {
+            console.log('Tentando carregar gráfico...');
+            TotalPrecoRevenda();
+        } else {
+            console.log('Chart.js ou canvas não disponível, tentando novamente em 100ms...');
+            setTimeout(tentarCarregarGrafico, 100);
         }
-    </style>
+    }
+
+    // Carregar o gráfico quando a página estiver pronta
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM carregado, iniciando gráfico...');
+        tentarCarregarGrafico();
+    });
+
+    // Fallback: tentar carregar após um pequeno delay
+    setTimeout(function() {
+        console.log('Fallback: verificando se pode carregar o gráfico...');
+        tentarCarregarGrafico();
+    }, 1000);
+</script>
+
+<script>
+    // Verificar se Chart.js está disponível
+    console.log('Chart.js disponível:', typeof Chart !== 'undefined');
+    
+    // Dados fictícios para o gráfico - 10 postos com valores médios mensais
+    const dadosFicticios3 = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        datasets: [
+            {
+                label: 'Posto 1 - Média',
+                data: [5.20, 5.35, 5.45, 5.30, 5.50, 5.60, 5.40, 5.55, 5.65, 5.70, 5.80, 5.90],
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 2 - Média',
+                data: [5.15, 5.30, 5.40, 5.25, 5.45, 5.55, 5.35, 5.50, 5.60, 5.65, 5.75, 5.85],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 3 - Média',
+                data: [5.25, 5.40, 5.50, 5.35, 5.55, 5.65, 5.45, 5.60, 5.70, 5.75, 5.85, 5.95],
+                backgroundColor: 'rgba(255, 206, 86, 0.8)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 4 - Média',
+                data: [5.10, 5.25, 5.35, 5.20, 5.40, 5.50, 5.30, 5.45, 5.55, 5.60, 5.70, 5.80],
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 5 - Média',
+                data: [5.30, 5.45, 5.55, 5.40, 5.60, 5.70, 5.50, 5.65, 5.75, 5.80, 5.90, 6.00],
+                backgroundColor: 'rgba(153, 102, 255, 0.8)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 6 - Média',
+                data: [5.05, 5.20, 5.30, 5.15, 5.35, 5.45, 5.25, 5.40, 5.50, 5.55, 5.65, 5.75],
+                backgroundColor: 'rgba(255, 159, 64, 0.8)',
+                borderColor: 'rgba(255, 159, 64, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 7 - Média',
+                data: [5.35, 5.50, 5.60, 5.45, 5.65, 5.75, 5.55, 5.70, 5.80, 5.85, 5.95, 6.05],
+                backgroundColor: 'rgba(199, 199, 199, 0.8)',
+                borderColor: 'rgba(199, 199, 199, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 8 - Média',
+                data: [5.00, 5.15, 5.25, 5.10, 5.30, 5.40, 5.20, 5.35, 5.45, 5.50, 5.60, 5.70],
+                backgroundColor: 'rgba(83, 102, 255, 0.8)',
+                borderColor: 'rgba(83, 102, 255, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 9 - Média',
+                data: [5.40, 5.55, 5.65, 5.50, 5.70, 5.80, 5.60, 5.75, 5.85, 5.90, 6.00, 6.10],
+                backgroundColor: 'rgba(78, 252, 3, 0.8)',
+                borderColor: 'rgba(78, 252, 3, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Posto 10 - Média',
+                data: [4.95, 5.10, 5.20, 5.05, 5.25, 5.35, 5.15, 5.30, 5.40, 5.45, 5.55, 5.65],
+                backgroundColor: 'rgba(252, 3, 244, 0.8)',
+                borderColor: 'rgba(252, 3, 244, 1)',
+                borderWidth: 1
+            }
+        ]
+    };
+
+    async function fetchPrecoRevenda3() {
+        // Simulando uma chamada de API
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(dadosFicticios3);
+            }, 100);
+        });
+    }
+
+    async function VisaoMensalPosto() {
+        try {
+            console.log('Iniciando carregamento do gráfico VisaoMensalPosto...');
+            const data = await fetchPrecoRevenda3();
+            console.log('Dados carregados:', data);
+            
+            const canvas = document.getElementById('VisaoMensalPosto');
+            console.log('Canvas encontrado:', canvas);
+            
+            if (!canvas) {
+                console.error('Canvas VisaoMensalPosto não encontrado');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            console.log('Contexto 2D obtido:', ctx);
+            
+            // Verificar se Chart está disponível
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js não está carregado');
+                return;
+            }
+
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    aspectRatio: 2, // Proporção mais larga para melhor visualização
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': R$ ' + context.parsed.y.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false, // Não começar do zero para melhor visualização
+                            min: 4.5, // Valor mínimo personalizado
+                            max: 6.5, // Valor máximo personalizado
+                            title: {
+                                display: true,
+                                text: 'Preço (R$)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                },
+                                stepSize: 0.2 // Intervalo menor entre os valores
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mês'
+                            },
+                            ticks: {
+                                maxRotation: 0, // Evitar rotação dos labels
+                                minRotation: 0
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000
+                    }
+                }
+            });
+            
+            console.log('Gráfico VisaoMensalPosto criado com sucesso:', chart);
+        } catch (error) {
+            console.error('Erro ao carregar o gráfico VisaoMensalPosto:', error);
+        }
+    }
+
+    // Função para tentar carregar o gráfico
+    function tentarCarregarGrafico3() {
+        if (typeof Chart !== 'undefined' && document.getElementById('VisaoMensalPosto')) {
+            console.log('Tentando carregar gráfico VisaoMensalPosto...');
+            VisaoMensalPosto();
+        } else {
+            console.log('Chart.js ou canvas VisaoMensalPosto não disponível, tentando novamente em 100ms...');
+            setTimeout(tentarCarregarGrafico3, 100);
+        }
+    }
+
+    // Carregar o gráfico quando a página estiver pronta
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM carregado, iniciando gráfico VisaoMensalPosto...');
+        tentarCarregarGrafico3();
+    });
+
+    // Fallback: tentar carregar após um pequeno delay
+    setTimeout(function() {
+        console.log('Fallback: verificando se pode carregar o gráfico VisaoMensalPosto...');
+        tentarCarregarGrafico3();
+    }, 1000);
+</script>
+
+
+<script>
+    // Verificar se Chart.js está disponível
+    console.log('Chart.js disponível:', typeof Chart !== 'undefined');
+    
+    // Dados fictícios para o gráfico
+    const dadosFicticios2 = {
+        labels: [
+            'Posto Petrobras Centro',
+            'Posto Shell Norte',
+            'Posto Ipiranga Sul',
+            'Posto BR Leste',
+            'Posto Texaco Oeste',
+            'Posto Esso Central',
+            'Posto Petrobras Norte',
+            'Posto Shell Sul',
+            'Posto Ipiranga Centro',
+            'Posto BR Oeste'
+        ],
+        datasets: [{
+            label: 'Preço de Revenda (R$)',
+            data: [3.79, 3.85, 3.92, 3.98, 4.05, 4.12, 4.18, 4.25, 4.32, 4.39],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(153, 102, 255, 0.8)',
+                'rgba(255, 159, 64, 0.8)',
+                'rgba(199, 199, 199, 0.8)',
+                'rgba(83, 102, 255, 0.8)',
+                'rgba(78, 252, 3, 0.8)',
+                'rgba(252, 3, 244, 0.8)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(199, 199, 199, 1)',
+                'rgba(83, 102, 255, 1)',
+                'rgba(78, 252, 3, 1)',
+                'rgba(252, 3, 244, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    async function fetchPrecoRevenda2() {
+        // Simulando uma chamada de API
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(dadosFicticios2);
+            }, 100);
+        });
+    }
+
+    async function TotalPrecoRevenda2() {
+        try {
+            console.log('Iniciando carregamento do gráfico 2...');
+            const data = await fetchPrecoRevenda2();
+            console.log('Dados carregados:', data);
+            
+            const canvas = document.getElementById('TotalPrecoRevenda2');
+            console.log('Canvas encontrado:', canvas);
+            
+            if (!canvas) {
+                console.error('Canvas TotalPrecoRevenda2 não encontrado');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            console.log('Contexto 2D obtido:', ctx);
+            
+            // Verificar se Chart está disponível
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js não está carregado');
+                return;
+            }
+
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Preço: R$ ' + context.parsed.x.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Preço (R$)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toFixed(2);
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Postos'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000
+                    }
+                }
+            });
+            
+            console.log('Gráfico 2 criado com sucesso:', chart);
+        } catch (error) {
+            console.error('Erro ao carregar o gráfico 2:', error);
+        }
+    }
+
+    // Função para tentar carregar o gráfico
+    function tentarCarregarGrafico2() {
+        if (typeof Chart !== 'undefined' && document.getElementById('TotalPrecoRevenda2')) {
+            console.log('Tentando carregar gráfico 2...');
+            TotalPrecoRevenda2();
+        } else {
+            console.log('Chart.js ou canvas TotalPrecoRevenda2 não disponível, tentando novamente em 100ms...');
+            setTimeout(tentarCarregarGrafico2, 100);
+        }
+    }
+
+    // Carregar o gráfico quando a página estiver pronta
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM carregado, iniciando gráfico 2...');
+        tentarCarregarGrafico2();
+    });
+
+    // Fallback: tentar carregar após um pequeno delay
+    setTimeout(function() {
+        console.log('Fallback: verificando se pode carregar o gráfico 2...');
+        tentarCarregarGrafico2();
+    }, 1000);
+</script>            
+
+
+            <script type="text/javascript">
+            $(function() {
+                $('#datepicker').datepicker();
+            })
+            </script>
+
+            <script type="text/javascript">
+                
+            $.fn.datepicker.dates['pt-BR'] = {
+                days: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+                daysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+                daysMin: ["D", "S", "T", "Q", "Q", "S", "S"],
+                months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+                monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                today: "Hoje",
+                clear: "Limpar",
+                format: "dd/mm/yyyy",
+                titleFormat: "MM yyyy",
+                weekStart: 0
+            };
+
+            $('.input-group.date').datepicker({
+                language: 'pt-BR',
+                todayBtn: "linked",
+                autoclose: true,
+                todayHighlight: true,
+                format: 'dd/mm/yyyy',
+                showWeekDays: true,
+                disableTouchKeyboard: true,
+                clearBtn: true
+            });
+            </script>
 
     </div>
   </div>

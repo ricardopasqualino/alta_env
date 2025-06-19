@@ -6,7 +6,7 @@ from alta.views import (
     p_cartao_precos, 
     p_plans, 
     p_ia, 
-    p_mapeei, 
+    p_monitorar_produtos, 
     p_lista_preco,
     add_price,
     new_price,
@@ -20,6 +20,7 @@ from alta.views import (
     enviar_email_recuperacao_senha,
     confirmacao_email_recuperacao,
     processar_pergunta,
+    p_monitorar_concorrentes,
 )
 
 urlpatterns = [
@@ -29,7 +30,7 @@ urlpatterns = [
     path('', p_cartao_precos, name='index'),
     
     path('cartao-precos/', p_cartao_precos, name='p_cartao_precos'),
-    path('mapear-precos/', p_mapeei, name='p_mapeei'),
+    path('monitorar-produtos/', p_monitorar_produtos, name='p_monitorar_produtos'),
     path('listar-precos/', p_lista_preco, name='p_lista_preco'),
     path('acompanhar-precos/', add_price, name='p_acompanhar'),
     path('adicionar-novo-preco/', new_price, name='new_price'),
@@ -47,6 +48,7 @@ urlpatterns = [
     path('enviar-email-recuperacao-senha/', enviar_email_recuperacao_senha, name='enviar_email_recuperacao_senha'),
     path('confirmacao-email-recuperacao/', confirmacao_email_recuperacao, name='confirmacao_email_recuperacao'),
     path('processar_pergunta/', processar_pergunta, name='processar_pergunta'),
+    path('monitorar-concorrentes/', p_monitorar_concorrentes, name='p_monitorar_concorrentes'),
 ]
 
 LOGIN_URL = 'login'

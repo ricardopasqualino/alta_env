@@ -63,7 +63,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Bando de dados Render
+# # Bando de dados Render
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -76,7 +76,7 @@ DATABASES = {
 }
 
 
-# # Bando de dados Local
+# Bando de dados Local
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -154,3 +154,4 @@ SESSION_COOKIE_AGE = 7200  # 2 horas em segundos
 # Aumentar o timeout das requisições
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 TIMEOUT = 300  # 5 minutos
+
