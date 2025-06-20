@@ -8,12 +8,15 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .filters import MainFilter
-from .forms import NewPrice, CreateUserForm
 from .openai_utils import generate_price_embedding, calculate_similarity
 from .ia_utils import processar_pergunta_ia, vetorizar_texto
 from django.contrib.auth import authenticate, login
+from django.db.models.functions import ExtractMonth, ExtractYear
 
+
+from .filters import MainFilter
+
+from .forms import NewPrice, CreateUserForm
 
 from .models import (
     AddPrice, 
@@ -111,20 +114,103 @@ def p_ia(request):
 
 @login_required
 def p_monitorar_concorrentes(request):
-    return render(request, 'p_monitorar_concorrentes.html')
+    
+    filter = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True))
+
+    cidade_usuario = request.user.profile.cidade
+    uf_usuario = request.user.profile.estado
+
+    total_linhas_pesquisa = filter.qs.distinct().count()
+
+    aggregates = filter.qs.aggregate(
+        min_price=Min('preco_revenda'),
+        min_date=Min('data_coleta'),
+        max_price=Max('preco_revenda'),
+        max_date=Max('data_coleta'),
+        avg_price=Avg('preco_revenda')
+    )
+    menor_preco = aggregates.get('min_price')
+    data_menor_preco = aggregates.get('min_date')
+    maior_preco = aggregates.get('max_price')
+    data_maior_preco = aggregates.get('max_date')
+    media_preco = aggregates.get('avg_price')
+
+    variance = 0
+    if maior_preco is not None and menor_preco is not None:
+        variance = maior_preco - menor_preco
+
+    data = {
+        'filter': filter,
+        'cidade_usuario': cidade_usuario,
+        'uf_usuario': uf_usuario,
+        'total_linhas_pesquisa': total_linhas_pesquisa,
+        'menor_preco': menor_preco,
+        'data_menor_preco': data_menor_preco,
+        'maior_preco': maior_preco,
+        'data_maior_preco': data_maior_preco,
+        'media_preco': media_preco,
+        'variance': variance
+    }
+    return render(request, 'p_monitorar_concorrentes.html', data)
 
 
 @login_required
 def p_monitorar_produtos(request):
+
+    filter = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True).filter(gasstation_id__cidade=request.user.profile.cidade))
     profile = Profile.objects.all()
 
     cidade_usuario = request.user.profile.cidade
     uf_usuario = request.user.profile.estado
 
+    aggregates = filter.qs.aggregate(
+        min_price=Min('preco_revenda'),
+        min_date=Min('data_coleta'),
+        max_price=Max('preco_revenda'),
+        max_date=Max('data_coleta'),
+        avg_price=Avg('preco_revenda')
+    )
+    menor_preco = aggregates.get('min_price')
+    data_menor_preco = aggregates.get('min_date')
+    maior_preco = aggregates.get('max_price')
+    data_maior_preco = aggregates.get('max_date')
+    media_preco = aggregates.get('avg_price')
+
+    variance = 0
+    variance_percent = 0
+    if maior_preco is not None and menor_preco is not None:
+        variance = maior_preco - menor_preco
+        if media_preco and media_preco > 0:
+            variance_percent = (variance / media_preco) * 100
+
+    total_linhas_pesquisa = filter.qs.distinct().count()
+    total_postos = filter.qs.values('gasstation_id').distinct().count()
+
+    preco_medio_mensal = filter.qs.annotate(
+        mes=ExtractMonth('data_coleta'),
+        ano=ExtractYear('data_coleta')
+    ).values('mes', 'ano').annotate(
+        preco_medio=Avg('preco_revenda')
+    ).order_by('ano', 'mes')
+    
+    today = datetime.now()
+
     data = {
         'profile': profile,
         'cidade_usuario': cidade_usuario,
-        'uf_usuario': uf_usuario
+        'uf_usuario': uf_usuario,
+        'filter': filter,
+        'menor_preco': menor_preco,
+        'data_menor_preco': data_menor_preco,
+        'maior_preco': maior_preco,
+        'data_maior_preco': data_maior_preco,
+        'media_preco': media_preco,
+        'variance': variance,
+        'variance_percent': variance_percent,
+        'total_linhas_pesquisa': total_linhas_pesquisa,
+        'today': today,
+        'total_postos': total_postos,
+        'preco_medio_mensal': preco_medio_mensal
     }
 
     return render(request, 'p_mapeei.html', data)

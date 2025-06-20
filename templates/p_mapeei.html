@@ -38,19 +38,10 @@
                     </div>
                 </div> 
 
-                <div class="col-lg-2 col-sm-12 col-md-6">
-                    <div class="form-floating">
-                    <select class="form-select" id="gas_station" name="gas_station"
-                        {{ filter.form.gas_station }} </>
-                    <label for="gas_station">Selecione o posto</label>
-                    </div>
-                </div> 
-
-                <div class="col-lg-3 col-sm-12 col-md-6">
-                    <div class="form-floating">
-                    <select class="form-select" id="produto" name="produto"
-                        {{ filter.form.produto }} </>
-                    <label for="produto">Selecione o produto</label>
+                <div class="col-lg-3 col-sm-12 col-md-4 mt-2">
+                    <div class="form-group">
+                        <select class="form-select" id="produto" name="produto"
+                            {{ filter.form.produto }} </>
                     </div>
                 </div>
                        
@@ -61,10 +52,14 @@
     </form>
 </div>
 
-<div class="row">
-    <p class="mb-0 mt-3">Os dados estão sendo exibidos são da sua cidade
-    <a href="{% url 'p_profile' %}" class="breadcrumb-item">{{ cidade_usuario }}/{{ uf_usuario }}</a></p>
-  </div>
+    <div class="row">
+        <p class="mb-0 mt-3 text-muted small">Dados exibidos para a cidade
+        <a href="{% url 'p_profile' %}" class="breadcrumb-item">{{ cidade_usuario }}/{{ uf_usuario }}</a></p>
+    </div>
+
+    <!-- <div class="row">
+        {{ preco_medio_mensal }}
+    </div> -->
 
 <section class="section contact">
     <div class="row pagetitle">
@@ -74,49 +69,51 @@
     <div class="row d-flex">
         <div class="col-lg-2">
             <div class="info-box card">
-                <p class="text-muted">Últimos 12 meses</p>
-                <h4 class="text-danger"><strong>+57%</strong></h4>
-                <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
+                <p class="text-muted">Total de</p>
+                <h4 class="text-muted"><strong>{{ total_linhas_pesquisa }}</strong></h4>
+                <p>preços em {{ total_postos }} postos</p>
             </div>
         </div>
-        <div class="col-lg-2">
-            <div class="info-box card">
-                <p class="text-muted">Últimos 6 meses</p>
-                <h4 class="text-danger"><strong>+44%</strong></h4>
-                <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
-            </div>
-        </div>
-        <div class="col-lg-2">
-            <div class="info-box card">
-                <p class="text-muted">Últimos 30 dias</p>
-                <h4 class="text-danger"><strong>+35%</strong></h4>
-                <p>{{ ultimo_preco_date|date:'d/m/Y' }}</p>
-            </div>
-        </div>                
+    
 
         <div class="col-lg-2">
             <div class="info-box card">
                 <p class="text-muted">Menor preço</p>
-                <h4 class="text-success"><strong>R$ 3,79</strong></h4>
-                <p>{% if menor_preco_date %}{{ menor_preco_date|date:'d/m/Y' }}{% else %}{% endif %}</p>
+                <h4 class="text-success"><strong>R$ {{ menor_preco|floatformat:2 }}</strong></h4>
+                <p>{{ data_menor_preco|date:'d/m/Y' }}</p>
             </div>
         </div>
 
         <div class="col-lg-2">
             <div class="info-box card">
                 <p class="text-muted">Preço Médio</p>
-                <h4 class="text-primary"><strong>R$ 4,11</strong></h4>
+                <h4 class="text-primary"><strong>R$ {{ media_preco|floatformat:2 }}</strong></h4>
+                <p>{{ today|date:'d/m/Y' }}</p>
             </div>
         </div>
 
         <div class="col-lg-2">
             <div class="info-box card">
                 <p class="text-muted">Maior Preço</p>
-                <h4 class="text-danger"><strong>R$ 6,19</strong></h4>
-                <!-- <p>{{ maior_preco_date|date:'d/m/Y' }}</p> -->
+                <h4 class="text-danger"><strong>R$ {{ maior_preco|floatformat:2 }}</strong></h4>
+                <p>{{ data_maior_preco|date:'d/m/Y' }}</p>
             </div> 
         </div> 
-    </div>
+
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">% Variação</p>
+                <h4 class="text-danger"><strong>{{ variance_percent|floatformat:2 }}%</strong></h4>
+            </div>
+        </div>
+
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted">R$ Variação</p>
+                <h4 class="text-danger"><strong>R$ {{ variance|floatformat:2 }}</strong></h4>
+            </div>
+        </div>      
+             
 
     <div class="row">
         <div class="col-lg-8">
@@ -165,6 +162,7 @@
             </div>  
         </div> 
     </div>
+<!--     
     <div class="row">
         <div class="col-lg-4">
             <div class="card">
@@ -209,19 +207,27 @@
             </div>  
         </div>        
     
-    </div>
+    </div> -->
 </section>
 
 <script>
     // Verificar se Chart.js está disponível
     console.log('Chart.js disponível:', typeof Chart !== 'undefined');
     
-    // Dados fictícios para o gráfico
+    // Dados do preço médio mensal
     const dadosFicticios = {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        labels: [
+            {% for item in preco_medio_mensal %}
+                '{{ item.mes }}/{{ item.ano }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ],
         datasets: [{
             label: 'Preço de Revenda (R$)',
-            data: [5.20, 5.35, 5.45, 5.30, 5.50, 5.60, 5.40, 5.55, 5.65, 5.70, 5.80, 5.90],
+            data: [
+                {% for item in preco_medio_mensal %}
+                    {{ item.preco_medio|floatformat:2 }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
             backgroundColor: 'rgba(54, 162, 235, 0.8)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
