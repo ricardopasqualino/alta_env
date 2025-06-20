@@ -34,11 +34,13 @@ def index(request):
 
 @login_required
 def p_cartao_precos(request):
-    fil = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3))
+    fil = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True))
     cidade = request.GET.get('cidade')
+    ano = request.GET.get('ano')
+    mes = request.GET.get('mes')
     
     # Gerar uma chave de cache única baseada na cidade
-    cache_key = f"precos_cidade_{cidade}"
+    cache_key = f"precos_cidade_{cidade}_{ano}_{mes}"
     
     # Tentar obter todos os dados do cache
     cached_data = cache.get(cache_key)
@@ -48,7 +50,9 @@ def p_cartao_precos(request):
     else:
         # Otimizar a query base
         base_query = AddPrice.objects.filter(
-            gasstation_id__cidade=cidade
+            gasstation_id__cidade=cidade,
+            data_coleta__year=ano,
+            data_coleta__month=mes
         ).exclude(produto_id=3).select_related(
             'produto_id'
         ).only(
@@ -87,7 +91,9 @@ def p_cartao_precos(request):
         'preco_min': preco_min,
         'preco_max': preco_max,
         'preco_avg': preco_avg,
-        'ultima_data': ultima_data
+        'ultima_data': ultima_data,
+        'ano': ano,
+        'mes': mes
     }
 
     return render(request, 'p_cartao_precos.html', data)
