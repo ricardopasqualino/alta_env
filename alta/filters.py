@@ -116,6 +116,19 @@ class MainFilter(django_filters.FilterSet):
         initial='1',
     )
 
+    data_inicio = django_filters.DateFilter(
+        field_name='data_coleta', 
+        lookup_expr='gte', 
+        label='Data Inicial'
+    )
+
+
+    data_fim = django_filters.DateFilter(
+        field_name='data_coleta', 
+        lookup_expr='lte', 
+        label='Data Final',
+    )    
+
     class Meta:
         model = AddPrice 
         fields = [
@@ -126,42 +139,6 @@ class MainFilter(django_filters.FilterSet):
             'produto',
             'bandeira',
             'razao',
-        ]        
-        
-class CompetitorFilter(django_filters.FilterSet):
-    gas_station = django_filters.ModelChoiceFilter(
-        queryset=GasStation.objects.all(),
-        label='Posto',
-        field_name='gas_station'
-    )    
-    
-    produto = django_filters.ChoiceFilter(
-        label='produto',
-        choices='get_produto_choices',
-        field_name='produto_id__produto',
-        lookup_expr='exact'
-    )
-
-    data_inicio = django_filters.DateFilter(
-        field_name='data_coleta', 
-        lookup_expr='gte', 
-        label='Data Inicial'
-    )
-
-    data_fim = django_filters.DateFilter(
-        field_name='data_coleta', 
-        lookup_expr='lte', 
-        label='Data Final',
-    )
-
-    def get_produto_choices(self):
-        return [(produto, produto) for produto in AddPrice.objects.filter(produto_id__isnull=False).values_list('produto_id__produto', flat=True).distinct()]
-
-    class Meta:
-        model = AddPrice
-        fields = [
-            'gas_station', 
-            'produto', 
             'data_inicio',
             'data_fim',
-            ]        
+        ]        

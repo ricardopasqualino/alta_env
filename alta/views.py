@@ -157,7 +157,17 @@ def p_monitorar_concorrentes(request):
 @login_required
 def p_monitorar_produtos(request):
 
-    filter = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True).filter(gasstation_id__cidade=request.user.profile.cidade))
+    filter = MainFilter(
+        request.GET, 
+        queryset=AddPrice.objects.exclude(
+            produto_id=3, 
+            pesquisa_origem_id=2, 
+            produto_id__isnull=True
+        ).filter(
+            gasstation_id__cidade=request.user.profile.cidade
+        )
+    )
+
     profile = Profile.objects.all()
 
     cidade_usuario = request.user.profile.cidade
@@ -195,11 +205,20 @@ def p_monitorar_produtos(request):
     
     today = datetime.now()
 
+    # Top 10 postos mais baratos
+    top_10_postos_mais_baratos = filter.qs.values(
+        'gasstation_id__razao', 'gasstation_id__id'
+    ).annotate(
+        preco_medio=Avg('preco_revenda')
+    ).order_by('preco_medio')[:10]
+
+    top_10_postos_mais_caros = filter.qs.order_by('-preco_revenda').values('gasstation_id__razao', 'preco_revenda').distinct()[:10]
+
     data = {
+        'filter': filter,
         'profile': profile,
         'cidade_usuario': cidade_usuario,
         'uf_usuario': uf_usuario,
-        'filter': filter,
         'menor_preco': menor_preco,
         'data_menor_preco': data_menor_preco,
         'maior_preco': maior_preco,
@@ -210,7 +229,9 @@ def p_monitorar_produtos(request):
         'total_linhas_pesquisa': total_linhas_pesquisa,
         'today': today,
         'total_postos': total_postos,
-        'preco_medio_mensal': preco_medio_mensal
+        'preco_medio_mensal': list(preco_medio_mensal),
+        'top_10_postos_mais_baratos': list(top_10_postos_mais_baratos),
+        'top_10_postos_mais_caros': list(top_10_postos_mais_caros)
     }
 
     return render(request, 'p_mapeei.html', data)
