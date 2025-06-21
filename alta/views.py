@@ -181,9 +181,12 @@ def p_monitorar_produtos(request):
         avg_price=Avg('preco_revenda')
     )
     menor_preco = aggregates.get('min_price')
+    menor_preco_count = filter.qs.filter(preco_revenda=menor_preco).count()
     data_menor_preco = aggregates.get('min_date')
+
     maior_preco = aggregates.get('max_price')
     data_maior_preco = aggregates.get('max_date')
+    maior_preco_count = filter.qs.filter(preco_revenda=maior_preco).count()
     media_preco = aggregates.get('avg_price')
 
     variance = 0
@@ -212,7 +215,7 @@ def p_monitorar_produtos(request):
         preco_medio=Avg('preco_revenda')
     ).order_by('preco_medio')[:10]
 
-    top_10_postos_mais_caros = filter.qs.order_by('-preco_revenda').values('gasstation_id__razao', 'preco_revenda').distinct()[:10]
+    top_10_postos_mais_caros = filter.qs.order_by('-preco_revenda').values('gasstation_id__razao', 'preco_revenda')[:10]
 
     data = {
         'filter': filter,
@@ -231,7 +234,9 @@ def p_monitorar_produtos(request):
         'total_postos': total_postos,
         'preco_medio_mensal': list(preco_medio_mensal),
         'top_10_postos_mais_baratos': list(top_10_postos_mais_baratos),
-        'top_10_postos_mais_caros': list(top_10_postos_mais_caros)
+        'top_10_postos_mais_caros': list(top_10_postos_mais_caros),
+        'menor_preco_count': menor_preco_count,
+        'maior_preco_count': maior_preco_count
     }
 
     return render(request, 'p_mapeei.html', data)
@@ -259,7 +264,7 @@ def p_lista_preco(request):
         'gasstation_id__bandeira',
         'produto_id__produto',
         'pesquisa_origem__origem'
-    )
+    ).order_by('preco_revenda')
 
     # Aplicar filtros padrão se nenhum filtro específico for fornecido
     if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
@@ -275,6 +280,7 @@ def p_lista_preco(request):
 
     # Otimizar contagem usando count() com distinct
     total_linhas_pesquisa = f.qs.distinct().count()
+
     
     # Preparar dados para o template
     data = {

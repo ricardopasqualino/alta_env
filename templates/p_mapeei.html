@@ -71,15 +71,15 @@
     
         <div class="col-lg-2">
             <div class="info-box card">
-                <p class="text-muted">Menor preço</p>
+                <p class="text-muted mb-1">Menor preço</p>
                 <h4 class="text-success"><strong>R$ {{ menor_preco|floatformat:2 }}</strong></h4>
-                <p>{{ data_menor_preco|date:'d/m/Y' }}</p>
+                <p><span class="badge bg-info text-white p-2">{{ menor_preco_count }}</span>  <span class="text-muted small">   {{ data_menor_preco|date:'d/m/Y' }}</span></p>
             </div>
         </div>
 
         <div class="col-lg-2">
             <div class="info-box card">
-                <p class="text-muted">Preço Médio</p>
+                <p class="text-muted mb-1">Preço Médio</p>
                 <h4 class="text-primary"><strong>R$ {{ media_preco|floatformat:2 }}</strong></h4>
                 <p>{{ today|date:'d/m/Y' }}</p>
             </div>
@@ -87,25 +87,27 @@
 
         <div class="col-lg-2">
             <div class="info-box card">
-                <p class="text-muted">Maior Preço</p>
+                <p class="text-muted mb-1">Maior Preço</p>
                 <h4 class="text-danger"><strong>R$ {{ maior_preco|floatformat:2 }}</strong></h4>
-                <p>{{ data_maior_preco|date:'d/m/Y' }}</p>
+                <p><span class="badge bg-info text-white p-2">{{ maior_preco_count }}</span><span class="text-muted small">  {{ data_maior_preco|date:'d/m/Y' }}</span></p>
             </div> 
         </div> 
 
         <div class="col-lg-2">
             <div class="info-box card">
-                <p class="text-muted">% Variação</p>
+                <p class="text-muted mb-1">R$ Variação</p>
+                <h4 class="text-danger"><strong>R$ {{ variance|floatformat:2 }}</strong></h4>
+            </div>
+        </div>           
+
+        <div class="col-lg-2">
+            <div class="info-box card">
+                <p class="text-muted mb-1">% Variação</p>
                 <h4 class="text-danger"><strong>{{ variance_percent|floatformat:2 }}%</strong></h4>
             </div>
         </div>
 
-        <div class="col-lg-2">
-            <div class="info-box card">
-                <p class="text-muted">R$ Variação</p>
-                <h4 class="text-danger"><strong>R$ {{ variance|floatformat:2 }}</strong></h4>
-            </div>
-        </div>      
+   
     </div>
 
     <div class="row">
