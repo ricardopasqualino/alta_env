@@ -217,6 +217,11 @@ def p_monitorar_produtos(request):
 
     top_10_postos_mais_caros = filter.qs.order_by('-preco_revenda').values('gasstation_id__razao', 'preco_revenda')[:10]
 
+    # Contar quantos postos estão praticando cada preço distinto
+    precos_por_postos = filter.qs.values('preco_revenda').annotate(
+        quantidade_postos=Count('gasstation_id', distinct=True)
+    ).order_by('-quantidade_postos')
+
     data = {
         'filter': filter,
         'profile': profile,
@@ -236,7 +241,8 @@ def p_monitorar_produtos(request):
         'top_10_postos_mais_baratos': list(top_10_postos_mais_baratos),
         'top_10_postos_mais_caros': list(top_10_postos_mais_caros),
         'menor_preco_count': menor_preco_count,
-        'maior_preco_count': maior_preco_count
+        'maior_preco_count': maior_preco_count,
+        'precos_por_postos': list(precos_por_postos)
     }
 
     return render(request, 'p_mapeei.html', data)

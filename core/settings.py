@@ -63,7 +63,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# # Bando de dados Render
+# Bando de dados Render
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

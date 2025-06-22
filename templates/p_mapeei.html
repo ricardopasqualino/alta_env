@@ -45,10 +45,17 @@
                             {{ filter.form.produto }} </>
                     </div>
                 </div>
-                       
-                <div class="col-lg-2 col-sm-12 col-md-6">
+                
+                <div class="col-lg-2 d-none d-lg-block">
                     <button class="btn btn-primary m-1" type="submit">Filtrar</button>
+                </div>      
+
+                <div class="col-lg-2 d-lg-none mt-2">
+                    <button class="btn btn-primary m-1 w-100" type="submit">Filtrar</button>
                 </div>        
+   
+
+                <div class="col-lg-2 d-lg-none">
             </div>
         </form>
     </div>
@@ -58,9 +65,10 @@
         <a href="{% url 'p_profile' %}" class="breadcrumb-item">{{ cidade_usuario }}/{{ uf_usuario }}</a></p>
     </div>
 
+
 <section class="section contact">
     
-    <div class="row d-flex">
+    <div class="row d-flex d-none d-lg-flex">
         <div class="col-lg-2">
             <div class="info-box card">
                 <p class="text-muted mb-1">Total de</p>
@@ -110,6 +118,55 @@
    
     </div>
 
+    <div class="row d-flex d-md-none">
+        <div class="col-6">
+            <div class="info-box card">
+                <p class="text-muted mb-1">Total de</p>
+                <h4 class="text-muted"><strong>{{ total_linhas_pesquisa }} preços</strong></h4>
+                <p><span class="badge bg-info text-white p-2">{{ total_postos }}</span> postos</p>
+            </div>
+        </div>
+    
+        <div class="col-6">
+            <div class="info-box card">
+                <p class="text-muted mb-1">Menor preço</p>
+                <h4 class="text-success"><strong>R$ {{ menor_preco|floatformat:2 }}</strong></h4>
+                <p><span class="badge bg-info text-white p-2">{{ menor_preco_count }}</span>  <span class="text-muted small">   {{ data_menor_preco|date:'d/m/Y' }}</span></p>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="info-box card">
+                <p class="text-muted mb-1">Preço Médio</p>
+                <h4 class="text-primary"><strong>R$ {{ media_preco|floatformat:2 }}</strong></h4>
+                <p>{{ today|date:'d/m/Y' }}</p>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="info-box card">
+                <p class="text-muted mb-1">Maior Preço</p>
+                <h4 class="text-danger"><strong>R$ {{ maior_preco|floatformat:2 }}</strong></h4>
+                <p><span class="badge bg-info text-white p-2">{{ maior_preco_count }}</span><span class="text-muted small">  {{ data_maior_preco|date:'d/m/Y' }}</span></p>
+            </div> 
+        </div> 
+
+        <div class="col-6">
+            <div class="info-box card">
+                <p class="text-muted mb-1">R$ Variação</p>
+                <h4 class="text-danger"><strong>R$ {{ variance|floatformat:2 }}</strong></h4>
+            </div>
+        </div>           
+
+        <div class="col-6">
+            <div class="info-box card">
+                <p class="text-muted mb-1">% Variação</p>
+                <h4 class="text-danger"><strong>{{ variance_percent|floatformat:2 }}%</strong></h4>
+            </div>
+        </div>   
+    </div>
+
+
     <div class="row">
         <div class="col-lg-6 col-sm-12 col-md-6">
             <div class="card">
@@ -140,6 +197,59 @@
             </div>  
         </div>          
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Distribuição de Preços por Postos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Preço (R$)</th>
+                                    <th>Quantidade de Postos</th>
+                                    <th>Barra de Distribuição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for preco in precos_por_postos %}
+                                <tr>
+                                    <td class="fw-bold">R$ {{ preco.preco_revenda|floatformat:2 }}</td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ preco.quantidade_postos }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            {% widthratio preco.quantidade_postos total_postos 100 as percentage %}
+                                            <div class="progress-bar bg-info" 
+                                                 role="progressbar" 
+                                                 style="width: {{ percentage }}%"
+                                                 aria-valuenow="{{ preco.quantidade_postos }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="{{ total_postos }}">
+                                                {{ percentage }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">
+                                        Nenhum dado disponível
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 <!-- Passar dados do Django para JavaScript de forma segura -->
