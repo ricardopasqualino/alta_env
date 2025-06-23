@@ -222,6 +222,15 @@ def p_monitorar_produtos(request):
         quantidade_postos=Count('gasstation_id', distinct=True)
     ).order_by('-quantidade_postos')
 
+    # Obter min e max da data_coleta para cada posto e preço registrado
+    postos_por_preco = filter.qs.values('gasstation_id', 'gasstation_id__razao', 'preco_revenda').annotate(
+        data_minima=Min('data_coleta'),
+        data_maxima=Max('data_coleta'),
+        quantidade_postos=Count('preco_revenda') * 7
+    ).order_by('gasstation_id__razao')
+
+
+
     data = {
         'filter': filter,
         'profile': profile,
@@ -242,7 +251,8 @@ def p_monitorar_produtos(request):
         'top_10_postos_mais_caros': list(top_10_postos_mais_caros),
         'menor_preco_count': menor_preco_count,
         'maior_preco_count': maior_preco_count,
-        'precos_por_postos': list(precos_por_postos)
+        'precos_por_postos': list(precos_por_postos),
+        'postos_por_preco': list(postos_por_preco)
     }
 
     return render(request, 'p_mapeei.html', data)

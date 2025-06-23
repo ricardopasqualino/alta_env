@@ -250,6 +250,74 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Lista de Postos por Preço</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="accordionPostos">
+                        {% for posto in postos_por_preco %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                <button class="accordion-button collapsed" type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse{{ forloop.counter }}" 
+                                        aria-expanded="false" 
+                                        aria-controls="collapse{{ forloop.counter }}">
+                                    <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                        <span class="fw-bold">{{ posto.gasstation_id__razao|default:"N/A" }}</span>
+                                        <div class="d-flex gap-3">
+                                            <span class="badge bg-secondary">{{ posto.quantidade_postos }} dias</span>
+                                            <span class="badge bg-success">R$ {{ posto.preco_revenda|floatformat:2 }}</span>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapse{{ forloop.counter }}" 
+                                 class="accordion-collapse collapse" 
+                                 aria-labelledby="heading{{ forloop.counter }}" 
+                                 data-bs-parent="#accordionPostos">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="text-muted">Detalhes do Posto</h6>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Razão Social:</strong> {{ posto.gasstation_id__razao|default:"N/A" }}</li>
+                                                <li><strong>Quantidade de Dias:</strong> {{ posto.quantidade_postos }}</li>
+                                                <li><strong>Preço:</strong> R$ {{ posto.preco_revenda|floatformat:2 }}</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="text-muted">Informações Adicionais</h6>
+                                            <ul class="list-unstyled">
+                                                <li><strong>ID do Posto:</strong> {{ posto.gasstation_id }}</li>
+
+                                                {% if posto.quantidade_postos > 7 %}
+                                                    <li><strong>Data Inicial:</strong> {{ posto.data_minima|date:'d/m/Y' }}</li>
+                                                    <li><strong>Data Final:</strong> {{ posto.data_maxima|date:'d/m/Y' }}</li>
+                                                {% else %}
+                                                    <li><strong>Data:</strong> {{ posto.data_minima|date:'d/m/Y' }}</li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <p>Nenhum posto encontrado</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 <!-- Passar dados do Django para JavaScript de forma segura -->
