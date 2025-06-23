@@ -115,12 +115,32 @@ def p_ia(request):
 @login_required
 def p_monitorar_concorrentes(request):
     
-    filter = MainFilter(request.GET, queryset=AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True))
+    filter = MainFilter(
+        request.GET, 
+        queryset=AddPrice.objects.exclude(
+            produto_id=3, 
+            pesquisa_origem_id=2, 
+            produto_id__isnull=True
+        ).filter(
+            gasstation_id__cidade=request.user.profile.cidade,
+            gasstation_id__estado=request.user.profile.estado
+        )
+    )
 
     cidade_usuario = request.user.profile.cidade
     uf_usuario = request.user.profile.estado
 
     total_linhas_pesquisa = filter.qs.distinct().count()
+
+    # Obter lista de razões sociais dos postos
+    razoes = filter.qs.values_list('gasstation_id__razao', flat=True).distinct()
+
+    preco_medio_mensal = filter.qs.annotate(
+        mes=ExtractMonth('data_coleta'),
+        ano=ExtractYear('data_coleta')
+    ).values('mes', 'ano').annotate(
+        preco_medio=Avg('preco_revenda')
+    ).order_by('ano', 'mes')
 
     aggregates = filter.qs.aggregate(
         min_price=Min('preco_revenda'),
@@ -129,11 +149,12 @@ def p_monitorar_concorrentes(request):
         max_date=Max('data_coleta'),
         avg_price=Avg('preco_revenda')
     )
-    menor_preco = aggregates.get('min_price')
-    data_menor_preco = aggregates.get('min_date')
-    maior_preco = aggregates.get('max_price')
-    data_maior_preco = aggregates.get('max_date')
-    media_preco = aggregates.get('avg_price')
+
+    menor_preco = filter.qs.aggregate(min_price=Min('preco_revenda'))['min_price']
+    data_menor_preco = filter.qs.aggregate(min_date=Min('data_coleta'))['min_date']
+    maior_preco = filter.qs.aggregate(max_price=Max('preco_revenda'))['max_price']
+    data_maior_preco = filter.qs.aggregate(max_date=Max('data_coleta'))['max_date']
+    media_preco = filter.qs.aggregate(avg_price=Avg('preco_revenda'))['avg_price']
 
     variance = 0
     if maior_preco is not None and menor_preco is not None:
@@ -149,8 +170,11 @@ def p_monitorar_concorrentes(request):
         'maior_preco': maior_preco,
         'data_maior_preco': data_maior_preco,
         'media_preco': media_preco,
-        'variance': variance
+        'variance': variance,
+        'razoes': razoes,
+        'preco_medio_mensal': list(preco_medio_mensal)
     }
+    
     return render(request, 'p_monitorar_concorrentes.html', data)
 
 
@@ -228,8 +252,6 @@ def p_monitorar_produtos(request):
         data_maxima=Max('data_coleta'),
         quantidade_postos=Count('preco_revenda') * 7
     ).order_by('gasstation_id__razao')
-
-
 
     data = {
         'filter': filter,
