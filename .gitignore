@@ -6,3 +6,5 @@ alta/tests.py
 alta/tests.pyc
 static/files/*
 progresso_temp.json
+automation/
+process_files.py

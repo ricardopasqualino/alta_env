@@ -27,7 +27,11 @@
                 <h1 class="card-title text-left mt-3 pb-0 fs-2">{{ user.first_name }} {{ user.last_name }}</h1>
                 <p class="fs-4">{{ user.profile.cargo|title }} na empresa {{ user.profile.empresa|title }}</p>
                 <ul class="list-group">
-                    <li class="list-group-item">Telefone: ({{ user.profile.telefone|slice:":2" }}) {{ user.profile.telefone|slice:"2:7" }}-{{ user.profile.telefone|slice:"7:" }}</li>
+                    {% with tel=user.profile.telefone %}
+                        <li class="list-group-item">
+                            Telefone: {{ tel|slice:":2" }}{{ tel|slice:"2:6" }}{{ tel|slice:"6:" }}
+                        </li>
+                    {% endwith %}
                     <li class="list-group-item">Cidade/UF: {{ user.profile.cidade }}/{{ user.profile.estado }}</li>
                     <li class="list-group-item">E-mail: {{ user.email }}</li>
                     <li class="list-group-item">Data da criação do login: {{ user.date_joined|date:'d/m/y - G:i' }}</li>

@@ -166,9 +166,8 @@
         </div>   
     </div>
 
-
     <div class="row">
-        <div class="col-lg-6 col-sm-12 col-md-6">
+        <div class="col-lg-4 col-sm-12 col-md-6">
             <div class="card">
                 <div class="row gy-4">
                     <div class="col-lg-12 info-box">
@@ -182,7 +181,7 @@
                 </div>                    
             </div>  
         </div>  
-        <div class="col-lg-6 col-sm-12 col-md-6">
+        <div class="col-lg-4 col-sm-12 col-md-6">
             <div class="card">
                 <div class="row gy-4">
                     <div class="col-lg-12 info-box">
@@ -196,10 +195,8 @@
                 </div>                    
             </div>  
         </div>          
-    </div>
 
-    <div class="row">
-        <div class="col-12">
+        <div class="col-lg-4 col-sm-12 col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">Distribuição de Preços por Postos</h5>
@@ -218,15 +215,20 @@
                                 {% for preco in precos_por_postos %}
                                 <tr>
                                     <td class="fw-bold">R$ {{ preco.preco_revenda|floatformat:2 }}</td>
+                                    {% if preco.quantidade_postos == 1 %}
+                                        <td>
+                                            <span class="badge bg-light text-dark">{{ preco.quantidade_postos }}</span>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <span class="badge bg-primary">{{ preco.quantidade_postos }}</span>
+                                        </td>
+                                    {% endif %}
                                     <td>
-                                        <span class="badge bg-primary">{{ preco.quantidade_postos }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="progress" style="height: 20px;">
+                                        <div class="progress">
                                             {% widthratio preco.quantidade_postos total_postos 100 as percentage %}
                                             <div class="progress-bar bg-info" 
                                                  role="progressbar" 
-                                                 style="width: {{ percentage }}%"
                                                  aria-valuenow="{{ preco.quantidade_postos }}" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="{{ total_postos }}">
@@ -250,15 +252,15 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
+    <div class="row d-flex justify-content-center">
+        <div class="col-lg-8 col-sm-12 col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="card-title">Lista de Postos por Preço</h5>
+                    <h5 class="card-title">Postos e seus Preços</h5>
                 </div>
                 <div class="card-body">
                     <div class="accordion" id="accordionPostos">
-                        {% for posto in postos_por_preco %}
+                        {% for posto in postos_com_precos %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="heading{{ forloop.counter }}">
                                 <button class="accordion-button collapsed" type="button" 
@@ -267,10 +269,13 @@
                                         aria-expanded="false" 
                                         aria-controls="collapse{{ forloop.counter }}">
                                     <div class="d-flex justify-content-between align-items-center w-100 me-3">
-                                        <span class="fw-bold">{{ posto.gasstation_id__razao|default:"N/A" }}</span>
-                                        <div class="d-flex gap-3">
-                                            <span class="badge bg-secondary">{{ posto.quantidade_postos }} dias</span>
-                                            <span class="badge bg-success">R$ {{ posto.preco_revenda|floatformat:2 }}</span>
+                                        <div class="d-flex flex-column">
+                                            <span class="fw-bold">{{ posto.gasstation_id__razao|default:"N/A" }}</span>
+                                            <small class="text-muted">{{ posto.gasstation_id__bandeira|default:"Sem bandeira" }}</small>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <span class="badge bg-info">{{ posto.total_registros }} registros</span>
+                                            <span class="badge bg-success">R$ {{ posto.preco_medio|floatformat:2 }}</span>
                                         </div>
                                     </div>
                                 </button>
@@ -280,27 +285,63 @@
                                  aria-labelledby="heading{{ forloop.counter }}" 
                                  data-bs-parent="#accordionPostos">
                                 <div class="accordion-body">
-                                    <div class="row">
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
-                                            <h6 class="text-muted">Detalhes do Posto</h6>
+                                            <h6 class="text-muted">Informações do Posto</h6>
                                             <ul class="list-unstyled">
                                                 <li><strong>Razão Social:</strong> {{ posto.gasstation_id__razao|default:"N/A" }}</li>
-                                                <li><strong>Quantidade de Dias:</strong> {{ posto.quantidade_postos }}</li>
-                                                <li><strong>Preço:</strong> R$ {{ posto.preco_revenda|floatformat:2 }}</li>
+                                                <li><strong>Bandeira:</strong> {{ posto.gasstation_id__bandeira|default:"N/A" }}</li>
+                                                <li><strong>Cidade:</strong> {{ posto.gasstation_id__cidade|default:"N/A" }}</li>
+                                                <li><strong>Estado:</strong> {{ posto.gasstation_id__estado|default:"N/A" }}</li>
+                                                <li><strong>Total de Registros:</strong> {{ posto.total_registros }}</li>
                                             </ul>
                                         </div>
                                         <div class="col-md-6">
-                                            <h6 class="text-muted">Informações Adicionais</h6>
+                                            <h6 class="text-muted">Resumo de Preços</h6>
                                             <ul class="list-unstyled">
-                                                <li><strong>ID do Posto:</strong> {{ posto.gasstation_id }}</li>
-
-                                                {% if posto.quantidade_postos > 7 %}
-                                                    <li><strong>Data Inicial:</strong> {{ posto.data_minima|date:'d/m/Y' }}</li>
-                                                    <li><strong>Data Final:</strong> {{ posto.data_maxima|date:'d/m/Y' }}</li>
-                                                {% else %}
-                                                    <li><strong>Data:</strong> {{ posto.data_minima|date:'d/m/Y' }}</li>
-                                                {% endif %}
+                                                <li><strong>Preço Mínimo:</strong> <span class="text-success">R$ {{ posto.preco_minimo|floatformat:2 }}</span></li>
+                                                <li><strong>Preço Médio:</strong> <span class="text-primary">R$ {{ posto.preco_medio|floatformat:2 }}</span></li>
+                                                <li><strong>Preço Máximo:</strong> <span class="text-danger">R$ {{ posto.preco_maximo|floatformat:2 }}</span></li>
+                                                <li><strong>Período:</strong> {{ posto.data_primeira|date:'d/m/Y' }} a {{ posto.data_ultima|date:'d/m/Y' }}</li>
                                             </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <h6 class="text-muted">Histórico de Preços</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Preço (R$)</th>
+                                                        <th>Quantidade de Dias</th>
+                                                        <th>Período</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for preco in posto.precos_distintos %}
+                                                    <tr>
+                                                        <td class="fw-bold">R$ {{ preco.preco_revenda|floatformat:2 }}</td>
+                                                        <td>
+                                                            <span class="badge bg-secondary">{{ preco.quantidade_dias }} dias</span>
+                                                        </td>
+                                                        <td>
+                                                            {% if preco.data_inicio == preco.data_fim %}
+                                                                {{ preco.data_inicio|date:'d/m/Y' }}
+                                                            {% else %}
+                                                                {{ preco.data_inicio|date:'d/m/Y' }} a {{ preco.data_fim|date:'d/m/Y' }}
+                                                            {% endif %}
+                                                        </td>
+                                                    </tr>
+                                                    {% empty %}
+                                                    <tr>
+                                                        <td colspan="3" class="text-center text-muted">
+                                                            Nenhum preço registrado
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -604,6 +645,22 @@
         console.log('Fallback: verificando se pode carregar os gráficos...');
         carregarGraficos();
     }, 1000);
+
+    // Função para configurar progress bars
+    function configurarProgressBars() {
+        const progressBars = document.querySelectorAll('.progress-bar');
+        progressBars.forEach(function(bar) {
+            const percentage = bar.textContent.replace('%', '');
+            if (percentage && !isNaN(percentage)) {
+                bar.style.width = percentage + '%';
+            }
+        });
+    }
+
+    // Configurar progress bars quando DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', function() {
+        configurarProgressBars();
+    });
 </script>
 
 <script type="text/javascript">

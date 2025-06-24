@@ -12,7 +12,7 @@ from .openai_utils import generate_price_embedding, calculate_similarity
 from .ia_utils import processar_pergunta_ia, vetorizar_texto
 from django.contrib.auth import authenticate, login
 from django.db.models.functions import ExtractMonth, ExtractYear
-
+from django.db.models import F, ExpressionWrapper, DurationField
 
 from .filters import MainFilter
 
@@ -184,11 +184,11 @@ def p_monitorar_produtos(request):
     filter = MainFilter(
         request.GET, 
         queryset=AddPrice.objects.exclude(
-            produto_id=3, 
-            pesquisa_origem_id=2, 
-            produto_id__isnull=True
+                produto_id=3, 
+                pesquisa_origem_id=2, 
+                produto_id__isnull=True
         ).filter(
-            gasstation_id__cidade=request.user.profile.cidade
+                gasstation_id__cidade=request.user.profile.cidade
         )
     )
 
@@ -244,12 +244,41 @@ def p_monitorar_produtos(request):
     # Contar quantos postos estão praticando cada preço distinto
     precos_por_postos = filter.qs.values('preco_revenda').annotate(
         quantidade_postos=Count('gasstation_id', distinct=True)
-    ).order_by('-quantidade_postos')
+    ).order_by('-quantidade_postos')[:9]
 
-    # Obter min e max da data_coleta para cada posto e preço registrado
+    # Agrupar preços por posto - nova estrutura
+    postos_com_precos = filter.qs.values(
+        'gasstation_id', 
+        'gasstation_id__razao', 
+        'gasstation_id__bandeira',
+        'gasstation_id__cidade',
+        'gasstation_id__estado'
+    ).annotate(
+        preco_minimo=Min('preco_revenda'),
+        preco_maximo=Max('preco_revenda'),
+        preco_medio=Avg('preco_revenda'),
+        total_registros=Count('id'),
+        data_primeira=Min('data_coleta'),
+        data_ultima=Max('data_coleta')
+    ).order_by('gasstation_id__razao')
+
+    # Para cada posto, obter todos os preços distintos
+    for posto in postos_com_precos:
+        precos_distintos = filter.qs.filter(
+            gasstation_id=posto['gasstation_id']
+        ).values('preco_revenda').annotate(
+            quantidade_dias=Count('data_coleta', distinct=True),
+            data_inicio=Min('data_coleta'),
+            data_fim=Max('data_coleta')
+        ).order_by('preco_revenda')
+        
+        posto['precos_distintos'] = list(precos_distintos)
+
+    # Obter min e max da data_coleta para cada posto e preço registrado (mantido para compatibilidade)
     postos_por_preco = filter.qs.values('gasstation_id', 'gasstation_id__razao', 'preco_revenda').annotate(
         data_minima=Min('data_coleta'),
         data_maxima=Max('data_coleta'),
+        data_preco=F('data_maxima') - F('data_minima'),
         quantidade_postos=Count('preco_revenda') * 7
     ).order_by('gasstation_id__razao')
 
@@ -274,7 +303,8 @@ def p_monitorar_produtos(request):
         'menor_preco_count': menor_preco_count,
         'maior_preco_count': maior_preco_count,
         'precos_por_postos': list(precos_por_postos),
-        'postos_por_preco': list(postos_por_preco)
+        'postos_por_preco': list(postos_por_preco),
+        'postos_com_precos': list(postos_com_precos)
     }
 
     return render(request, 'p_mapeei.html', data)
