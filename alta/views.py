@@ -205,11 +205,13 @@ def p_monitorar_produtos(request):
         avg_price=Avg('preco_revenda')
     )
     menor_preco = aggregates.get('min_price')
+    
     menor_preco_count = filter.qs.filter(preco_revenda=menor_preco).count()
-    data_menor_preco = aggregates.get('min_date')
+    data_menor_preco = filter.qs.filter(preco_revenda=menor_preco).aggregate(min_date=Min('data_coleta'))['min_date']
 
     maior_preco = aggregates.get('max_price')
-    data_maior_preco = aggregates.get('max_date')
+    data_maior_preco = filter.qs.filter(preco_revenda=maior_preco).aggregate(max_date=Max('data_coleta'))['max_date']
+
     maior_preco_count = filter.qs.filter(preco_revenda=maior_preco).count()
     media_preco = aggregates.get('avg_price')
 
@@ -267,9 +269,10 @@ def p_monitorar_produtos(request):
         precos_distintos = filter.qs.filter(
             gasstation_id=posto['gasstation_id']
         ).values('preco_revenda').annotate(
-            quantidade_dias=Count('data_coleta', distinct=True),
+            quantidade_marcacoes=Count('id', distinct=True),
             data_inicio=Min('data_coleta'),
-            data_fim=Max('data_coleta')
+            data_fim=Max('data_coleta'),
+            quantidade_dias=F('data_fim') - F('data_inicio')
         ).order_by('preco_revenda')
         
         posto['precos_distintos'] = list(precos_distintos)
@@ -482,39 +485,28 @@ def new_register(request):
 
         if form.is_valid():
             user = form.save(commit=False)
-            user.username = form.cleaned_data.get('username')
-            user.email = form.cleaned_data.get('email')
-            user.save()
+            # Obtém o valor do email do formulário
+            email_value = form.cleaned_data.get('username')
+            user.username = email_value
+            user.email = email_value  # Garante que o email seja salvo corretamente
             
-            # Verifica se o usuário já possui um perfil
+            # Salva o usuário e cria o perfil automaticamente (via form.save())
+            user = form.save()
+            
+            # Atualiza o perfil com os dados adicionais se necessário
             if hasattr(user, 'profile'):
-                user.profile.telefone = form.cleaned_data.get('telefone')
-                user.profile.cargo = form.cleaned_data.get('cargo')
-                user.profile.empresa = form.cleaned_data.get('empresa')  # Certifica-se de que o campo empresa é atualizado
-                user.profile.cidade = Cidade.objects.get(id=form.cleaned_data.get('cidade').id)
-                user.profile.estado = Estado.objects.get(id=form.cleaned_data.get('estado').id)
+                user.profile.empresa = form.cleaned_data.get('empresa')
                 user.profile.save()
-            else:
-                # Cria um novo perfil se não existir
-                novo_perfil = Profile.objects.create(
-                    user=user,
-                    telefone=form.cleaned_data.get('telefone'),
-                    cargo=form.cleaned_data.get('cargo'),
-                    cidade=Cidade.objects.get(id=form.cleaned_data.get('cidade').id),
-                    estado=Estado.objects.get(id=form.cleaned_data.get('estado').id),
-                )
-                novo_perfil.empresa = form.cleaned_data.get('empresa')  # Corrige a gravação do dado de empresa
-                novo_perfil.save()
             
             messages.success(request, 'Conta criada com sucesso! Você já pode fazer login.')
             return redirect('login')
         else:
             # Verifica especificamente os erros de cada campo
             if 'username' in form.errors:
-                messages.error(request, 'Este nome de usuário já está em uso. Por favor, escolha outro.')
+                messages.error(request, 'Este email já está em uso. Por favor, escolha outro.')
             elif 'email' in form.errors:
                 messages.error(request, 'Este email já está cadastrado. Por favor, use outro email ou faça login.')
-            elif 'posto' in form.errors:
+            elif 'empresa' in form.errors:
                 messages.error(request, 'Por favor, informe o nome da sua empresa.')
             else:
                 for field, errors in form.errors.items():

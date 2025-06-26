@@ -55,7 +55,7 @@
               <div class="card mb-3">
                 <div class="card-body">
                   <div class="pt-4 pb-2">
-                    <h5 class="card-title text-center pb-0 fs-4 mb-3">Crie sua conta! É grátis!</h5>
+                    <h6 class="card-title text-center fs-5 mb-3">Crie sua conta! É grátis!</h6>
                   </div>
 
                   {% if messages %}
@@ -76,10 +76,10 @@
                     <div class="row mt-3">
 
                       <div class="col-6">
-                        <span class="form-label">Nome</span>
+                        <span class="form-label mb-5">Nome</span>
                         <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                         oninput="this.value = this.value.replace(/[0-9]/g, '');"
-                        placeholder="João" required="required" maxlength="50"
+                        placeholder="" required="required" maxlength="50"
                         {{ form.first_name }} </>
                       </div>
 
@@ -87,7 +87,7 @@
                         <span class="form-label">Sobrenome</span>
                         <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                         oninput="this.value = this.value.replace(/[0-9]/g, '');"
-                        placeholder="da Silva" required="required" maxlength="50"
+                        placeholder="" required="required" maxlength="50"
                         {{ form.last_name }} </>
                       </div>
                     </div>
@@ -97,30 +97,40 @@
                       <div class="col-6">
                         <span class="form-label">DDD + Telefone</span>
                         <input type="tel" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                        placeholder="11919596478" required="required" maxlength="13"
+                        placeholder="" required="required" maxlength="13"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
                         {{ form.telefone }} </>
                       </div>
-
+                      
                       <div class="col-6">
-                        <span class="form-label">E-mail Corporativo</span>
-                        <input type="email" name="email" class="form-control" required="required" maxlength="60"
-                        placeholder="joao.silva@empresa.com.br" 
-                        value="{{ form.email.value|default:'' }}">
+                        <span class="form-label">Cargo</span>
+                        <select class="form-select" aria-label="Cargo" aria-describedby="basic-addon1" required="required"
+                          {{ form.cargo }}>
+                          <option value="proprietario">Proprietário</option>
+                          <option value="diretor">Diretor</option>
+                          <option value="gerente">Gerente</option>
+                          <option value="supervisor/coordenador">Supervisor/Coordenador</option>
+                          <option value="operador">Operador</option>
+                          <option value="analista">Analista</option>
+                          <option value="administrador">Administrador</option>
+                          <option value="outro">Outro</option>
+                        </select>
                       </div>
                     </div>
+
+
 
                     <div class="row mt-3">
                         
                       <div class="col-12">
                         <span class="form-label">Empresa</span>
                         <input type="text" name="empresa" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
-                        placeholder="Posto da Silva" required="required" maxlength="50"
+                        placeholder="" required="required" maxlength="50"
                         value="{{ form.empresa.value|default:'' }}">
                       </div>
                     </div>
 
-                    <div class="row mt-3" style="margin-right: 0;">
+                    <div class="row mt-3">
 
                       <div class="col-8">
                         <span class="form-label">Cidade</span>
@@ -137,29 +147,22 @@
                       </div>
                     </div>
 
-                    <div class="row mt-3">
-                      <div class="col-12">
-                        <span class="form-label">Cargo</span>
-                        <select class="form-select" aria-label="Cargo" aria-describedby="basic-addon1" required="required"
-                          {{ form.cargo }}>
-                          <option value="proprietario">Proprietário</option>
-                          <option value="diretor">Diretor</option>
-                          <option value="gerente">Gerente</option>
-                          <option value="supervisor/coordenador">Supervisor/Coordenador</option>
-                          <option value="operador">Operador</option>
-                          <option value="analista">Analista</option>
-                          <option value="administrador">Administrador</option>
-                          <option value="outro">Outro</option>
-                        </select>
-                      </div>
-                    </div>
+
 
                     <div class="row mt-3">
                       <div class="col-12">
-                        <span class="form-label">Nome de usuário</span>
-                        <input type="text" name="username" class="form-control" 
-                        required="required" maxlength="100" placeholder="joao.silva@empresa.com.br" 
-                        value="{{ form.username.value|default:'' }}">
+                        <span class="form-label">E-mail Corporativo</span>
+                        <input type="email" name="username" class="form-control" 
+                        required="required" maxlength="100" placeholder="" 
+                        value="{{ form.username.value|default:'' }}"
+                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                        title="Por favor, insira um endereço de e-mail válido com domínio completo (ex: .com, .br, .org)"
+                        onblur="validarEmail(this)"
+                        oninput="validarEmail(this)"
+                        onchange="validarEmailCompleto(this)">
+                        <div id="email-error" class="invalid-feedback" style="display: none;">
+                          Por favor, insira um endereço de e-mail válido com domínio completo (ex: usuario@empresa.com)
+                        </div>
                       </div>
                     </div>
 
@@ -168,15 +171,15 @@
                         <div class="col-6">
                           <span class="form-label">Digite a senha</span>
                           <input type="password" class="form-control" aria-label="Username" 
-                          aria-describedby="basic-addon1" placeholder="Crie uma senha"
+                          aria-describedby="basic-addon1" placeholder=""
                           required="required" maxlength="10"
                           {{ form.password1 }} </>
                         </div>
 
                       <div class="col-6">
-                        <span class="form-label">Repita a senha</span>
+                        <span class="form-label">Repita a mesma senha</span>
                         <input type="password" class="form-control" aria-label="Username" 
-                        aria-describedby="basic-addon1" placeholder="Repita a mesma senha"
+                        aria-describedby="basic-addon1" placeholder=""
                         required="required" maxlength="10"
                         {{ form.password2 }} </>
                       </div>
@@ -239,11 +242,11 @@
 
                     <div class="col-12">
                       <span class="form-label">E-mail Corporativo</span>
-                      <input type="email" name="email" class="form-control" required="required" maxlength="60"
+                      <input type="email" name="username" class="form-control" required="required" maxlength="60"
                       placeholder="joao.silva@empresa.com.br" 
-                      value="{{ form.email.value|default:'' }}">
+                      value="{{ form.username.value|default:'' }}">
                       <div class="text-danger">
-                        {{ form.email.errors }}
+                        {{ form.username.errors }}
                       </div>
                     </div>
 
