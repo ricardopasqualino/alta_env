@@ -41,10 +41,42 @@
   <main>
     <div class="container">
 
-      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center">
+
         <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-12 col-sm-12">
+
+          <div class="row justify-content-center p-2">
+            <div class="col-lg-7 col-md-12 col-sm-12 mt-5">
+              <!-- <img src="{% static 'assets/img/register.jpg' %}"> -->
+              <h1 class="card-title fs-2 mb-3 mt-5">Mais de 10M de preços de combustíveis de postos em todo Brasil! Histórico desde 2004!</h1>
+              <p class="mt-3">Faça seu cadastro grátis e use de forma ilimitada.</p>
+            
+              <ul class="list-unstyled mt-4">
+              <li class="mb-2">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong>Análise de preços em tempo real</strong>
+              </li>
+
+              <li class="mb-2">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong>Histórico completo desde 2004</strong>
+              </li>
+              
+              <li class="mb-2">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong>Relatórios personalizados</strong>
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong>Crie comparações entre postos</strong>
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <strong>Receba alertas de preços</strong>
+              </li>
+            </ul>
+            </div>            
+            <div class="col-lg-5 col-md-12 col-sm-12">
               <div class="d-flex justify-content-center py-4">
                 <a href="" class="logo d-flex align-items-center w-auto">
                   <img src="{% static 'assets/img/logo.png'%}" alt="Alta BI">
@@ -54,9 +86,6 @@
 
               <div class="card mb-3">
                 <div class="card-body">
-                  <div class="pt-4 pb-2">
-                    <h6 class="card-title text-center fs-5 mb-3">Crie sua conta! É grátis!</h6>
-                  </div>
 
                   {% if messages %}
                   <div class="messages">
@@ -69,43 +98,44 @@
                   </div>
                   {% endif %}
 
+                  <div class="p-2">
+                    <h6 class="card-title text-center fs-6">Crie sua conta! É grátis!</h6>
+                  </div>
+
                   <form class="row g-3 needs-validation justify-content-center d-none d-lg-flex d-lg-block" action="{% url 'new_register' %}" method="POST">
 
                     {% csrf_token %}
 
-                    <div class="row mt-3">
-
+                    <div class="row mt-1">
                       <div class="col-6">
-                        <span class="form-label mb-5">Nome</span>
-                        <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                        <span class="form-label small">Nome</span>
+                        <input type="text" name="first_name" class="form-control form-control-sm" aria-label="Username" aria-describedby="basic-addon1" 
                         oninput="this.value = this.value.replace(/[0-9]/g, '');"
                         placeholder="" required="required" maxlength="50"
-                        {{ form.first_name }} </>
+                        value="{{ form.first_name.value|default:'' }}">
                       </div>
 
                       <div class="col-6">
-                        <span class="form-label">Sobrenome</span>
-                        <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                        <span class="form-label small">Sobrenome</span>
+                        <input type="text" name="last_name" class="form-control form-control-sm" aria-label="Username" aria-describedby="basic-addon1" 
                         oninput="this.value = this.value.replace(/[0-9]/g, '');"
                         placeholder="" required="required" maxlength="50"
-                        {{ form.last_name }} </>
+                        value="{{ form.last_name.value|default:'' }}">
                       </div>
                     </div>
                     
-                    <div class="row mt-3">
-                      
+                    <div class="row mt-1">
                       <div class="col-6">
-                        <span class="form-label">DDD + Telefone</span>
-                        <input type="tel" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                        <span class="form-label small">DDD + Telefone</span>
+                        <input type="tel" name="telefone" inputmode="numeric" class="form-control form-control-sm" aria-label="Username" aria-describedby="basic-addon1" 
                         placeholder="" required="required" maxlength="13"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
-                        {{ form.telefone }} </>
+                        value="{{ form.telefone.value|default:'' }}">
                       </div>
                       
                       <div class="col-6">
-                        <span class="form-label">Cargo</span>
-                        <select class="form-select" aria-label="Cargo" aria-describedby="basic-addon1" required="required"
-                          {{ form.cargo }}>
+                        <span class="form-label small">Cargo</span>
+                        <select class="form-select form-select-sm" name="cargo" aria-label="Cargo" aria-describedby="basic-addon1" required="required">
                           <option value="proprietario">Proprietário</option>
                           <option value="diretor">Diretor</option>
                           <option value="gerente">Gerente</option>
@@ -118,41 +148,33 @@
                       </div>
                     </div>
 
-
-
-                    <div class="row mt-3">
-                        
+                    <div class="row mt-1">
                       <div class="col-12">
-                        <span class="form-label">Empresa</span>
-                        <input type="text" name="empresa" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
+                        <span class="form-label small">Empresa</span>
+                        <input type="text" name="empresa" class="form-control form-control-sm" aria-label="Empresa" aria-describedby="basic-addon1" 
                         placeholder="" required="required" maxlength="50"
                         value="{{ form.empresa.value|default:'' }}">
                       </div>
                     </div>
 
-                    <div class="row mt-3">
-
+                    <div class="row mt-1">
                       <div class="col-8">
-                        <span class="form-label">Cidade</span>
-                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
+                        <span class="form-label small">Cidade</span>
+                        <select class="form-select form-select-sm" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
                           {{ form.cidade }} </>
-                        </select>
                       </div>
 
                       <div class="col-4">
-                        <span class="form-label">Estado</span>
-                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
+                        <span class="form-label small">Estado</span>
+                        <select class="form-select form-select-sm" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
                           {{ form.estado }} </>
-                        </select>
                       </div>
                     </div>
 
-
-
-                    <div class="row mt-3">
+                    <div class="row mt-1">
                       <div class="col-12">
-                        <span class="form-label">E-mail Corporativo</span>
-                        <input type="email" name="username" class="form-control" 
+                        <span class="form-label small">E-mail Corporativo</span>
+                        <input type="email" name="username" class="form-control form-control-sm" 
                         required="required" maxlength="100" placeholder="" 
                         value="{{ form.username.value|default:'' }}"
                         pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -166,52 +188,52 @@
                       </div>
                     </div>
 
-                      <div class="row mt-3">
-
-                        <div class="col-6">
-                          <span class="form-label">Digite a senha</span>
-                          <input type="password" class="form-control" aria-label="Username" 
-                          aria-describedby="basic-addon1" placeholder=""
-                          required="required" maxlength="10"
-                          {{ form.password1 }} </>
-                        </div>
-
+                    <div class="row mt-1">
                       <div class="col-6">
-                        <span class="form-label">Repita a mesma senha</span>
-                        <input type="password" class="form-control" aria-label="Username" 
+                        <span class="form-label small">Digite a senha</span>
+                        <input type="password" name="password1" class="form-control form-control-sm" aria-label="Username" 
                         aria-describedby="basic-addon1" placeholder=""
                         required="required" maxlength="10"
-                        {{ form.password2 }} </>
+                        value="{{ form.password1.value|default:'' }}">
                       </div>
-                      
+
+                      <div class="col-6">
+                        <span class="form-label small">Repita a mesma senha</span>
+                        <input type="password" name="password2" class="form-control form-control-sm"
+                        aria-describedby="basic-addon1" placeholder=""
+                        required="required" maxlength="10"
+                        value="{{ form.password2.value|default:'' }}">
+                      </div>
                     </div>
-                      <div class="row mt-3">
-                        <div class="col-12">
-                          <ul>
-                            <li class="text-danger">Sua senha deve conter 10 caracteres</li>
-                            <li class="text-danger">Sua senha deve conter letras maiúsculas e minúsculas</li>
-                            <li class="text-danger">Sua senha deve conter caracteres especiais</li>
-                          </ul>
-                        </div>
+
+                    <div class="row mt-3">
+                      <div class="col-12">
+                        <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
+                      </div> 
+                    </div>
+
+                    <!-- <div class="row mt-1">
+                      <div class="col-12">
+                        <ul class="list-unstyled mb-0">
+                          <li class="text-muted small">• Mínimo 10 caracteres</li>
+                          <li class="text-muted small">• Maiúsculas e minúsculas</li>
+                          <li class="text-muted small">• Caracteres especiais</li>
+                        </ul>
                       </div>
+                    </div> -->
 
-                  <div class="col-12">
-                    <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
-                  </div> 
-
-                </form>
+                  </form>
                 
                 <form class="row g-3 needs-validation justify-content-center d-block d-md-none" action="{% url 'new_register' %}" method="POST">
 
                   {% csrf_token %}
 
-
                     <div class="col-12">
-                      <span class="form-label">Nomeas</span>
-                      <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                      <span class="form-label">Nome</span>
+                      <input type="text" name="first_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       oninput="this.value = this.value.replace(/[0-9]/g, '');"
                       placeholder="João" required="required" maxlength="50"
-                      {{ form.first_name }} </>
+                      value="{{ form.first_name.value|default:'' }}">
                       <div class="input-group">
                         {{ form.first_name.errors }}
                       </div>
@@ -219,22 +241,21 @@
 
                     <div class="col-12">
                       <span class="form-label">Sobrenome</span>
-                      <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                      <input type="text" name="last_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       oninput="this.value = this.value.replace(/[0-9]/g, '');"
                       placeholder="da Silva" required="required" maxlength="50"
-                      {{ form.last_name }} </>
+                      value="{{ form.last_name.value|default:'' }}">
                       <div class="input-group">
                         {{ form.last_name.errors }}
                       </div>
                     </div>
                   
-                        
                     <div class="col-12">
                       <span class="form-label">DDD + Telefone</span>
-                      <input type="tel" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
+                      <input type="tel" name="telefone" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       placeholder="11919596478" required="required" maxlength="13"
                       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
-                      {{ form.telefone }} </>
+                      value="{{ form.telefone.value|default:'' }}">
                       <div class="input-group">
                         {{ form.telefone.errors }}
                       </div>
@@ -250,7 +271,6 @@
                       </div>
                     </div>
 
-                      
                     <div class="col-12">
                       <span class="form-label">Empresa</span>
                       <input type="text" name="empresa" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
@@ -261,79 +281,67 @@
                       </div>
                     </div>
 
-                  <div class="row">
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">Cidade</span>
-                      <select class="form-select" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
-                        {{ form.cidade }} </>
-                      </select>
-                      <div class="input-group">
-                        {{ form.cargo.errors }}
-                      </div>
-                    </div>
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">Estado</span>
-                      <select class="form-select" aria-label="Estado" aria-describedby="basic-addon1" required="required"
-                        {{ form.estado }} </>
-                      </select>
-                      <div class="input-group">
-                        {{ form.estado.errors }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row mt-3">
-                    <div class="col-12">
-                      <span class="form-label">Cargo</span>
-                      <select class="form-select" aria-label="Cargo" aria-describedby="basic-addon1" required="required"
-                        {{ form.cargo }}>
-                        <option value="proprietario">Proprietário</option>
-                        <option value="diretor">Diretor</option>
-                        <option value="gerente">Gerente</option>
-                        <option value="supervisor/coordenador">Supervisor/Coordenador</option>
-                        <option value="operador">Operador</option>
-                        <option value="analista">Analista</option>
-                        <option value="administrador">Administrador</option>
-                        <option value="outro">Outro</option>
-                      </select>
-                      <div class="input-group">
-                        {{ form.cargo.errors }}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row mt-3">
-                    <div class="col-12">
-                      <span class="form-label">Nome de usuário</span>
-                      <input type="text" name="username" class="form-control" required="required" maxlength="100"
-                      placeholder="joao.silva@empresa.com.br" 
-                      value="{{ form.username.value|default:'' }}">
-                      <div class="text-danger">
-                        {{ form.username.errors }}
-                      </div>
-                    </div>
-                  </div>
-
-
-                      <div class="col-12">
-                        <span class="form-label">Digite a senha</span>
-                        <input type="password" class="form-control" aria-label="Username" 
-                        aria-describedby="basic-addon1" placeholder="Crie uma senha"
-                        required="required" maxlength="10"
-                        {{ form.password1 }} </>
+                    <div class="row">
+                      <div class="col-12 mt-3">
+                        <span class="form-label">Cidade</span>
+                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required">
+                          {{ form.cidade }}
+                        </select>
                         <div class="input-group">
-                          {{ form.password1.errors }}
+                          {{ form.cidade.errors }}
                         </div>
                       </div>
 
+                      <div class="col-12 mt-3">
+                        <span class="form-label">Estado</span>
+                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required">
+                          {{ form.estado }}
+                        </select>
+                        <div class="input-group">
+                          {{ form.estado.errors }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="col-12">
+                        <span class="form-label">Cargo</span>
+                        <select class="form-select" name="cargo" aria-label="Cargo" aria-describedby="basic-addon1" required="required">
+                          <option value="proprietario">Proprietário</option>
+                          <option value="diretor">Diretor</option>
+                          <option value="gerente">Gerente</option>
+                          <option value="supervisor/coordenador">Supervisor/Coordenador</option>
+                          <option value="operador">Operador</option>
+                          <option value="analista">Analista</option>
+                          <option value="administrador">Administrador</option>
+                          <option value="outro">Outro</option>
+                        </select>
+                        <div class="input-group">
+                          {{ form.cargo.errors }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <span class="form-label">Digite a senha</span>
+                      <input type="password" name="password1" class="form-control" aria-label="Username" 
+                      aria-describedby="basic-addon1" placeholder="Crie uma senha"
+                      required="required" maxlength="10"
+                      value="{{ form.password1.value|default:'' }}">
+                      <div class="input-group">
+                        {{ form.password1.errors }}
+                      </div>
+                    </div>
+
                     <div class="col-12">
                       <span class="form-label">Repita a senha</span>
-                      <input type="password" class="form-control" aria-label="Username" 
+                      <input type="password" name="password2" class="form-control" aria-label="Username" 
                       aria-describedby="basic-addon1" placeholder="Repita a mesma senha"
                       required="required" maxlength="10"
-                      {{ form.password2 }} </>
+                      value="{{ form.password2.value|default:'' }}">
+                      <div class="input-group">
+                        {{ form.password2.errors }}
+                      </div>
                     </div>
                     
                     <div class="row mt-3">
@@ -346,13 +354,11 @@
                       </div>
                     </div>
 
-                  
-                  
-                <div class="col-12">
-                  <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
-                </div> 
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
+                    </div> 
 
-              </form>
+                  </form>
 
 
             </div>
@@ -370,20 +376,19 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
-  <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/chart.js/chart.umd.js"></script>
-  <script src="assets/vendor/echarts/echarts.min.js"></script>
-  <script src="assets/vendor/quill/quill.js"></script>
-  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="assets/vendor/tinymce/tinymce.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
+  <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
+  <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/quill/quill.js' %}"></script>
+  <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
 
   <!-- Template Main JS File -->
-  <script src="assets/js/main.js"></script>
+  <script src="{% static 'assets/js/main.js' %}"></script>
 
 </body>
 
 </html>
-
 {% endblock %}
