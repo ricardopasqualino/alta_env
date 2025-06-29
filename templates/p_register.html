@@ -48,31 +48,37 @@
           <div class="row justify-content-center p-2">
             <div class="col-lg-7 col-md-12 col-sm-12 mt-5">
               <img class="img-fluid w-100 mt-5" src="{% static 'assets/img/register.jpg' %}">
-              <h1 class="card-title fs-2 mb-3 mt-3">Mais de 3M de preços de combustíveis de postos em todo Brasil! Histórico desde 2004!</h1>
-              <p class="mt-3">Faça seu cadastro grátis e use de forma ilimitada.</p>
+              
+              <h1 class="card-title fs-2 mb-3 mt-3">
+                Consulta ilimitada de mais de 3M de preços de combustíveis de postos em todo Brasil!
+              </h1>
+              
+              <p class="mt-3">Faça seu cadastro grátis e incorpora preços, indicadores e KPIs 
+                relacionados ao comportamento dos preços de combustíveis de postos em todo Brasil!
+              </p>
             
               <ul class="list-unstyled mt-4">
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Análise de preços com preço médio, máximo e mínimo para cada posto.</strong>
+                <strong>Análise de preço médio, máximo e mínimo para cada posto e cidade.</strong>
               </li>
 
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Preço mais praticado por todos os postos de uma região.</strong>
+                <strong>Preço mais vezes praticado pelos postos de uma cidade/região.</strong>
               </li>
               
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Lista aberta para você extrair os valores para o Excel.</strong>
+                <strong>Lista aberta para extrair os valores para o Excel.</strong>
               </li>
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Adicionar preços manulmente para o concorrente.</strong>
+                <strong>Adicionar preços manulmente e criar a sua própria lista de preços.</strong>
               </li>
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Suporte especializado para estudos personalizados para o seu negócio.</strong>
+                <strong>Filtros para analisar os preços de acordo com o seu negócio.</strong>
               </li>
             </ul>
             </div>            
@@ -80,7 +86,7 @@
               <div class="d-flex justify-content-center py-4">
                 <a href="" class="logo d-flex align-items-center w-auto">
                   <img src="{% static 'assets/img/logo.png'%}" alt="Alta BI">
-                  <span class="d-none d-lg-block">Alta</span>
+                  <span class="d-none d-lg-block">ALTA</span>
                 </a>
               </div>
 
@@ -102,7 +108,7 @@
                     <h6 class="card-title text-center fs-5">Crie sua conta! É grátis!</h6>
                   </div>
 
-                  <form class="row g-3 needs-validation justify-content-center" action="{% url 'new_register' %}" method="POST">
+                  <form class="row g-3 needs-validation justify-content-center d-none d-md-block" action="{% url 'new_register' %}" method="POST">
 
                     {% csrf_token %}
 
@@ -255,9 +261,11 @@
   
                     </form>
                   
-                <form class="row g-3 needs-validation justify-content-center d-block d-md-none" action="{% url 'new_register' %}" method="POST">
+                <form class="row g-3 needs-validation justify-content-center d-md-none" action="{% url 'new_register' %}" method="POST">
 
                   {% csrf_token %}
+
+                  <div class="row mt-3">
 
                     <div class="col-12">
                       <span class="form-label">Nome</span>
@@ -270,7 +278,7 @@
                       </div>
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-12 mt-3">
                       <span class="form-label">Sobrenome</span>
                       <input type="text" name="last_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       oninput="this.value = this.value.replace(/[0-9]/g, '');"
@@ -281,7 +289,7 @@
                       </div>
                     </div>
                   
-                    <div class="col-12">
+                    <div class="col-12 mt-3">
                       <span class="form-label">DDD + Telefone</span>
                       <input type="tel" name="telefone" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       placeholder="11919596478" required="required" maxlength="13"
@@ -292,17 +300,7 @@
                       </div>
                     </div>
 
-                    <div class="col-12">
-                      <span class="form-label">E-mail Corporativo</span>
-                      <input type="email" name="username" class="form-control" required="required" maxlength="60"
-                      placeholder="joao.silva@empresa.com.br" 
-                      value="{{ form.username.value|default:'' }}">
-                      <div class="text-danger">
-                        {{ form.username.errors }}
-                      </div>
-                    </div>
-
-                    <div class="col-12">
+                    <div class="col-12 mt-3">
                       <span class="form-label">Empresa</span>
                       <input type="text" name="empresa" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
                       placeholder="Posto da Silva" required="required" maxlength="50"
@@ -312,11 +310,10 @@
                       </div>
                     </div>
 
-                    <div class="row">
                       <div class="col-12 mt-3">
                         <span class="form-label">Cidade</span>
-                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required">
-                          {{ form.cidade }}
+                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
+                          {{ form.cidade }} </>
                         </select>
                         <div class="input-group">
                           {{ form.cidade.errors }}
@@ -325,17 +322,15 @@
 
                       <div class="col-12 mt-3">
                         <span class="form-label">Estado</span>
-                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required">
-                          {{ form.estado }}
+                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
+                          {{ form.estado }} </>
                         </select>
                         <div class="input-group">
                           {{ form.estado.errors }}
                         </div>
                       </div>
-                    </div>
 
-                    <div class="row mt-3">
-                      <div class="col-12">
+                      <div class="col-12 mt-3">
                         <span class="form-label">Cargo</span>
                         <select class="form-select" name="cargo" aria-label="Cargo" aria-describedby="basic-addon1" required="required">
                           <option value="proprietario">Proprietário</option>
@@ -351,9 +346,18 @@
                           {{ form.cargo.errors }}
                         </div>
                       </div>
+
+                    <div class="col-12 mt-3">
+                      <span class="form-label">E-mail Corporativo</span>
+                      <input type="email" name="username" class="form-control" aria-label="E-mail Corporativo" aria-describedby="basic-addon1" 
+                      placeholder="joao.silva@empresa.com.br" required="required" maxlength="50"
+                      value="{{ form.username.value|default:'' }}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                      <div class="text-danger">
+                        {{ form.username.errors }}
+                      </div>
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-12 mt-3">
                       <span class="form-label">Digite a senha</span>
                       <input type="password" name="password1" class="form-control" aria-label="Username" 
                       aria-describedby="basic-addon1" placeholder="Crie uma senha"
@@ -364,7 +368,7 @@
                       </div>
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-12 mt-3">
                       <span class="form-label">Repita a senha</span>
                       <input type="password" name="password2" class="form-control" aria-label="Username" 
                       aria-describedby="basic-addon1" placeholder="Repita a mesma senha"
@@ -374,32 +378,170 @@
                         {{ form.password2.errors }}
                       </div>
                     </div>
-                    
-                    <div class="row mt-3">
-                      <div class="col-12">
-                        <ul>
-                          <li class="text-danger">Sua senha deve conter 10 caracteres</li>
-                          <li class="text-danger">Sua senha deve conter letras maiúsculas e minúsculas</li>
-                          <li class="text-danger">Sua senha deve conter caracteres especiais</li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    <div class="col-12">
+                  </div>
+                  <div class="row">
+                    <div class="col-12 mt-3">
                       <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
                     </div> 
+                  </div>
 
-                  </form>
-
-
+                    
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <ul>
+                        <li class="text-muted small">Sua senha deve conter 10 caracteres</li>
+                        <li class="text-muted small">Sua senha deve conter maiúsculas e minúsculas</li>
+                        <li class="text-muted small">Sua senha deve conter caracteres especiais</li>
+                      </ul>
+                    </div>
+                  </div>
+              </form>
             </div>
           </div>
+        </div>
 
-</div>
-</div>
-</div>
+        <!-- Conheça a ALTA! -->
+        <div class="row mt-3 p-3 m-3">
 
-</section>
+          <div class="col-12">
+            <h1 class="card-title fs-2">Por que criar a sua conta?</h1>
+            <p class="text-muted">
+              A ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
+              Com mais de 3M de linhas de preços, você pode acessar os dados de forma ilimitada e personalizada.
+            </p>
+          </div>
+
+          <div class="col-3 card p-3 m-1">
+            <h1 class="card-title text-muted">Para as empresas</h1>
+            <h1 class="card-title fs-2">Redução de até 20% no custo do combustível</h1>
+            <p class="text-muted">Apenas selecionando os postos com melhor custo benefício para abastecer a sua frota.</p>
+          </div>
+
+          <div class="col-4 card p-3 m-1">
+            <p class="card-title text-muted">Para postos de Gasolina</h1>
+            <h1 class="card-title fs-2">Aumento de até 15% na lucratividade dos produtos do posto.</h1>
+            <p class="text-muted">
+              levantando e mapeando o corportamento dos concorrentes antes de 
+              precificar o seu produto.
+            </p>
+          </div>
+
+          <div class="col-4 card p-3 m-1">
+            <h1 class="card-title text-muted">Para analistas de mercado</h1>
+            <h1 class="card-title fs-2">Acompanhar a variação dos preços durante em períodos para</h1>
+            <p class="text-muted">refinar o processo de análise economica considerando 
+              o impacto do preço do combustível na economia.</p>
+          </div>
+
+          <p class="text-muted mt-3">
+            Seja dono de posto ou empresário sofrendo com alto custo do combustível, 
+            trazer esses dados para a tomada de decisão do seu negócio.
+          </p>
+
+        </div>
+
+        <!-- Cases de uso -->
+        <div class="row mt-3">
+          <div class="col-12 p-3 m-3">
+            <h1 class="card-title fs-2">Cases de uso</h1>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Empresa de transportes e Distribuição</h5>
+                <p class="text-muted">
+                  Com 5 veiculos na frota e um consumo médio de 1000 litros por dia, a empresa de transportes e distribuição conseguiu 
+                  reduzir o custo do combustível em 10%.</p>
+                <p class="text-muted">
+                  Com a ALTA, a empresa conseguiu acompanhar o preço do combustível em tempo real, além de ter uma visão detalhada de 
+                  como os preços estão se comportando em cada posto de gasolina.</p>
+                <p class="text-muted">
+                  Com esses dados, a empresa conseguiu tomar decisões estratégicas para reduzir o custo do combustível, como trocar de 
+                  posto de gasolina ou de combustível.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Posto de gasolina aumenta sua lucratividade</h5>
+                <p class="text-muted">
+                  Com a ALTA, o posto de gasolina conseguiu aumentar sua lucratividade em 10%, com um custo de 10% menor do que a concorrência.</p>
+                <p class="text-muted">
+                  Com a ALTA, o posto de gasolina conseguiu aumentar sua lucratividade em 10%, com um custo de 10% menor do que a concorrência.</p>
+                <p class="text-muted">
+                  Com a ALTA, o posto de gasolina conseguiu aumentar sua lucratividade em 10%, com um custo de 10% menor do que a concorrência.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quem somos? -->
+        <div class="row mt-3">
+          <div class="col-12 p-3 m-3">
+            <h1 class="card-title fs-2">Quem somos?</h1>
+            <p class="text-muted">
+              A ALTA é uma empresa que oferece uma plataforma de análise de dados para postos de gasolina.
+              Com mais de 3M de linhas de preços, a ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
+              <ul>
+                <li>
+                  <strong>Mais de 15 anos de atuação no mercado de Tecnologia</strong>
+                  <p class="text-muted">
+                    A ALTA é uma empresa que oferece uma plataforma de análise de dados para postos de gasolina.
+                    Com mais de 3M de linhas de preços, a ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
+                  </p>
+                </li>
+                <li>
+                  <strong>Mais de 150 empresas atentidas na gestão de postos de gasolina</strong>
+                  <p class="text-muted">
+                    A ALTA é uma empresa que oferece uma plataforma de análise de dados para postos de gasolina.
+                    Com mais de 150 empresas atentidas na gestão de postos de gasolina, a ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
+                  </p>
+                </li>
+              </ul>
+            </p>
+          </div>
+        </div>
+
+        <!-- Benefícios -->
+        <div class="row mt-3">
+          <div class="col-12 p-3 m-3">
+            <h1 class="card-title fs-2">Benefícios</h1>
+            <p class="text-muted">Conheça na prática os benefícios dos produtos ALTA para a sua empresa.</p>
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                  <div class="card-body">
+                    <!-- <img src="{% static 'assets/img/beneficios/acesso-ao-comportamento-dos-precos.png' %}" class="img-fluid" alt="Acesso ao comportamento dos preços"> -->
+                    <h5 class="card-title">Redução de custos com abast  ecimento da frota</h5>
+                    <p class="text-muted">
+                    Temos cases comprovados de empresas que passaram a se planejar e encontrar o posto com 
+                    melhor preço para abastecer a sua frota, reduzindo custos em até 20%.
+                    </p>
+                    <a href="#" class="btn btn-outline-primary">Saiba mais</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                  <div class="card-body">
+                    <!-- <img src="{% static 'assets/img/beneficios/acesso-ao-comportamento-dos-precos.png' %}" class="img-fluid" alt="Acesso ao comportamento dos preços"> -->
+                    <h5 class="card-title">Aumento na lucratividade de postos</h5>
+                    <p class="text-muted">
+                      Temos cases comprovados de postos que passaram a se planejar e encontrar o posto com 
+                      melhor preço para abastecer a sua frota, reduzindo custos em até 20%.
+                    </p>
+                    <a href="#" class="btn btn-outline-primary">Saiba mais</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
 
     </div>
   </main><!-- End #main -->
