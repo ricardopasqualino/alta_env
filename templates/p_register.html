@@ -411,13 +411,13 @@
             </p>
           </div>
 
-          <div class="col-3 card p-3 m-1">
+          <div class="col-lg-3 col-md-3 col-sm-12 card p-3 m-1">
             <h1 class="card-title text-muted">Para as empresas</h1>
             <h1 class="card-title fs-2">Redução de até 20% no custo do combustível</h1>
             <p class="text-muted">Apenas selecionando os postos com melhor custo benefício para abastecer a sua frota.</p>
           </div>
 
-          <div class="col-4 card p-3 m-1">
+          <div class="col-lg-4 col-md-4 col-sm-12 card p-3 m-1">
             <p class="card-title text-muted">Para postos de Gasolina</h1>
             <h1 class="card-title fs-2">Aumento de até 15% na lucratividade dos produtos do posto.</h1>
             <p class="text-muted">
@@ -426,26 +426,32 @@
             </p>
           </div>
 
-          <div class="col-4 card p-3 m-1">
+          <div class="col-lg-4 col-md-4 col-sm-12 card p-3 m-1">
             <h1 class="card-title text-muted">Para analistas de mercado</h1>
             <h1 class="card-title fs-2">Acompanhar a variação dos preços durante em períodos para</h1>
             <p class="text-muted">refinar o processo de análise economica considerando 
               o impacto do preço do combustível na economia.</p>
           </div>
+        </div>
 
-          <p class="text-muted mt-3">
+        <div class="row mt-3 p-3 m-3 bg-primary rounded-3">
+          <div class="col-lg-12 col-md-12 col-sm-12">
+          <p class="text-light text-center mt-3 fs-4 p-3">
             Seja dono de posto ou empresário sofrendo com alto custo do combustível, 
             trazer esses dados para a tomada de decisão do seu negócio.
           </p>
-
+          </div>
         </div>
 
         <!-- Cases de uso -->
         <div class="row mt-3">
           <div class="col-12 p-3 m-3">
             <h1 class="card-title fs-2">Cases de uso</h1>
+            <p class="text-muted">
+              Veja como a ALTA pode ajudar a sua empresa empresa a resolver problemas reais!
+            </p>
           </div>
-          <div class="col-6">
+          <div class="col-lg-6 col-md-6 col-sm-12">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Empresa de transportes e Distribuição</h5>
@@ -461,7 +467,7 @@
               </div>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-lg-6 col-md-6 col-sm-12">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Posto de gasolina aumenta sua lucratividade</h5>
@@ -478,28 +484,20 @@
 
         <!-- Quem somos? -->
         <div class="row mt-3">
-          <div class="col-12 p-3 m-3">
+          <div class="col-lg-6 col-md-6 col-sm-12 p-3 m-3">
             <h1 class="card-title fs-2">Quem somos?</h1>
             <p class="text-muted">
-              A ALTA é uma empresa que oferece uma plataforma de análise de dados para postos de gasolina.
-              Com mais de 3M de linhas de preços, a ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
+              A ALTA é uma empresa de tecnologia e inovação que oferece a maior plataforma de análise do 
+              comportamento de preços do combustíveis no Brasil. São mais de 3M de preços registrados e uso 
+              ilimitado para empresas identificar oportunidades para crescer seu negócio.
               <ul>
-                <li>
-                  <strong>Mais de 15 anos de atuação no mercado de Tecnologia</strong>
-                  <p class="text-muted">
-                    A ALTA é uma empresa que oferece uma plataforma de análise de dados para postos de gasolina.
-                    Com mais de 3M de linhas de preços, a ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
-                  </p>
-                </li>
-                <li>
-                  <strong>Mais de 150 empresas atentidas na gestão de postos de gasolina</strong>
-                  <p class="text-muted">
-                    A ALTA é uma empresa que oferece uma plataforma de análise de dados para postos de gasolina.
-                    Com mais de 150 empresas atentidas na gestão de postos de gasolina, a ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
-                  </p>
-                </li>
+                <li>Mais de 15 anos de atuação no mercado de Tecnologia</li>
+                <li>Mais de 150 empresas atentidas na gestão de postos de gasolina</li>
               </ul>
             </p>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 p-3 m-3">
+            <img src="{% static 'assets/img/quem-somos.jpg' %}" class="img-fluid" alt="Quem somos?">
           </div>
         </div>
 
@@ -543,6 +541,8 @@
     </div>
   </section>
 
+  
+
     </div>
   </main><!-- End #main -->
 
@@ -560,6 +560,49 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
+
+  <!-- WhatsApp Fixed Button -->
+  <a href="https://wa.me/5511919598665" target="_blank" class="whatsapp-fixed">
+    <i class="bi bi-whatsapp"></i>
+  </a>
+
+  <style>
+    .whatsapp-fixed {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #25d366;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 30px;
+      line-height: 60px;
+      z-index: 1000;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+
+    .whatsapp-fixed:hover {
+      background-color: #128c7e;
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+
+    @media (max-width: 768px) {
+      .whatsapp-fixed {
+        width: 50px;
+        height: 50px;
+        font-size: 25px;
+        line-height: 50px;
+        bottom: 15px;
+        left: 15px;
+      }
+    }
+  </style>
 
 </body>
 
