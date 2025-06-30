@@ -47,17 +47,56 @@
 
           <div class="row justify-content-center p-2">
             <div class="col-lg-7 col-md-12 col-sm-12 mt-5">
-              <img class="img-fluid w-100 mt-5" src="{% static 'assets/img/register.jpg' %}">
-              
-              <h1 class="card-title fs-2 mb-3 mt-3">
-                Consulta ilimitada de mais de 3M de preços de combustíveis de postos em todo Brasil!
-              </h1>
-              
-              <p class="mt-3">Faça seu cadastro grátis e incorpora preços, indicadores e KPIs 
-                relacionados ao comportamento dos preços de combustíveis de postos em todo Brasil!
+
+              <!-- <div class="row justify-content-left">
+                <div class="col-lg-8 col-md-6 col-sm-12">
+                  <div class="bg-primary rounded-3 p-3 text-center">
+                    <div class="row">
+                      <div class="col-lg-3 col-md-3 col-sm-3">
+                        <div class="text-white">
+                          <div class="fs-8 small">Dias</div>
+                          <div class="fs-6 fw-bold" id="days"></div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-3">
+                        <div class="text-white">
+                          <div class="fs-8 small">Horas</div>
+                          <div class="fs-6 fw-bold" id="hours"></div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-3">
+                        <div class="text-white">
+                          <div class="fs-8 small">Minutos</div>
+                          <div class="fs-6 fw-bold" id="minutes"></div>
+                        </div>
+                      </div>
+                      <div class="col-lg-3 col-md-3 col-sm-3">
+                        <div class="text-white">
+                          <div class="fs-8 small">Segundos</div>
+                          <div class="fs-6 fw-bold" id="seconds"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+<!-- 
+              <div class="row justify-content-left mt-5">
+                <img class="img-fluid w-100 mt-1" src="{% static 'assets/img/register.jpg' %}">
+              </div>
+               -->
+              <div class="row justify-content-left mt-3 p-2">
+
+                <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i>
+                <h1 class="card-title fs-2 mb-1">
+                  Consulta ilimitada de mais de 3M de preços de combustíveis de postos em todo Brasil!
+                </h1>
+              </div>
+              <p>Faça seu cadastro grátis e incorpore preços, indicadores e KPIs 
+                relacionados ao comportamento dos preços de combustíveis de postos em todo Brasil.
               </p>
             
-              <ul class="list-unstyled mt-4">
+              <ul class="list-unstyled mt-4 d-none d-md-block">
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                 <strong>Análise de preço médio, máximo e mínimo para cada posto e cidade.</strong>
@@ -82,11 +121,11 @@
               </li>
             </ul>
             </div>            
-            <div class="col-lg-5 col-md-12 col-sm-12">
+            <div class="col-lg-5 col-md-12 col-sm-12 mt-3">
               <div class="d-flex justify-content-center py-4">
                 <a href="" class="logo d-flex align-items-center w-auto">
                   <img src="{% static 'assets/img/logo.png'%}" alt="Alta BI">
-                  <span class="d-none d-lg-block">ALTA</span>
+                  <span>ALTA</span>
                 </a>
               </div>
 
@@ -271,7 +310,7 @@
                       <span class="form-label">Nome</span>
                       <input type="text" name="first_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       oninput="this.value = this.value.replace(/[0-9]/g, '');"
-                      placeholder="João" required="required" maxlength="50"
+                      placeholder="" required="required" maxlength="50"
                       value="{{ form.first_name.value|default:'' }}">
                       <div class="input-group">
                         {{ form.first_name.errors }}
@@ -282,7 +321,7 @@
                       <span class="form-label">Sobrenome</span>
                       <input type="text" name="last_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
                       oninput="this.value = this.value.replace(/[0-9]/g, '');"
-                      placeholder="da Silva" required="required" maxlength="50"
+                      placeholder="" required="required" maxlength="50"
                       value="{{ form.last_name.value|default:'' }}">
                       <div class="input-group">
                         {{ form.last_name.errors }}
@@ -292,7 +331,7 @@
                     <div class="col-12 mt-3">
                       <span class="form-label">DDD + Telefone</span>
                       <input type="tel" name="telefone" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      placeholder="11919596478" required="required" maxlength="13"
+                      placeholder="" required="required" maxlength="13"
                       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
                       value="{{ form.telefone.value|default:'' }}">
                       <div class="input-group">
@@ -303,7 +342,7 @@
                     <div class="col-12 mt-3">
                       <span class="form-label">Empresa</span>
                       <input type="text" name="empresa" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
-                      placeholder="Posto da Silva" required="required" maxlength="50"
+                      placeholder="" required="required" maxlength="50"
                       value="{{ form.empresa.value|default:'' }}">
                       <div class="text-danger">
                         {{ form.empresa.errors }}
@@ -350,7 +389,7 @@
                     <div class="col-12 mt-3">
                       <span class="form-label">E-mail Corporativo</span>
                       <input type="email" name="username" class="form-control" aria-label="E-mail Corporativo" aria-describedby="basic-addon1" 
-                      placeholder="joao.silva@empresa.com.br" required="required" maxlength="50"
+                      placeholder="" required="required" maxlength="50"
                       value="{{ form.username.value|default:'' }}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
                       <div class="text-danger">
                         {{ form.username.errors }}
@@ -360,7 +399,7 @@
                     <div class="col-12 mt-3">
                       <span class="form-label">Digite a senha</span>
                       <input type="password" name="password1" class="form-control" aria-label="Username" 
-                      aria-describedby="basic-addon1" placeholder="Crie uma senha"
+                      aria-describedby="basic-addon1" placeholder=""
                       required="required" maxlength="10"
                       value="{{ form.password1.value|default:'' }}">
                       <div class="input-group">
@@ -371,7 +410,7 @@
                     <div class="col-12 mt-3">
                       <span class="form-label">Repita a senha</span>
                       <input type="password" name="password2" class="form-control" aria-label="Username" 
-                      aria-describedby="basic-addon1" placeholder="Repita a mesma senha"
+                      aria-describedby="basic-addon1" placeholder=""
                       required="required" maxlength="10"
                       value="{{ form.password2.value|default:'' }}">
                       <div class="input-group">
@@ -406,8 +445,9 @@
           <div class="col-12">
             <h1 class="card-title fs-2">Por que criar a sua conta?</h1>
             <p class="text-muted">
-              A ALTA é a maior plataforma de B.I. para postos de gasolina no Brasil.
-              Com mais de 3M de linhas de preços, você pode acessar os dados de forma ilimitada e personalizada.
+              A ALTA é a maior plataforma on-line para análise do comportamento dos preços do combustível no Brasil.
+              Com mais de 3M de preços registrados e histórico desde 2004, se cadastrando você tem acesso ilimitado 
+              aos dados e dashboards para uso em sua empresa. Saiba como usar:
             </p>
           </div>
 
@@ -428,17 +468,18 @@
 
           <div class="col-lg-4 col-md-4 col-sm-12 card p-3 m-1">
             <h1 class="card-title text-muted">Para analistas de mercado</h1>
-            <h1 class="card-title fs-2">Acompanhar a variação dos preços durante em períodos para</h1>
-            <p class="text-muted">refinar o processo de análise economica considerando 
+            <h1 class="card-title fs-2">Acompanhar a variação dos preços durante em períodos</h1>
+            <p class="text-muted">para refinar o processo de análise economica considerando 
               o impacto do preço do combustível na economia.</p>
           </div>
         </div>
 
         <div class="row mt-3 p-3 m-3 bg-primary rounded-3">
           <div class="col-lg-12 col-md-12 col-sm-12">
-          <p class="text-light text-center mt-3 fs-4 p-3">
-            Seja dono de posto ou empresário sofrendo com alto custo do combustível, 
-            trazer esses dados para a tomada de decisão do seu negócio.
+          <p class="text-light text-center mt-3 fs-3 p-3">
+            Traga dados da ALTA para tomar decisões estratégicas e melhorar a rentabilidade do seu negócio. 
+            <strong>Solicite uma demonstração.</strong>
+
           </p>
           </div>
         </div>
@@ -520,7 +561,7 @@
                     Temos cases comprovados de empresas que passaram a se planejar e encontrar o posto com 
                     melhor preço para abastecer a sua frota, reduzindo custos em até 20%.
                     </p>
-                    <a href="#" class="btn btn-outline-primary">Saiba mais</a>
+                    <!-- <a href="#" class="btn btn-outline-primary">Saiba mais</a> -->
                   </div>
                 </div>
               </div>
@@ -533,7 +574,7 @@
                       Temos cases comprovados de postos que passaram a se planejar e encontrar o posto com 
                       melhor preço para abastecer a sua frota, reduzindo custos em até 20%.
                     </p>
-                    <a href="#" class="btn btn-outline-primary">Saiba mais</a>
+                    <!-- <a href="#" class="btn btn-outline-primary">Saiba mais</a> -->
                   </div>
                 </div>
               </div>
@@ -607,6 +648,77 @@
       }
     }
   </style>
+
+<style>
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #4154f1 0%, #717ff5 100%);
+  }
+  
+  .countdown-timer {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 5px;
+    backdrop-filter: blur(10px);
+  }
+  
+  .countdown-item {
+    padding: 3px;
+  }
+  
+  .countdown-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 1px;
+  }
+  
+  .countdown-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 768px) {
+    .countdown-number {
+      font-size: 1.8rem;
+    }
+    .countdown-label {
+      font-size: 0.8rem;
+    }
+  }
+</style>
+
+<script>
+  // Define a data final (7 dias a partir de agora)
+  const countDownDate = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
+
+  // Atualiza o contador a cada 1 segundo
+  const x = setInterval(function() {
+    const now = new Date().getTime();
+    const distance = countDownDate - now;
+
+    // Cálculos de tempo
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // Exibe o resultado
+    document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
+    document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+    document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+    document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+
+    // Quando o contador terminar
+    if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("days").innerHTML = "00";
+      document.getElementById("hours").innerHTML = "00";
+      document.getElementById("minutes").innerHTML = "00";
+      document.getElementById("seconds").innerHTML = "00";
+    }
+  }, 1000);
+</script>
+
 
 </body>
 
