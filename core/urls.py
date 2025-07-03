@@ -21,6 +21,7 @@ from alta.views import (
     confirmacao_email_recuperacao,
     processar_pergunta,
     p_monitorar_concorrentes,
+    p_radar_precos,
 )
 
 urlpatterns = [
@@ -49,6 +50,7 @@ urlpatterns = [
     path('confirmacao-email-recuperacao/', confirmacao_email_recuperacao, name='confirmacao_email_recuperacao'),
     path('processar_pergunta/', processar_pergunta, name='processar_pergunta'),
     path('monitorar-concorrentes/', p_monitorar_concorrentes, name='p_monitorar_concorrentes'),
+    path('radar-precos/', p_radar_precos, name='p_radar_precos'),
 ]
 
 LOGIN_URL = 'login'

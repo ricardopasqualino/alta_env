@@ -8,7 +8,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = False 
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 
                  'localhost', 

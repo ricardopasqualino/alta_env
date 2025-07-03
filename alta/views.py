@@ -13,6 +13,9 @@ from .ia_utils import processar_pergunta_ia, vetorizar_texto
 from django.contrib.auth import authenticate, login
 from django.db.models.functions import ExtractMonth, ExtractYear
 from django.db.models import F, ExpressionWrapper, DurationField
+import requests
+import os
+
 
 from .filters import MainFilter
 
@@ -438,6 +441,10 @@ def p_profile(request):
 
 
 @login_required
+def p_radar_precos(request):
+    return render(request, 'p_radar_precos.html')
+
+@login_required
 def login_page(request):
     if request.user.is_authenticated:
         return redirect('index')
@@ -489,7 +496,7 @@ def new_register(request):
             email_value = form.cleaned_data.get('username')
             user.username = email_value
             user.email = email_value  # Garante que o email seja salvo corretamente
-            
+
             # Salva o usuário e cria o perfil automaticamente (via form.save())
             user = form.save()
             
@@ -497,6 +504,29 @@ def new_register(request):
             if hasattr(user, 'profile'):
                 user.profile.empresa = form.cleaned_data.get('empresa')
                 user.profile.save()
+
+            # envia os dados para o webhook
+            try:
+                webhook_url = f"https://{os.getenv('RENDER_EXTERNAL_URL')}/webhook-test/79725962-e3a4-491e-8c56-852ee30e8f47"
+                
+                # Preparar dados para enviar
+                webhook_data = {
+                    'nome': user.first_name,
+                    'sobrenome': user.last_name,
+                    'email': user.email,
+                    'telefone': getattr(user.profile, 'telefone', '') if hasattr(user, 'profile') else ''
+                }
+                
+                # Enviar requisição POST para o webhook
+                response = requests.post(webhook_url, json=webhook_data, timeout=10)
+                
+                if response.status_code == 200:
+                    print(f"Webhook enviado com sucesso para {webhook_url}")
+                else:
+                    print(f"Erro ao enviar webhook. Status: {response.status_code}")
+                    
+            except Exception as e:
+                print(f"Erro ao enviar webhook: {str(e)}")
             
             messages.success(request, 'Conta criada com sucesso! Você já pode fazer login.')
             return redirect('login')
@@ -513,8 +543,11 @@ def new_register(request):
                     for error in errors:
                         messages.error(request, f'Erro no campo {field}: {error}')
 
-    context = {'form': form}
-    return render(request, 'p_register.html', context)
+    
+
+    
+    data = {'form': form}
+    return render(request, 'p_register.html', data)
 
 
 def password_reset(request):
