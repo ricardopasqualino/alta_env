@@ -155,3 +155,24 @@ SESSION_COOKIE_AGE = 7200  # 2 horas em segundos
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 TIMEOUT = 300  # 5 minutos
 
+
+# Configurações de Email
+# Em desenvolvimento, usa console backend (não envia email real)
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    print("📧 Modo de desenvolvimento: emails serão exibidos no console")
+else:
+    # Em produção, usa SMTP
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'ricardo@alta.bi')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '@@ro751pomz')
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'ricardo@alta.bi')
+
+# Configurações de Webhook
+if DEBUG:
+    RENDER_EXTERNAL_URL = 'localhost:8000'  # Para desenvolvimento local
+else:
+    RENDER_EXTERNAL_URL = os.getenv('RENDER_EXTERNAL_URL', 'alta-env.onrender.com')

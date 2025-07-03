@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect
-from django.db.models import Sum, Avg, Count, Max, Min, Q
+from django.db.models import Sum, Avg, Count, Max, Min, Q, F, ExpressionWrapper, DurationField
 from django.core.cache import cache
 from django.contrib import messages
 import json
@@ -12,9 +12,10 @@ from .openai_utils import generate_price_embedding, calculate_similarity
 from .ia_utils import processar_pergunta_ia, vetorizar_texto
 from django.contrib.auth import authenticate, login
 from django.db.models.functions import ExtractMonth, ExtractYear
-from django.db.models import F, ExpressionWrapper, DurationField
 import requests
 import os
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 from .filters import MainFilter
@@ -497,36 +498,49 @@ def new_register(request):
             user.username = email_value
             user.email = email_value  # Garante que o email seja salvo corretamente
 
-            # Salva o usuário e cria o perfil automaticamente (via form.save())
+            # Enviar email de notificação (com tratamento de erro)
+            try:
+                send_mail(
+                    'Novo usuário cadastrado!', 
+                    f'Um novo usuário foi cadastrado:\n\nNome: {form.cleaned_data.get("first_name")}\nSobrenome: {form.cleaned_data.get("last_name")}\nEmail: {form.cleaned_data.get("username")}\nEmpresa: {form.cleaned_data.get("empresa")}', 
+                    settings.DEFAULT_FROM_EMAIL, 
+                    ['ricardo@alta.bi'],
+                    fail_silently=True,  # Não quebra o cadastro se email falhar
+                )
+                print("✅ Email de notificação enviado com sucesso")
+            except Exception as e:
+                print(f"⚠️ Erro ao enviar email: {str(e)}")
+                print("📧 O cadastro foi realizado, mas o email de notificação falhou")
+            
             user = form.save()
             
             # Atualiza o perfil com os dados adicionais se necessário
             if hasattr(user, 'profile'):
                 user.profile.empresa = form.cleaned_data.get('empresa')
                 user.profile.save()
-
-            # envia os dados para o webhook
+            
+            # Enviar webhook (opcional - não quebra o cadastro se falhar)
             try:
-                webhook_url = f"https://{os.getenv('RENDER_EXTERNAL_URL')}/webhook-test/79725962-e3a4-491e-8c56-852ee30e8f47"
-                
-                # Preparar dados para enviar
+                # Usar HTTP para desenvolvimento local, HTTPS para produção
+                protocol = 'http' if settings.DEBUG else 'https'
+                webhook_url = f"{protocol}://{settings.RENDER_EXTERNAL_URL}/webhook-test/79725962-e3a4-491e-8c56-852ee30e8f47/"
                 webhook_data = {
                     'nome': user.first_name,
                     'sobrenome': user.last_name,
                     'email': user.email,
-                    'telefone': getattr(user.profile, 'telefone', '') if hasattr(user, 'profile') else ''
+                    'empresa': getattr(user.profile, 'empresa', ''),
+                    'data_cadastro': user.date_joined.strftime('%d/%m/%Y %H:%M:%S')
                 }
                 
-                # Enviar requisição POST para o webhook
-                response = requests.post(webhook_url, json=webhook_data, timeout=10)
-                
+                response = requests.post(webhook_url, json=webhook_data, timeout=5)
                 if response.status_code == 200:
-                    print(f"Webhook enviado com sucesso para {webhook_url}")
+                    print("✅ Webhook enviado com sucesso")
                 else:
-                    print(f"Erro ao enviar webhook. Status: {response.status_code}")
+                    print(f"⚠️ Webhook retornou status {response.status_code}")
                     
             except Exception as e:
-                print(f"Erro ao enviar webhook: {str(e)}")
+                print(f"⚠️ Erro ao enviar webhook: {str(e)}")
+                print("🔗 O cadastro foi realizado, mas o webhook falhou")
             
             messages.success(request, 'Conta criada com sucesso! Você já pode fazer login.')
             return redirect('login')
@@ -543,9 +557,6 @@ def new_register(request):
                     for error in errors:
                         messages.error(request, f'Erro no campo {field}: {error}')
 
-    
-
-    
     data = {'form': form}
     return render(request, 'p_register.html', data)
 
@@ -710,3 +721,49 @@ def processar_pergunta(request):
     except Exception as e:
         print(f"Erro ao processar pergunta: {str(e)}")
         return JsonResponse({'erro': str(e)}, status=500)
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+@require_http_methods(["POST", "GET"])
+def webhook_test(request, webhook_id):
+    """
+    Endpoint para receber webhooks de teste
+    """
+    try:
+        # Log dos dados recebidos
+        print(f"Webhook recebido - ID: {webhook_id}")
+        print(f"Método: {request.method}")
+        
+        if request.method == "POST":
+            # Para requisições POST, tentar obter dados JSON
+            try:
+                data = json.loads(request.body)
+                print(f"Dados recebidos: {data}")
+            except json.JSONDecodeError:
+                print("Dados não são JSON válido")
+                data = {}
+        else:
+            # Para requisições GET
+            data = dict(request.GET)
+            print(f"Parâmetros GET: {data}")
+        
+        # Log dos headers
+        print(f"Headers: {dict(request.headers)}")
+        
+        # Retornar sucesso
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Webhook recebido com sucesso',
+            'webhook_id': webhook_id,
+            'data_received': data,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        print(f"Erro ao processar webhook: {str(e)}")
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)

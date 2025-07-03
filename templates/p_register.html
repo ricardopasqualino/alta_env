@@ -89,7 +89,7 @@
 
                 <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i>
                 <h1 class="card-title fs-2 mb-1">
-                  Conheça a ALTA: App on-line com mais de 3M de preços de combustíveis de postos em todo Brasil!
+                  Conheça a ALTA: <br> App on-line com mais de 3M de preços de combustíveis de postos em todo Brasil!
                   <!-- Reduza em até 15% os custos com combustível. -->
                 </h1>
               </div>
@@ -553,17 +553,18 @@
         <!-- Benefícios -->
         <div class="row mt-3">
           <div class="col-12 p-3 m-3">
-            <h1 class="card-title fs-2">Benefícios</h1>
+            <h1 class="card-title fs-2">Principais funcionalidades e recursos</h1>
             <p class="text-muted">Conheça na prática os benefícios dos produtos ALTA para a sua empresa.</p>
+
             <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="card">
                   <div class="card-body">
                     <!-- <img src="{% static 'assets/img/beneficios/acesso-ao-comportamento-dos-precos.png' %}" class="img-fluid" alt="Acesso ao comportamento dos preços"> -->
-                    <h5 class="card-title">Redução de custos com abastecimento da frota</h5>
+                    <h5 class="card-title">Filtro avançado que permite criar visões detalhadas</h5>
                     <p class="text-muted">
-                    Temos cases comprovados de empresas que passaram a se planejar e encontrar o posto com 
-                    melhor preço para abastecer a sua frota, reduzindo custos em até 20%.
+                    Acesso a mais de 3M de dados de preços de combustíveis de postos em todo Brasil utilizando filtros para selecionar
+                    apenas dados de uma cidade, um posto de sua preferência, um produto, uma bandeira, etc.
                     </p>
                     <!-- <a href="#" class="btn btn-outline-primary">Saiba mais</a> -->
                   </div>
@@ -573,16 +574,45 @@
                 <div class="card">
                   <div class="card-body">
                     <!-- <img src="{% static 'assets/img/beneficios/acesso-ao-comportamento-dos-precos.png' %}" class="img-fluid" alt="Acesso ao comportamento dos preços"> -->
-                    <h5 class="card-title">Aumento na lucratividade de postos</h5>
+                    <h5 class="card-title">Acompanhamento do preço médio, mínimo e máximo por cidade</h5>
                     <p class="text-muted">
-                      Temos cases comprovados de postos que passaram a se planejar e encontrar o posto com 
-                      melhor preço para abastecer a sua frota, reduzindo custos em até 20%.
+                      Acompanhe o preço médio, mínimo e máximo de cada produto por cidade.
                     </p>
                     <!-- <a href="#" class="btn btn-outline-primary">Saiba mais</a> -->
                   </div>
                 </div>
               </div>
             </div>
+
+            <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                  <div class="card-body">
+                    <!-- <img src="{% static 'assets/img/beneficios/acesso-ao-comportamento-dos-precos.png' %}" class="img-fluid" alt="Acesso ao comportamento dos preços"> -->
+                    <h5 class="card-title">Lista de preços com acesso a todos os preços</h5>
+                    <p class="text-muted">
+                    Acesso a todos os preços praticados por posto em sua região, permitindo criar uma lista de preços 
+                    para negociação com os postos.
+                    </p>
+                    <!-- <a href="#" class="btn btn-outline-primary">Saiba mais</a> -->
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                  <div class="card-body">
+                    <!-- <img src="{% static 'assets/img/beneficios/acesso-ao-comportamento-dos-precos.png' %}" class="img-fluid" alt="Acesso ao comportamento dos preços"> -->
+                    <h5 class="card-title">Painel detalhado para acompanhar o comportamento dos preços por produto</h5>
+                    <p class="text-muted">
+                      Acompanhe o comportamento dos preços por produto, bandeira, cidade, etc.
+                    </p>
+                    <!-- <a href="#" class="btn btn-outline-primary">Saiba mais</a> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
           </div>
         </div>
 
@@ -594,13 +624,10 @@
             <img src="{% static 'assets/img/v_monitor_product.gif' %}" class="img-fluid" alt="Monitorar Produto">
           </div>
         </div>
-
       </div>
     </div>
+    
   </section>
-
-  
-
     </div>
   </main><!-- End #main -->
 
@@ -624,116 +651,125 @@
     <i class="bi bi-whatsapp"></i>
   </a>
 
-  <style>
-    .whatsapp-fixed {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background-color: #25d366;
-      color: white;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      text-align: center;
-      font-size: 30px;
-      line-height: 60px;
-      z-index: 1000;
-      text-decoration: none;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-    }
+</body>
 
-    .whatsapp-fixed:hover {
-      background-color: #128c7e;
-      color: white;
-      transform: scale(1.1);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-    }
+  <footer class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>ALTA</span></strong>
+    </div>
+    <div class="credits">
+      Todos os direitos reservados..
+    </div>
+  </footer>
 
-    @media (max-width: 768px) {
-      .whatsapp-fixed {
-        width: 50px;
-        height: 50px;
-        font-size: 25px;
-        line-height: 50px;
-        bottom: 15px;
-        left: 15px;
-      }
-    }
-  </style>
+</html>
 
 <style>
-  .bg-gradient-primary {
-    background: linear-gradient(135deg, #4154f1 0%, #717ff5 100%);
+  .whatsapp-fixed {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #25d366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 30px;
+    line-height: 60px;
+    z-index: 1000;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
   }
-  
-  .countdown-timer {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 5px;
-    backdrop-filter: blur(10px);
+
+  .whatsapp-fixed:hover {
+    background-color: #128c7e;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
   }
-  
-  .countdown-item {
-    padding: 3px;
-  }
-  
-  .countdown-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    line-height: 1;
-    margin-bottom: 1px;
-  }
-  
-  .countdown-label {
-    font-size: 0.9rem;
-    opacity: 0.9;
-  }
-  
+
   @media (max-width: 768px) {
-    .countdown-number {
-      font-size: 1.8rem;
-    }
-    .countdown-label {
-      font-size: 0.8rem;
+    .whatsapp-fixed {
+      width: 50px;
+      height: 50px;
+      font-size: 25px;
+      line-height: 50px;
+      bottom: 15px;
+      left: 15px;
     }
   }
 </style>
 
+<style>
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4154f1 0%, #717ff5 100%);
+}
+
+.countdown-timer {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 5px;
+  backdrop-filter: blur(10px);
+}
+
+.countdown-item {
+  padding: 3px;
+}
+
+.countdown-number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 1px;
+}
+
+.countdown-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .countdown-number {
+    font-size: 1.8rem;
+  }
+  .countdown-label {
+    font-size: 0.8rem;
+  }
+}
+</style>
+
 <script>
-  // Define a data final (7 dias a partir de agora)
-  const countDownDate = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
+// Define a data final (7 dias a partir de agora)
+const countDownDate = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
 
-  // Atualiza o contador a cada 1 segundo
-  const x = setInterval(function() {
-    const now = new Date().getTime();
-    const distance = countDownDate - now;
+// Atualiza o contador a cada 1 segundo
+const x = setInterval(function() {
+  const now = new Date().getTime();
+  const distance = countDownDate - now;
 
-    // Cálculos de tempo
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  // Cálculos de tempo
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Exibe o resultado
-    document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
-    document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
-    document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
-    document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+  // Exibe o resultado
+  document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
+  document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+  document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+  document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
 
-    // Quando o contador terminar
-    if (distance < 0) {
-      clearInterval(x);
-      document.getElementById("days").innerHTML = "00";
-      document.getElementById("hours").innerHTML = "00";
-      document.getElementById("minutes").innerHTML = "00";
-      document.getElementById("seconds").innerHTML = "00";
-    }
-  }, 1000);
+  // Quando o contador terminar
+  if (distance < 0) {
+    clearInterval(x);
+    document.getElementById("days").innerHTML = "00";
+    document.getElementById("hours").innerHTML = "00";
+    document.getElementById("minutes").innerHTML = "00";
+    document.getElementById("seconds").innerHTML = "00";
+  }
+}, 1000);
 </script>
 
-
-</body>
-
-</html>
 {% endblock %}

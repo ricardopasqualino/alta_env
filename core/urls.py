@@ -22,6 +22,7 @@ from alta.views import (
     processar_pergunta,
     p_monitorar_concorrentes,
     p_radar_precos,
+    webhook_test,
 )
 
 urlpatterns = [
@@ -51,6 +52,7 @@ urlpatterns = [
     path('processar_pergunta/', processar_pergunta, name='processar_pergunta'),
     path('monitorar-concorrentes/', p_monitorar_concorrentes, name='p_monitorar_concorrentes'),
     path('radar-precos/', p_radar_precos, name='p_radar_precos'),
+    path('webhook-test/<str:webhook_id>/', webhook_test, name='webhook_test'),
 ]
 
 LOGIN_URL = 'login'
