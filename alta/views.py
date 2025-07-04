@@ -523,7 +523,22 @@ def new_register(request):
             try:
                 # Usar HTTP para desenvolvimento local, HTTPS para produção
                 protocol = 'http' if settings.DEBUG else 'https'
-                webhook_url = f"{protocol}://{settings.RENDER_EXTERNAL_URL}/webhook-test/79725962-e3a4-491e-8c56-852ee30e8f47/"
+                
+                # Limpar a URL para evitar duplicação de protocolo
+                clean_url = settings.RENDER_EXTERNAL_URL
+                if clean_url.startswith('https://'):
+                    clean_url = clean_url.replace('https://', '')
+                elif clean_url.startswith('http://'):
+                    clean_url = clean_url.replace('http://', '')
+                
+                webhook_url = f"{protocol}://{clean_url}/webhook-test/79725962-e3a4-491e-8c56-852ee30e8f47/"
+                
+                if settings.DEBUG:
+                    print(f"🔗 DEBUG: Protocolo = {protocol}")
+                    print(f"🔗 DEBUG: RENDER_EXTERNAL_URL = {settings.RENDER_EXTERNAL_URL}")
+                    print(f"🔗 DEBUG: URL limpa = {clean_url}")
+                    print(f"🔗 DEBUG: URL completa = {webhook_url}")
+                
                 webhook_data = {
                     'nome': user.first_name,
                     'sobrenome': user.last_name,

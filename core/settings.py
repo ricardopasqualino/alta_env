@@ -8,7 +8,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False 
+DEBUG = False  # Desativado para produção 
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 
                  'localhost', 
@@ -176,3 +176,8 @@ if DEBUG:
     RENDER_EXTERNAL_URL = 'localhost:8000'  # Para desenvolvimento local
 else:
     RENDER_EXTERNAL_URL = os.getenv('RENDER_EXTERNAL_URL', 'alta-env.onrender.com')
+    # Se a URL já contém https://, remover para evitar duplicação
+    if RENDER_EXTERNAL_URL.startswith('https://'):
+        RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL.replace('https://', '')
+    elif RENDER_EXTERNAL_URL.startswith('http://'):
+        RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL.replace('http://', '')
