@@ -63,15 +63,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Bando de dados Render
+# Configuração do Banco de Dados usando variáveis de ambiente
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'alta_db_prod_2',
-        'USER': 'alta_db_prod_2_user',
-        'PASSWORD': '3rp700XExUxgrfqCIPgvChVMOwWUyQUB',
-        'HOST': 'dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com',
-        'PORT': '5432',
+        'ENGINE': config('DB_ENGINE'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -79,12 +79,12 @@ DATABASES = {
 # Banco de dados Local
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'altalocal',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Pzq@515027',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'ENGINE': config('DB_ENGINE_2'),
+#         'NAME': config('DB_NAME_2'),
+#         'USER': config('DB_USER_2'),
+#         'PASSWORD': config('DB_PASSWORD_2'),
+#         'HOST': config('DB_HOST_2'),
+#         'PORT': config('DB_PORT_2'),
 #     }
 # }
 
@@ -167,9 +167,9 @@ else:
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'ricardo.pasqualino@gmail.com')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'ricardo.pasqualino@gmail.com')
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
     
     print("📧 Modo de produção: usando SMTP Gmail")
     print(f"📧 EMAIL_HOST_USER: {EMAIL_HOST_USER}")

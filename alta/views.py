@@ -505,15 +505,15 @@ def new_register(request):
                     f'''Novo lead/usuário cadastrado em app.alta.bi!
 
                     Dados do cliente:
-                    - Nome: {form.cleaned_data.get('first_name', 'Não informado')}
-                    - Sobrenome: {form.cleaned_data.get('last_name', 'Não informado')}
-                    - Cargo: {form.cleaned_data.get('cargo', 'Não informado')}
-                    - Telefone: {form.cleaned_data.get('telefone', 'Não informado')}
-                    - Email: {form.cleaned_data.get('username', 'Não informado')}
-                    - Empresa: {form.cleaned_data.get('empresa', 'Não informada')}
-                    - Cidade: {form.cleaned_data.get('cidade', 'Não informada')}
-                    - Estado: {form.cleaned_data.get('estado', 'Não informado')}
-                    - Data de cadastro: {user.date_joined.strftime('%d/%m/%Y às %H:%M')}
+                    Nome: {form.cleaned_data.get('first_name', 'Não informado')}
+                    Sobrenome: {form.cleaned_data.get('last_name', 'Não informado')}
+                    Cargo: {form.cleaned_data.get('cargo', 'Não informado')}
+                    Telefone: {form.cleaned_data.get('telefone', 'Não informado')}
+                    Email: {form.cleaned_data.get('username', 'Não informado')}
+                    Empresa: {form.cleaned_data.get('empresa', 'Não informada')}
+                    Cidade: {form.cleaned_data.get('cidade', 'Não informada')}
+                    Estado: {form.cleaned_data.get('estado', 'Não informado')}
+                    Data de cadastro: {user.date_joined.strftime('%d/%m/%Y às %H:%M')}
 
                     Este é um email automático do sistema Alta.''',
                     settings.DEFAULT_FROM_EMAIL,
