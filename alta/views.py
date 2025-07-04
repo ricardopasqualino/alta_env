@@ -502,7 +502,20 @@ def new_register(request):
             try:
                 send_mail(
                     'Novo usuário cadastrado!',
-                    'mensagem...',
+                    f'''Novo usuário cadastrado no sistema!
+
+                    Dados do usuário:
+                    - Nome: {form.cleaned_data.get('first_name', 'Não informado')}
+                    - Sobrenome: {form.cleaned_data.get('last_name', 'Não informado')}
+                    - Telefone: {form.cleaned_data.get('telefone', 'Não informado')}
+                    - Email: {form.cleaned_data.get('username', 'Não informado')}
+                    - CNPJ: {form.cleaned_data.get('cnpj', 'Não informado')}
+                    - Empresa: {form.cleaned_data.get('empresa', 'Não informada')}
+                    - Cidade: {form.cleaned_data.get('cidade', 'Não informada')}
+                    - Estado: {form.cleaned_data.get('estado', 'Não informado')}
+                    - Data de cadastro: {user.date_joined.strftime('%d/%m/%Y às %H:%M')}
+
+                    Este é um email automático do sistema Alta.''',
                     settings.DEFAULT_FROM_EMAIL,
                     ['ricardo.pasqualino@gmail.com'],
                     fail_silently=False,
