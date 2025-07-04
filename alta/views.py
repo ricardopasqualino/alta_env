@@ -511,6 +511,23 @@ def new_register(request):
             except Exception as e:
                 print(f"⚠️ Erro ao enviar email: {str(e)}")
                 print("📧 O cadastro foi realizado, mas o email de notificação falhou")
+                
+                # Análise detalhada do erro
+                if "535" in str(e):
+                    print("🔍 Erro 535: Problema de autenticação do Gmail")
+                    print("   - Verifique se a verificação em duas etapas está ativada")
+                    print("   - Gere uma nova senha de app em: https://myaccount.google.com/apppasswords")
+                    print("   - Configure EMAIL_HOST_PASSWORD no Render com a senha de app")
+                elif "587" in str(e):
+                    print("🔍 Erro de conexão SMTP na porta 587")
+                elif "timeout" in str(e).lower():
+                    print("🔍 Timeout na conexão SMTP")
+                elif "authentication" in str(e).lower():
+                    print("🔍 Erro de autenticação SMTP")
+                    print("   - Verifique EMAIL_HOST_USER e EMAIL_HOST_PASSWORD no Render")
+                else:
+                    print(f"🔍 Outro tipo de erro: {type(e).__name__}")
+                    print(f"🔍 Mensagem completa: {str(e)}")
             
             user = form.save()
             

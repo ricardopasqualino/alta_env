@@ -168,8 +168,17 @@ else:
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'ricardo@alta.bi')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '@@ro751pomz')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
     DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'ricardo@alta.bi')
+    
+    # Verificar se as configurações de email estão corretas
+    if not EMAIL_HOST_PASSWORD:
+        print("⚠️ ATENÇÃO: EMAIL_HOST_PASSWORD não configurada!")
+        print("   Configure a variável de ambiente EMAIL_HOST_PASSWORD no Render")
+        print("   Use a senha de app do Gmail (não a senha normal)")
+    if not EMAIL_HOST_USER:
+        print("⚠️ ATENÇÃO: EMAIL_HOST_USER não configurada!")
+        print("   Configure a variável de ambiente EMAIL_HOST_USER no Render")
 
 # Configurações de Webhook
 if DEBUG:
