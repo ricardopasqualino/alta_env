@@ -167,9 +167,14 @@ else:
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'ricardo@alta.bi')
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'ricardo.pasqualino@gmail.com')
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'ricardo@alta.bi')
+    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'ricardo.pasqualino@gmail.com')
+    
+    print("📧 Modo de produção: usando SMTP Gmail")
+    print(f"📧 EMAIL_HOST_USER: {EMAIL_HOST_USER}")
+    print(f"📧 EMAIL_HOST_PASSWORD configurada: {'Sim' if EMAIL_HOST_PASSWORD else 'Não'}")
+    print(f"📧 DEFAULT_FROM_EMAIL: {DEFAULT_FROM_EMAIL}")
     
     # Verificar se as configurações de email estão corretas
     if not EMAIL_HOST_PASSWORD:
@@ -179,6 +184,8 @@ else:
     if not EMAIL_HOST_USER:
         print("⚠️ ATENÇÃO: EMAIL_HOST_USER não configurada!")
         print("   Configure a variável de ambiente EMAIL_HOST_USER no Render")
+    else:
+        print("✅ Configurações de email carregadas com sucesso")
 
 # Configurações de Webhook
 if DEBUG:

@@ -501,11 +501,11 @@ def new_register(request):
             # Enviar email de notificação (com tratamento de erro)
             try:
                 send_mail(
-                    'Novo usuário cadastrado!', 
-                    f'Um novo usuário foi cadastrado:\n\nNome: {form.cleaned_data.get("first_name")}\nSobrenome: {form.cleaned_data.get("last_name")}\nEmail: {form.cleaned_data.get("username")}\nEmpresa: {form.cleaned_data.get("empresa")}', 
-                    settings.DEFAULT_FROM_EMAIL, 
-                    ['ricardo@alta.bi'],
-                    fail_silently=True,  # Não quebra o cadastro se email falhar
+                    'Novo usuário cadastrado!',
+                    'mensagem...',
+                    settings.DEFAULT_FROM_EMAIL,
+                    ['ricardo.pasqualino@gmail.com'],
+                    fail_silently=False,
                 )
                 print("✅ Email de notificação enviado com sucesso")
             except Exception as e:
