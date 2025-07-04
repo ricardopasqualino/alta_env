@@ -501,15 +501,15 @@ def new_register(request):
             # Enviar email de notificação (com tratamento de erro)
             try:
                 send_mail(
-                    'Novo usuário cadastrado!',
-                    f'''Novo usuário cadastrado no sistema!
+                    f'O cliente {form.cleaned_data.get("first_name", "Não informado")} se cadastrou!',
+                    f'''Novo lead/usuário cadastrado em app.alta.bi!
 
-                    Dados do usuário:
+                    Dados do cliente:
                     - Nome: {form.cleaned_data.get('first_name', 'Não informado')}
                     - Sobrenome: {form.cleaned_data.get('last_name', 'Não informado')}
+                    - Cargo: {form.cleaned_data.get('cargo', 'Não informado')}
                     - Telefone: {form.cleaned_data.get('telefone', 'Não informado')}
                     - Email: {form.cleaned_data.get('username', 'Não informado')}
-                    - CNPJ: {form.cleaned_data.get('cnpj', 'Não informado')}
                     - Empresa: {form.cleaned_data.get('empresa', 'Não informada')}
                     - Cidade: {form.cleaned_data.get('cidade', 'Não informada')}
                     - Estado: {form.cleaned_data.get('estado', 'Não informado')}
@@ -518,6 +518,7 @@ def new_register(request):
                     Este é um email automático do sistema Alta.''',
                     settings.DEFAULT_FROM_EMAIL,
                     ['ricardo.pasqualino@gmail.com'],
+                    ['ricardo@alta.bi'],
                     fail_silently=False,
                 )
                 print("✅ Email de notificação enviado com sucesso")

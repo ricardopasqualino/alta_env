@@ -65,7 +65,7 @@ class AddPrice(models.Model):
     unidade_medida = models.CharField(max_length=50, null=True, blank=True, default=None, verbose_name='Unidade de medida')
     preco_revenda = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Preço de venda', db_index=True)
     preco_compra = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name='Preço de compra', db_index=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True, blank=True, verbose_name='Usuário', db_index=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, default=None, null=True, blank=True, verbose_name='Usuário', db_index=True)
 
     class Meta:
         indexes = [
