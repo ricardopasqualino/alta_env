@@ -517,8 +517,7 @@ def new_register(request):
 
                     Este é um email automático do sistema Alta.''',
                     settings.DEFAULT_FROM_EMAIL,
-                    ['ricardo.pasqualino@gmail.com'],
-                    ['ricardo@alta.bi'],
+                    ['ricardo.pasqualino@gmail.com', 'ricardo@alta.bi', 'joao@alta.bi'],
                     fail_silently=False,
                 )
                 print("✅ Email de notificação enviado com sucesso")
