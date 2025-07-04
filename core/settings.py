@@ -4,8 +4,8 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'default-secret-key')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '') 
+SECRET_KEY = config('DJANGO_SECRET_KEY', default='default-secret-key')
+OPENAI_API_KEY = config('OPENAI_API_KEY', default='') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False  # Desativado para produção 
@@ -66,27 +66,17 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Configuração do Banco de Dados usando variáveis de ambiente
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'),
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('DB_NAME', default='alta_db_prod_2'),
+        'USER': config('DB_USER', default='alta_db_prod_2_user'),
+        'PASSWORD': config('DB_PASSWORD', default='3rp700XExUxgrfqCIPgvChVMOwWUyQUB'),
+        'HOST': config('DB_HOST', default='dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
 
-# Banco de dados Local
-# DATABASES = {
-#     'default': {
-#         'ENGINE': config('DB_ENGINE_2'),
-#         'NAME': config('DB_NAME_2'),
-#         'USER': config('DB_USER_2'),
-#         'PASSWORD': config('DB_PASSWORD_2'),
-#         'HOST': config('DB_HOST_2'),
-#         'PORT': config('DB_PORT_2'),
-#     }
-# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -167,9 +157,9 @@ else:
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-    DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='ricardo.pasqualino@gmail.com')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ricardo.pasqualino@gmail.com')
     
     print("📧 Modo de produção: usando SMTP Gmail")
     print(f"📧 EMAIL_HOST_USER: {EMAIL_HOST_USER}")
@@ -191,7 +181,7 @@ else:
 if DEBUG:
     RENDER_EXTERNAL_URL = 'localhost:8000'  # Para desenvolvimento local
 else:
-    RENDER_EXTERNAL_URL = os.getenv('RENDER_EXTERNAL_URL', 'alta-env.onrender.com')
+    RENDER_EXTERNAL_URL = config('RENDER_EXTERNAL_URL', default='alta-env.onrender.com')
     # Se a URL já contém https://, remover para evitar duplicação
     if RENDER_EXTERNAL_URL.startswith('https://'):
         RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL.replace('https://', '')
