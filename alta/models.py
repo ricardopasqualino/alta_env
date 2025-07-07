@@ -100,7 +100,8 @@ class PriceEmbedding(models.Model):
 
 class FAQ(models.Model):
     title = models.CharField(default=None, null=False, blank=False, max_length=100, verbose_name='Título')
-    description = models.CharField(default=None, null=False, blank=False, max_length=500,verbose_name='Descrição')
+    description = models.TextField(default=None, null=False, blank=False, verbose_name='Descrição')
+
 
     def __str__(self):
         return self.title

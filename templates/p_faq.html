@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block main %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Perguntas Frequentes</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Perguntas Frequentes</li>
+          </ol>
+        </nav>
+      </div><!-- End Page Title -->
+
+        <div class="row mt-3">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="input-group mt-3">
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="searchInput" 
+                                   placeholder="Pesquise por perguntas ou termos..."
+                                   autocomplete="off">
+                            <button class="btn btn-outline-secondary" type="button" id="clearBtn" style="display: none;">
+                                <i class="bi bi-x"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const searchInput = document.getElementById('searchInput');
+                const searchBtn = document.getElementById('searchBtn');
+                const accordionItems = document.querySelectorAll('.accordion-item');
+                
+                function filterFAQs() {
+                    const searchTerm = searchInput.value.toLowerCase().trim();
+                    
+                    accordionItems.forEach(item => {
+                        const title = item.querySelector('.accordion-button').textContent.toLowerCase();
+                        const description = item.querySelector('.accordion-body').textContent.toLowerCase();
+                        
+                        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                            item.style.display = 'block';
+                            // Destacar o termo pesquisado
+                            if (searchTerm) {
+                                highlightText(item, searchTerm);
+                            } else {
+                                removeHighlight(item);
+                            }
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    // Mostrar mensagem se nenhum resultado for encontrado
+                    const visibleItems = document.querySelectorAll('.accordion-item[style="display: block;"]');
+                    const noResultsMsg = document.getElementById('noResultsMsg');
+                    
+                    if (visibleItems.length === 0 && searchTerm) {
+                        if (!noResultsMsg) {
+                            const msg = document.createElement('div');
+                            msg.id = 'noResultsMsg';
+                            msg.className = 'alert alert-info text-center mt-3';
+                            msg.innerHTML = '<i class="bi bi-info-circle"></i> Nenhuma pergunta encontrada para: "' + searchTerm + '"';
+                            document.querySelector('#faqAccordion').appendChild(msg);
+                        }
+                    } else if (noResultsMsg) {
+                        noResultsMsg.remove();
+                    }
+                }
+                
+                function highlightText(element, searchTerm) {
+                    const title = element.querySelector('.accordion-button');
+                    const description = element.querySelector('.accordion-body');
+                    
+                    title.innerHTML = title.textContent.replace(
+                        new RegExp(searchTerm, 'gi'),
+                        match => `<mark class="bg-warning">${match}</mark>`
+                    );
+                    
+                    description.innerHTML = description.textContent.replace(
+                        new RegExp(searchTerm, 'gi'),
+                        match => `<mark class="bg-warning">${match}</mark>`
+                    );
+                }
+                
+                function removeHighlight(element) {
+                    const title = element.querySelector('.accordion-button');
+                    const description = element.querySelector('.accordion-body');
+                    
+                    title.innerHTML = title.textContent;
+                    description.innerHTML = description.textContent;
+                }
+                
+                // Event listeners
+                searchInput.addEventListener('input', filterFAQs);
+                searchBtn.addEventListener('click', filterFAQs);
+                
+                // Pesquisar ao pressionar Enter
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        filterFAQs();
+                    }
+                });
+                
+                // Limpar pesquisa ao clicar no X do input (se suportado)
+                searchInput.addEventListener('search', function() {
+                    if (this.value === '') {
+                        filterFAQs();
+                    }
+                });
+            });
+        </script>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="accordion" id="faqAccordion">
+                    {% for faq in faqs %}
+                        <div class="accordion-item mb-3">
+                            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold text-primary" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse{{ forloop.counter }}" 
+                                        aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
+                                        aria-controls="collapse{{ forloop.counter }}">
+                                    {{ faq.title }}
+                                </button>
+                            </h2>
+                            <div id="collapse{{ forloop.counter }}" 
+                                 class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
+                                 aria-labelledby="heading{{ forloop.counter }}" 
+                                 data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{ faq.description }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+</main>
+{% endblock %}

@@ -8,7 +8,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY', default='default-secret-key')
 OPENAI_API_KEY = config('OPENAI_API_KEY', default='') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Desativado para produção 
+DEBUG = True  # Desativado para produção 
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 
                  'localhost', 
@@ -63,17 +63,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
+
 # Configuração do Banco de Dados usando variáveis de ambiente
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': config('DB_NAME', default='alta_db_prod_2'),
-        'USER': config('DB_USER', default='alta_db_prod_2_user'),
-        'PASSWORD': config('DB_PASSWORD', default='3rp700XExUxgrfqCIPgvChVMOwWUyQUB'),
-        'HOST': config('DB_HOST', default='dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com'),
-        'PORT': config('DB_PORT', default='5432'),
+        'ENGINE': config('DB_ENGINE'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': config('DB_ENGINE_2'),
+#         'NAME': config('DB_NAME_2'),
+#         'USER': config('DB_USER_2'),
+#         'PASSWORD': config('DB_PASSWORD_2'),
+#         'HOST': config('DB_HOST_2'),
+#         'PORT': config('DB_PORT_2'),
+#     }
+# }
+
 
 
 

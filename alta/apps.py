@@ -4,3 +4,6 @@ from django.apps import AppConfig
 class AltaConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'alta'
+    
+    def ready(self):
+        import alta.signals

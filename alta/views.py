@@ -26,17 +26,25 @@ from .models import (
     AddPrice, 
     PesquisaOrigem, 
     Profile,
-    Cidade,
-    Estado,
     GasStation,
     Produto,
-    PriceEmbedding
+    PriceEmbedding,
+    FAQ
 )
 
 
 @login_required
 def index(request):
     return render(request, 'index.html')
+
+
+@login_required
+def p_faq(request):
+    faqs = FAQ.objects.all()
+    data = {
+        'faqs': faqs
+    }
+    return render(request, 'p_faq.html', data)
 
 
 @login_required
@@ -208,6 +216,8 @@ def p_monitorar_produtos(request):
         max_date=Max('data_coleta'),
         avg_price=Avg('preco_revenda')
     )
+
+    
     menor_preco = aggregates.get('min_price')
     
     menor_preco_count = filter.qs.filter(preco_revenda=menor_preco).count()
