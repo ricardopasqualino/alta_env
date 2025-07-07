@@ -126,6 +126,19 @@ def p_ia(request):
 
 @login_required
 def p_monitorar_concorrentes(request):
+    # Verificar se o usuário tem profile, se não tiver, criar um
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        # Criar profile para o usuário
+        user_profile = Profile.objects.create(user=request.user)
+    
+    # Se o usuário não tem cidade definida, usar uma cidade padrão ou mostrar erro
+    if not user_profile.cidade:
+        # Redirecionar para uma página de configuração ou usar cidade padrão
+        from django.contrib import messages
+        messages.warning(request, 'Por favor, configure sua cidade no perfil para visualizar os dados.')
+        return redirect('p_profile')
     
     filter = MainFilter(
         request.GET, 
@@ -134,13 +147,13 @@ def p_monitorar_concorrentes(request):
             pesquisa_origem_id=2, 
             produto_id__isnull=True
         ).filter(
-            gasstation_id__cidade=request.user.profile.cidade,
-            gasstation_id__estado=request.user.profile.estado
+            gasstation_id__cidade=user_profile.cidade,
+            gasstation_id__estado=user_profile.estado
         )
     )
 
-    cidade_usuario = request.user.profile.cidade
-    uf_usuario = request.user.profile.estado
+    cidade_usuario = user_profile.cidade
+    uf_usuario = user_profile.estado
 
     total_linhas_pesquisa = filter.qs.distinct().count()
 
@@ -192,6 +205,19 @@ def p_monitorar_concorrentes(request):
 
 @login_required
 def p_monitorar_produtos(request):
+    # Verificar se o usuário tem profile, se não tiver, criar um
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        # Criar profile para o usuário
+        user_profile = Profile.objects.create(user=request.user)
+    
+    # Se o usuário não tem cidade definida, usar uma cidade padrão ou mostrar erro
+    if not user_profile.cidade:
+        # Redirecionar para uma página de configuração ou usar cidade padrão
+        from django.contrib import messages
+        messages.warning(request, 'Por favor, configure sua cidade no perfil para visualizar os dados.')
+        return redirect('p_profile')
 
     filter = MainFilter(
         request.GET, 
@@ -200,14 +226,14 @@ def p_monitorar_produtos(request):
                 pesquisa_origem_id=2, 
                 produto_id__isnull=True
         ).filter(
-                gasstation_id__cidade=request.user.profile.cidade
+                gasstation_id__cidade=user_profile.cidade
         )
     )
 
     profile = Profile.objects.all()
 
-    cidade_usuario = request.user.profile.cidade
-    uf_usuario = request.user.profile.estado
+    cidade_usuario = user_profile.cidade
+    uf_usuario = user_profile.estado
 
     aggregates = filter.qs.aggregate(
         min_price=Min('preco_revenda'),
@@ -351,13 +377,20 @@ def p_lista_preco(request):
         'pesquisa_origem__origem'
     ).order_by('preco_revenda')
 
+    # Verificar se o usuário tem profile, se não tiver, criar um
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        # Criar profile para o usuário
+        user_profile = Profile.objects.create(user=request.user)
+    
     # Aplicar filtros padrão se nenhum filtro específico for fornecido
     if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
         base_queryset = base_queryset.filter(
             data_coleta__gte=datetime.now() - timedelta(days=15),
             produto_id=1,
             pesquisa_origem_id=1,
-            gasstation_id__cidade=request.user.profile.cidade,
+            gasstation_id__cidade=user_profile.cidade,
         )
 
     # Aplicar filtros
@@ -380,8 +413,15 @@ def p_lista_preco(request):
 
 @login_required
 def add_price(request):
+    # Verificar se o usuário tem profile, se não tiver, criar um
+    try:
+        user_profile = request.user.profile
+    except Profile.DoesNotExist:
+        # Criar profile para o usuário
+        user_profile = Profile.objects.create(user=request.user)
+    
     form = NewPrice(request.POST or None)
-    form.fields['gasstation_id'].queryset = GasStation.objects.filter(cidade=request.user.profile.cidade)
+    form.fields['gasstation_id'].queryset = GasStation.objects.filter(cidade=user_profile.cidade)
 
     prices = AddPrice.objects.filter(user=request.user).only(
             'gasstation_id', 
