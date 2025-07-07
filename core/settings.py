@@ -8,7 +8,7 @@ SECRET_KEY = config('DJANGO_SECRET_KEY', default='default-secret-key')
 OPENAI_API_KEY = config('OPENAI_API_KEY', default='') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # Desativado para produção 
+DEBUG = False  # Desativado para produção 
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 
                  'localhost', 
