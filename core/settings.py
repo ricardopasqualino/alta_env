@@ -5,10 +5,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='default-secret-key')
-OPENAI_API_KEY = config('OPENAI_API_KEY', default='') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False  # Desativado para produção 
+DEBUG = False
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 
                  'localhost', 
@@ -73,6 +72,9 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD', default='3rp700XExUxgrfqCIPgvChVMOwWUyQUB'),
         'HOST': config('DB_HOST', default='dpg-d088hrfdiees7391qrc0-a.oregon-postgres.render.com'),
         'PORT': config('DB_PORT', default='5432'),
+        'OPTIONS': {
+            'connect_timeout': 10,
+        },
     }
 }
 
@@ -201,3 +203,15 @@ else:
         RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL.replace('https://', '')
     elif RENDER_EXTERNAL_URL.startswith('http://'):
         RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL.replace('http://', '')
+
+# Configuração de Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutos
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+        }
+    }
+}

@@ -5,8 +5,8 @@
 {% block main %}
 
 <main id="main" class="main">
-    <div class="pagetitle">
-        <h1>Perguntas Frequentes</h1>
+    <div class="pagetitle mb-3">
+        <!-- <h1>Perguntas Frequentes</h1> -->
         <nav>
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -15,21 +15,18 @@
         </nav>
       </div><!-- End Page Title -->
 
-        <div class="row mt-3">
-            <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="input-group mt-3">
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="searchInput" 
-                                   placeholder="Pesquise por perguntas ou termos..."
-                                   autocomplete="off">
-                            <button class="btn btn-outline-secondary" type="button" id="clearBtn" style="display: none;">
-                                <i class="bi bi-x"></i>
-                            </button>
-                        </div>
-                    </div>
+        <div class="row justify-content-center align-items-center d-flex mt-3">
+            <div class="col-md-8 text-center pagetitle">
+                <h1 class="mb-3">Como podemos te ajudar?</h1>
+                <div class="input-group">
+                    <input type="text" 
+                           class="form-control" 
+                           placeholder="Pesquise por perguntas ou termos..."
+                           id="searchInput" 
+                           autocomplete="off">
+                    <button class="btn btn-outline-secondary" type="button" id="clearBtn" style="display: none;">
+                        <i class="bi bi-x"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -121,26 +118,33 @@
         </script>
 
         <div class="row mt-5">
-            <div class="col-12">
-                <div class="accordion" id="faqAccordion">
+            <div class="col-lg-8 col-md-10 col-sm-12 mx-auto">
+                <div class="accordion shadow-sm" id="faqAccordion">
                     {% for faq in faqs %}
-                        <div class="accordion-item mb-3">
+                        <div class="accordion-item mb-3 border-0 rounded-3 overflow-hidden">
                             <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-                                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold text-primary" 
+                                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-bold text-dark border-0 shadow-none" 
                                         type="button" 
                                         data-bs-toggle="collapse" 
                                         data-bs-target="#collapse{{ forloop.counter }}" 
                                         aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
-                                        aria-controls="collapse{{ forloop.counter }}">
-                                    {{ faq.title }}
+                                        aria-controls="collapse{{ forloop.counter }}"
+                                        style="transition: all 0.3s ease; background-color: #ffffff;">
+                                    <i class="bi bi-question-circle-fill me-3" style="color: #012970;"></i>
+                                    <span style="color: #012970;">{{ faq.title }}</span>
                                 </button>
                             </h2>
                             <div id="collapse{{ forloop.counter }}" 
                                  class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
                                  aria-labelledby="heading{{ forloop.counter }}" 
                                  data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    {{ faq.description }}
+                                <div class="accordion-body bg-white border-top border-light p-4">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-chat-dots-fill text-muted me-3 mt-1"></i>
+                                        <div class="text-muted lh-base">
+                                            {{ faq.description }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

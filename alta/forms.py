@@ -8,7 +8,6 @@ from .models import (
     AddPrice, 
     Contato, 
     Profile,
-    GasStation,
     Estado,
     Cidade,
 )
@@ -40,16 +39,27 @@ class CreateUserForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-            # Criar o perfil do usuário
-            Profile.objects.create(
-                user=user,
-                telefone=self.cleaned_data.get('telefone'),
-                empresa=self.cleaned_data.get('empresa'),
-                cargo=self.cleaned_data.get('cargo'),
-                cpf=self.cleaned_data.get('cpf'),
-                cidade=self.cleaned_data.get('cidade'),
-                estado=self.cleaned_data.get('estado')
-            )
+            # O signal já cria o Profile automaticamente, então apenas atualizamos os dados
+            try:
+                profile = user.profile
+                profile.telefone = self.cleaned_data.get('telefone')
+                profile.empresa = self.cleaned_data.get('empresa')
+                profile.cargo = self.cleaned_data.get('cargo')
+                profile.cpf = self.cleaned_data.get('cpf')
+                profile.cidade = self.cleaned_data.get('cidade')
+                profile.estado = self.cleaned_data.get('estado')
+                profile.save()
+            except Profile.DoesNotExist:
+                # Fallback caso o signal não tenha funcionado
+                Profile.objects.create(
+                    user=user,
+                    telefone=self.cleaned_data.get('telefone'),
+                    empresa=self.cleaned_data.get('empresa'),
+                    cargo=self.cleaned_data.get('cargo'),
+                    cpf=self.cleaned_data.get('cpf'),
+                    cidade=self.cleaned_data.get('cidade'),
+                    estado=self.cleaned_data.get('estado')
+                )
         return user
 
 

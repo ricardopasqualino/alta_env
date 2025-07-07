@@ -130,12 +130,12 @@
                       {% for obj in list_price %}
                           <tr>
                             <td>{{ obj.data_coleta|date:'d/m/Y' }}</td>
-                            <td><strong>{{ obj.gasstation_id.cnpj }}</strong> | {{ obj.gasstation_id.razao }}</td>
-                            <td>{{ obj.gasstation_id.cidade }}/{{ obj.gasstation_id.estado }}</td>
-                            <td>{{ obj.gasstation_id.bairro }}</td>
-                            <td>{{ obj.produto_id.produto }}</td>
+                            <td><strong>{{ obj.cnpj }}</strong> | {{ obj.gasstation_id__razao }}</td>
+                            <td>{{ obj.gasstation_id__cidade }}/{{ obj.gasstation_id__estado }}</td>
+                            <td>{{ obj.gasstation_id__bairro }}</td>
+                            <td>{{ obj.produto_id__produto }}</td>
                             <td>R$ {{ obj.preco_revenda }}</td>
-                            <td>{{ obj.gasstation_id.bandeira }}</td>
+                            <td>{{ obj.gasstation_id__bandeira }}</td>
                           </tr>
                       {% empty %}
                         <tr>
@@ -161,8 +161,8 @@
                         {{ obj.data_coleta|date:'d/m/Y' }} - R$ {{ obj.preco_revenda }}
                       </div>
                       <ul class="list-group list-group-flush">
-                        <li class="list-group-item">{{ obj.gasstation_id.razao }}</li>
-                        <li class="list-group-item">{{ obj.produto_id.produto }}</li>
+                        <li class="list-group-item">{{ obj.gasstation_id__razao }}</li>
+                        <li class="list-group-item">{{ obj.produto_id__produto }}</li>
                       </ul>
                     </div>
 

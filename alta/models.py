@@ -82,22 +82,6 @@ class AddPrice(models.Model):
         ordering = ['-data_coleta']  # Ordenação padrão por data decrescente
     
 
-class PriceEmbedding(models.Model):
-    addprice = models.OneToOneField(AddPrice, on_delete=models.CASCADE, related_name='embedding')
-    produto_nome = models.CharField(max_length=100, verbose_name='Nome do Produto', null=True, blank=True)
-    posto_nome = models.CharField(max_length=500, verbose_name='Nome do Posto', null=True, blank=True)
-    embedding = models.JSONField(verbose_name='Embedding vetorial')
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['created_at']),
-            models.Index(fields=['updated_at']),
-        ]
-        ordering = ['-created_at']
-
-
 class FAQ(models.Model):
     title = models.CharField(default=None, null=False, blank=False, max_length=100, verbose_name='Título')
     description = models.TextField(default=None, null=False, blank=False, verbose_name='Descrição')
@@ -107,7 +91,6 @@ class FAQ(models.Model):
         return self.title
     
  
-    
 class Contato(models.Model):
     nome = models.CharField(default=None, null=False, blank=False, max_length=100, verbose_name='Nome')
     email = models.EmailField(max_length=254, default=None, null=False, blank=False, verbose_name="Email")
