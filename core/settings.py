@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Configuração do Banco de Dados usando variáveis de ambiente
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
