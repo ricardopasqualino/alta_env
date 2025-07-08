@@ -146,7 +146,10 @@ def p_monitorar_produtos(request):
         # Aplicar filtros padrão se nenhum filtro específico for fornecido
         if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
             base_queryset = base_queryset.filter(
-                data_coleta__gte=datetime.now() - timedelta(days=15)
+                data_coleta__gte=datetime.now() - timedelta(days=90),
+                gasstation_id__cidade=user_profile.cidade,
+                produto_id=1,
+                pesquisa_origem_id=1
             )
         
         filter = MainFilter(request.GET, queryset=base_queryset)
@@ -171,7 +174,9 @@ def p_monitorar_produtos(request):
     # Aplicar filtros padrão se nenhum filtro específico for fornecido
     if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
         base_queryset = base_queryset.filter(
-            data_coleta__gte=datetime.now() - timedelta(days=90)
+            data_coleta__gte=datetime.now() - timedelta(days=90),
+            produto_id=1,
+            pesquisa_origem_id=1
         )
 
     filter = MainFilter(request.GET, queryset=base_queryset)
