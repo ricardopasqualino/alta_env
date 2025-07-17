@@ -102,12 +102,7 @@
             </ul>
             </div>            
             <div class="col-lg-5 col-md-12 col-sm-12 mt-3">
-              <div class="d-flex justify-content-center py-4">
-                <a href="" class="logo d-flex align-items-center w-auto">
-                  <img src="{% static 'assets/img/logo.png'%}" alt="Alta BI">
-                  <span>ALTA</span>
-                </a>
-              </div>
+
 
               <div class="card mb-3">
                 <div class="card-body">
@@ -666,20 +661,19 @@
             <img src="{% static 'assets/img/i_lista_precos.gif' %}" class="img-fluid" alt="Monitorar Produto">
           </div>
         </div>
-
-
-
-        
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-12">
+      <a href="https://wa.me/5511999994501" target="_blank" class="whatsapp-fixed">
+        <i class="bi bi-whatsapp"></i>
+      </a>
+    </div>
+  </div>
 </section>
-
-<!-- WhatsApp Fixed Button -->
-<a href="https://wa.me/5511999994501" target="_blank" class="whatsapp-fixed">
-  <i class="bi bi-whatsapp"></i>
-</a>
-
+  
 <style>
   .whatsapp-fixed {
     position: fixed;
@@ -717,75 +711,4 @@
     }
   }
 </style>
-
-<style>
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #4154f1 0%, #717ff5 100%);
-}
-
-.countdown-timer {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 5px;
-  backdrop-filter: blur(10px);
-}
-
-.countdown-item {
-  padding: 3px;
-}
-
-.countdown-number {
-  font-size: 2.5rem;
-  font-weight: bold;
-  line-height: 1;
-  margin-bottom: 1px;
-}
-
-.countdown-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-@media (max-width: 768px) {
-  .countdown-number {
-    font-size: 1.8rem;
-  }
-  .countdown-label {
-    font-size: 0.8rem;
-  }
-}
-</style>
-
-<script>
-// Define a data final (7 dias a partir de agora)
-const countDownDate = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
-
-// Atualiza o contador a cada 1 segundo
-const x = setInterval(function() {
-  const now = new Date().getTime();
-  const distance = countDownDate - now;
-
-  // Cálculos de tempo
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  // Exibe o resultado
-  document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
-  document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
-  document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
-  document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
-
-  // Quando o contador terminar
-  if (distance < 0) {
-    clearInterval(x);
-    document.getElementById("days").innerHTML = "00";
-    document.getElementById("hours").innerHTML = "00";
-    document.getElementById("minutes").innerHTML = "00";
-    document.getElementById("seconds").innerHTML = "00";
-  }
-}, 1000);
-</script>
-
 {% endblock %}
