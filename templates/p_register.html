@@ -1,63 +1,10 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-  
+{% extends 'base_clean.html' %}
+
 {% load static %}
 
+{% block title %}Faça o seu cadastro - ALTA{% endblock %}
+
 {% block main %}
-
-<head>
-
-    <!-- Favicons -->
-    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
-    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
-  
-    <!-- Google Fonts -->
-    <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-  
-    <!-- Vendor CSS Files -->
-    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
-    <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
-
-    <!-- Template Main CSS File -->
-    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
-
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>Faça o seu cadastro</title>
-  <meta content="Faça o seu cadastro na maior plataforma de B.I. para postos de gasolina no Brasil." name="description">
-  <meta content="Posto, gasolina, preço, etanol, alcool, diesel, BI, business, negocios" name="keywords">
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17271058164">
-  </script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'AW-17271058164');
-  </script>
-   
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5G3B0KPJ4N"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-5G3B0KPJ4N');
-  </script>
-
-</head>
-
-<body>
 
   <main>
     <div class="container">
@@ -726,43 +673,12 @@
       </div>
     </div>
   </div>
-  
-
 </section>
-</main><!-- End #main -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
-  <!-- Vendor JS Files -->
-  <script src="{% static 'assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/chart.js/chart.umd.js' %}"></script>
-  <script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/quill/quill.js' %}"></script>
-  <script src="{% static 'assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
-  <script src="{% static 'assets/vendor/tinymce/tinymce.min.js' %}"></script>
-  <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-
-  <!-- Template Main JS File -->
-  <script src="{% static 'assets/js/main.js' %}"></script>
-
-  <!-- WhatsApp Fixed Button -->
-  <a href="https://wa.me/5511999994501" target="_blank" class="whatsapp-fixed">
-    <i class="bi bi-whatsapp"></i>
-  </a>
-
-</body>
-
-  <footer class="footer mt-3">
-    <div class="copyright">
-      &copy; Copyright <strong><span>ALTA</span></strong>
-    </div>
-    <div class="credits">
-      Todos os direitos reservados..
-    </div>
-  </footer>
-
-</html>
+<!-- WhatsApp Fixed Button -->
+<a href="https://wa.me/5511999994501" target="_blank" class="whatsapp-fixed">
+  <i class="bi bi-whatsapp"></i>
+</a>
 
 <style>
   .whatsapp-fixed {

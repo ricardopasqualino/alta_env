@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>ALTA</title>
+  <title>{% block title %}ALTA{% endblock %}</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -50,7 +50,10 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-5G3B0KPJ4N');
+      gtag('config', 'G-5G3B0KPJ4N', {
+        'page_title': '{% block title %}ALTA{% endblock %}',
+        'page_location': window.location.href
+      });
     </script>
 
 </head>

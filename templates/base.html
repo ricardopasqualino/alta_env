@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>ALTA VIEW</title>
+  <title>{% block title %}ALTA VIEW{% endblock %}</title>
   <meta content="Uma plataforma para monitorar preços de combustíveis dos postos de todos o Brasil." name="description">
   <meta content="preços de gasolina, etanol, diesel, gnv, combustíveis, postos de gasolina, monitoramento de preços, preços de combustíveis, preços de gasolina no Brasil, preços de etanol no Brasil, preços de diesel no Brasil, preços de gnv no Brasil, preços de combustíveis no Brasil, alta de preços, baixa de preços, variação de preços, mercado de combustíveis, análise de preços, comparação de preços, preços atualizados, preços de revenda, preços de compra, preços de distribuição, preços de mercado, preços regionais, preços estaduais, preços municipais, preços por cidade, preços por estado, preços por região" name="keywords">
 
@@ -57,7 +57,10 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
-    gtag('config', 'G-5G3B0KPJ4N');
+    gtag('config', 'G-5G3B0KPJ4N', {
+      'page_title': '{% block title %}ALTA VIEW{% endblock %}',
+      'page_location': window.location.href
+    });
   </script>
     
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
