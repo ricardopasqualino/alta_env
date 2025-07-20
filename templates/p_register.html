@@ -1,13 +1,64 @@
-{% extends 'base_clean.html' %}
+<!DOCTYPE html>
+<html lang="pt-br">
 
 {% load static %}
 
-{% block title %}Faça o seu cadastro - ALTA{% endblock %}
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="Uma plataforma para monitorar preços de combustíveis dos postos de todos o Brasil." name="description">
+  <meta content="preços de gasolina, etanol, diesel, gnv, combustíveis, postos de gasolina, monitoramento de preços, preços de combustíveis, preços de gasolina no Brasil, preços de etanol no Brasil, preços de diesel no Brasil, preços de gnv no Brasil, preços de combustíveis no Brasil, alta de preços, baixa de preços, variação de preços, mercado de combustíveis, análise de preços, comparação de preços, preços atualizados, preços de revenda, preços de compra, preços de distribuição, preços de mercado, preços regionais, preços estaduais, preços municipais, preços por cidade, preços por estado, preços por região" name="keywords">
+  
+  <title>Faça o seu cadastro - ALTA</title>
 
-{% block main %}
+   <!-- Favicons -->
+   <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+   <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+ 
+   <!-- Google Fonts -->
+   <link href="https://fonts.gstatic.com" rel="preconnect">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+ 
+   <!-- Vendor CSS Files -->
+   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+ 
+   <!-- Template Main CSS File -->
+   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/css/style-dashboard.css' %}" rel="stylesheet">
+
+   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"/>
+   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>   
+
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5G3B0KPJ4N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5G3B0KPJ4N', {
+      'page_location': window.location.href
+    });
+  </script>
+    
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
 
   <main>
-    <div class="container">
+    <div class="container-fluid px-0">
 
       <section class="section register d-flex align-items-center justify-content-center">
 
@@ -16,51 +67,16 @@
           <div class="row justify-content-center">
             <div class="col-lg-7 col-md-12 col-sm-12 mt-5">
 
-              <!-- <div class="row justify-content-left">
-                <div class="col-lg-8 col-md-6 col-sm-12">
-                  <div class="bg-primary rounded-3 p-3 text-center">
-                    <div class="row">
-                      <div class="col-lg-3 col-md-3 col-sm-3">
-                        <div class="text-white">
-                          <div class="fs-8 small">Dias</div>
-                          <div class="fs-6 fw-bold" id="days"></div>
-                        </div>
-                      </div>
-                      <div class="col-lg-3 col-md-3 col-sm-3">
-                        <div class="text-white">
-                          <div class="fs-8 small">Horas</div>
-                          <div class="fs-6 fw-bold" id="hours"></div>
-                        </div>
-                      </div>
-                      <div class="col-lg-3 col-md-3 col-sm-3">
-                        <div class="text-white">
-                          <div class="fs-8 small">Minutos</div>
-                          <div class="fs-6 fw-bold" id="minutes"></div>
-                        </div>
-                      </div>
-                      <div class="col-lg-3 col-md-3 col-sm-3">
-                        <div class="text-white">
-                          <div class="fs-8 small">Segundos</div>
-                          <div class="fs-6 fw-bold" id="seconds"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-              <!-- 
-              <div class="row justify-content-left mt-5">
-                <img class="img-fluid w-100 mt-1" src="{% static 'assets/img/register.jpg' %}">
-              </div>
-               -->
               <div class="row justify-content-left mt-3">
 
-                <!-- <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i> -->
-                <h1 class="card-title text-muted">Conheça a ALTA</h1>
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-3">
+                  <!-- <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i> -->
+                  <img src="{% static 'assets/img/logo.png' %}" class="img-fluid" style="width: 20%;" alt="ALTA">
+                </div>
 
                 <h1 class="card-title fs-2 mb-1">
-                  App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil!
-                  <!-- Reduza em até 15% os custos com combustível. -->
+                  <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
+                  Reduza em até 15% o custo com combustíveis <span class=" fs-2 text-primary">encontrando os postos com os menores preços</span> na sua região!
                 </h1>
 
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-block d-lg-none">
@@ -72,32 +88,30 @@
                 </div>
 
               </div>
-              <!-- <p>Faça seu cadastro grátis e incorpore preços, indicadores e KPIs 
-                relacionados ao comportamento dos preços de combustíveis nas análises da sua empresa.
-              </p> -->
+
             
               <ul class="list-unstyled mt-4 d-none d-md-block">
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Análise de preço médio, máximo e mínimo por produto e posto.</strong>
+                Análise de preço médio, máximo e mínimo por produto e posto.
               </li>
 
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Preço mais vezes praticado por posto e região.</strong>
+                Preço mais vezes praticado por posto e região.
               </li>
               
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Lista aberta para extrair os valores para o Excel.</strong>
+                Lista aberta para extrair os valores para o Excel.
               </li>
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Adicionar preços manualmente e criar a sua própria lista de preços.</strong>
+                Adicionar preços manualmente e criar a sua própria lista de preços.
               </li>
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
-                <strong>Filtros avançados para extrair dados de forma rápida e eficiente.</strong>
+                Filtros avançados para extrair dados de forma rápida e eficiente.
               </li>
             </ul>
             </div>            
@@ -201,7 +215,6 @@
                           <span class="form-label">Cidade</span>
                           <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
                             {{ form.cidade }} </>
-                          </select>
                           <div class="input-group">
                             {{ form.cidade.errors }}
                           </div>
@@ -210,8 +223,7 @@
                         <div class="col-lg-4 col-md-6 col-sm-12">
                           <span class="form-label">Estado</span>
                           <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
-                            {{ form.estado }}
-                          </select>
+                            {{ form.estado }} </>
                           <div class="input-group">
                             {{ form.estado.errors }}
                           </div>
@@ -259,6 +271,7 @@
                     <div class="row mt-3">
                       <div class="col-12">
                         <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
+                        <a href="{% url 'login' %}"><button class="btn btn-outline-primary w-100 mt-3" type="submit">Já tenho uma conta</button></a>
                       </div> 
                     </div>
                       
@@ -326,8 +339,8 @@
 
                       <div class="col-12 mt-3">
                         <span class="form-label">Cidade</span>
-                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
-                          {{ form.cidade }} </>
+                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required">
+                          {{ form.cidade }}
                         </select>
                         <div class="input-group">
                           {{ form.cidade.errors }}
@@ -336,8 +349,8 @@
 
                       <div class="col-12 mt-3">
                         <span class="form-label">Estado</span>
-                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
-                          {{ form.estado }} </>
+                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required">
+                          {{ form.estado }}
                         </select>
                         <div class="input-group">
                           {{ form.estado.errors }}
@@ -396,6 +409,7 @@
                   <div class="row">
                     <div class="col-12 mt-3">
                       <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
+                      <a href="{% url 'login' %}"><button class="btn btn-outline-primary w-100" type="submit">Já tenho uma conta</button></a>
                     </div> 
                   </div>
 
@@ -433,7 +447,7 @@
           </div>
 
           <div class="col-lg-4 col-md-4 col-sm-12 card p-3 m-1">
-            <p class="card-title text-muted">Para postos de combustíveis</h1>
+            <p class="card-title text-muted">Para postos de combustíveis</p>
             <h1 class="card-title fs-2">Aumento de até 15% na lucratividade por lote</h1>
             <p class="text-muted">
               apenas mapeando o corportamento dos preços dos concorrentes em sua região de atuação.
@@ -619,7 +633,7 @@
               <li>Veja a estratégia de preço de cada posto em sua região</li>
             </ul>
           </div>
-          <div class="col-md-6 col-sm-12d-flex justify-content-center">
+          <div class="col-md-6 col-sm-12 d-flex justify-content-center">
             <img src="{% static 'assets/img/i_monitorar_precos.gif' %}" class="img-fluid" alt="Monitorar Produto">
           </div>
         </div>
@@ -628,7 +642,7 @@
         <div class="row mt-3 mb-3 align-items-center">
           <h1 class="card-title fs-2">Cartão de Preços</h1>
           
-          <div class="col-md-6 col-sm-12d-flex justify-content-center">
+          <div class="col-md-6 col-sm-12 d-flex justify-content-center">
             <img src="{% static 'assets/img/i_cartao_precos.gif' %}" class="img-fluid" alt="Monitorar Produto">
           </div>
           
@@ -657,7 +671,7 @@
               <li>Exporte os dados de preços para planilhas e relatórios personalizados</li>
             </ul>
           </div>
-          <div class="col-md-6 col-sm-12d-flex justify-content-center">
+          <div class="col-md-6 col-sm-12 d-flex justify-content-center">
             <img src="{% static 'assets/img/i_lista_precos.gif' %}" class="img-fluid" alt="Monitorar Produto">
           </div>
         </div>
@@ -673,8 +687,26 @@
     </div>
   </div>
 </section>
+
+<div class="row">
+  <div class="col-12">
+    <hr>
+    <p class="text-muted text-center mt-3 mb-3">Todos os direitos reservados</p>
+  </div>
+</div>
+
+</body>
   
 <style>
+  body {
+    overflow-x: hidden;
+  }
+  
+  .container-fluid {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
   .whatsapp-fixed {
     position: fixed;
     bottom: 20px;
@@ -711,4 +743,3 @@
     }
   }
 </style>
-{% endblock %}
