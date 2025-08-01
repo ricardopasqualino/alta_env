@@ -129,3 +129,16 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.first_name
+    
+
+class Lead(models.Model):
+    nome = models.CharField(max_length=50, null=False, blank=False, verbose_name='Nome')
+    telefone = models.CharField(max_length=20, null=False, blank=False, verbose_name='Telefone')
+    data_cadastro = models.DateTimeField(auto_now_add=True, verbose_name='Data de Cadastro')
+
+    def __str__(self):
+        return f"{self.nome} - {self.telefone}"
+
+    class Meta:
+        verbose_name = 'Lead'
+        verbose_name_plural = 'Leads'

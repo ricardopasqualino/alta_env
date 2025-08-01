@@ -10,6 +10,7 @@ from .models import (
     Profile,
     Estado,
     Cidade,
+    Lead,
 )
 
 
@@ -108,3 +109,9 @@ class AddPriceForm(forms.ModelForm):
             'unidade_medida',
             'user'
         ]
+
+
+class NewLeadForm(forms.ModelForm):
+    class Meta:
+        model = Lead
+        fields = ['nome', 'telefone']

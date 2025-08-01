@@ -60,6 +60,20 @@
   <main>
       <div class="container">
         
+        <!-- Mensagens de sucesso/erro -->
+        {% if messages %}
+          <div class="row mt-3">
+            <div class="col-12">
+              {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        
         <div class="row mt-3 justify-content-center">
           <div class="row">
             <div class="col-12 d-flex justify-content-center">
@@ -69,7 +83,7 @@
 
           <div class="row">
             <div class="col-8 d-flex justify-content-center mx-auto">
-              <h1 class="card-title fs-3 mb-1 text-center p-3">
+              <h1 class="card-title fs-4 mb-1 text-center p-3">
                   <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
                 Reduza em 15% o custo com combustível <span class=" fs-2 text-primary">encontrando os postos com o menor preço</span> na sua região!
               </h1>
@@ -77,35 +91,36 @@
           </div>
 
           <div class="d-flex justify-content-center">
-            <img src="{% static 'assets/img/home_1.jpg' %}" class="img-fluid mt-1" style="width: 40%;" alt="Monitorar Produto">
+            <!-- <img src="{% static 'assets/img/home_1.jpg' %}" class="img-fluid mt-1" style="width: 40%;" alt="Monitorar Produto"> -->
         </div>
 
           <div class="row">
             <div class="col-6 d-flex justify-content-center mx-auto mt-4">
-              <form class="w-100">
-                <h2 class="card-title fs-5 mb-1 text-left p-1">Pegue o passo a passo de como implementar com o ALTA.bi</h2>
+              <form method="post" class="w-100">
+                <h2 class="card-title fs-5 mb-1 text-center p-1 mb-3 mt-1">Receba o passo a passo. Mande um contato!</h2>
+                
+                {% csrf_token %}
                 <div class="mb-3">
                   <!-- <label for="inputNome" class="form-label">Nome</label> -->
-                  <input type="text" class="form-control form-control-lg" id="inputNome" name="nome" placeholder="Digite seu nome" required style="height: 60px; font-size: 1.5rem;">
+                  <input type="text" class="form-control form-control-lg" id="inputNome" 
+                  name="nome" placeholder="Digite seu nome" required style="height: 60px; font-size: 1.3rem;" 
+                  maxlength="50" value="{{ form.nome.value|default:'' }}">
                 </div>
+
                 <div class="mb-3">
                   <!-- <label for="inputTelefone" class="form-label">Telefone</label> -->
-                  <input type="tel" class="form-control form-control-lg" id="inputTelefone" name="telefone" placeholder="(99) 99999-9999" required style="height: 60px; font-size: 1.5rem;">
+                  <input type="tel" name="telefone" inputmode="numeric" class="form-control form-control-lg" 
+                  placeholder="(99) 99999-9999" required="required" maxlength="13"
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
+                  value="{{ form.telefone.value|default:'' }}"> 
+                
+                  <p class="fs-8 text-center">Fique Tranquilo! Não vamos te ligar ツ</p>                
+
                 </div>
-                <a href=""><button class="btn btn-primary btn-lg w-100 mb-3">Receba Agora!</button></a>
+                <button type="submit" class="btn btn-primary btn-lg mb-3 w-100">Receba Agora!</button>
               </form>
             </div>
           </div>
-
-
-          
-
-
-
-
-
-            
-
 
           </div>
 

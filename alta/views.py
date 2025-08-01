@@ -15,9 +15,15 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
+
+
 from .filters import MainFilter
 
-from .forms import NewPrice, CreateUserForm
+from .forms import ( 
+    NewPrice, 
+    CreateUserForm,
+    NewLeadForm
+)
 
 from .models import (
     AddPrice, 
@@ -622,5 +628,19 @@ def confirmacao_email_recuperacao(request):
     return render(request, 'registration/password_done.html')
 
 
+
+
 def lp_topo(request):
-    return render(request, 'lp_topo.html')
+    if request.method == 'POST':
+        form = NewLeadForm(request.POST)
+        if form.is_valid():
+            lead = form.save()
+            messages.success(request, 'Lead cadastrado com sucesso!')
+            return redirect('lp_topo')
+        else:
+            messages.error(request, 'Erro ao cadastrar lead. Verifique os dados.')
+    else:
+        form = NewLeadForm()
+    data = {'form': form}
+    return render(request, 'lp_topo.html', data)
+
