@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+{% load static %}
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="Uma plataforma para monitorar preços de combustíveis dos postos de todos o Brasil." name="description">
+  <meta content="preços de gasolina, etanol, diesel, gnv, combustíveis, postos de gasolina, monitoramento de preços, preços de combustíveis, preços de gasolina no Brasil, preços de etanol no Brasil, preços de diesel no Brasil, preços de gnv no Brasil, preços de combustíveis no Brasil, alta de preços, baixa de preços, variação de preços, mercado de combustíveis, análise de preços, comparação de preços, preços atualizados, preços de revenda, preços de compra, preços de distribuição, preços de mercado, preços regionais, preços estaduais, preços municipais, preços por cidade, preços por estado, preços por região" name="keywords">
+  
+  <title>Conheça nosso produto - ALTA.bi</title>
+
+   <!-- Favicons -->
+   <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+   <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+ 
+   <!-- Google Fonts -->
+   <link href="https://fonts.gstatic.com" rel="preconnect">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+ 
+   <!-- Vendor CSS Files -->
+   <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+ 
+   <!-- Template Main CSS File -->
+   <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+   <link href="{% static 'assets/css/style-dashboard.css' %}" rel="stylesheet">
+
+   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"/>
+   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>   
+
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5G3B0KPJ4N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-5G3B0KPJ4N', {
+      'page_location': window.location.href
+    });
+  </script>
+    
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+  <main>
+      <div class="container">
+          
+          <div class="row mt-3 justify-content-center">
+            <img src="{% static 'assets/img/logo.png' %}" class="img-fluid" style="width: 20%;" alt="ALTA">
+
+            <div class="d-flex justify-content-center">
+              <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 80%;" alt="Monitorar Produto">
+            </div>
+
+            <div class="col-8 d-flex justify-content-center mx-auto mt-4">
+              <form class="w-100">
+                <div class="mb-3">
+                  <label for="inputNome" class="form-label">Nome</label>
+                  <input type="text" class="form-control" id="inputNome" name="nome" placeholder="Digite seu nome" required>
+                </div>
+                <div class="mb-3">
+                  <label for="inputTelefone" class="form-label">Telefone</label>
+                  <input type="tel" class="form-control" id="inputTelefone" name="telefone" placeholder="(99) 99999-9999" required>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-8 d-flex justify-content-center mx-auto">
+              <h1 class="card-title fs-2 mb-1 text-center p-5">
+                  <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
+                Reduza em até 15% o custo com combustíveis <span class=" fs-2 text-primary">encontrando os postos com os menores preços</span> na sua região!
+              </h1>
+            </div>
+
+            
+
+            <a href=""><button class="btn btn-primary btn-bg w-100">Criar conta Agora!</button></a>
+
+          </div>
+
+      </div>
+  </main>
+
+</body>

@@ -255,7 +255,7 @@
                           {{ form.password1.errors }}
                         </div>
                       </div>
-  
+                      
                       <div class="col-lg-6 col-md-6 col-sm-12">
                         <span class="form-label">Repita a mesma senha</span>
                         <input type="password" name="password2" class="form-control" aria-label="Username" 
@@ -267,26 +267,32 @@
                         </div>
                       </div>
                     </div>
-
+                    
+                    
                     <div class="row mt-3">
+                      <div class="col-12">
+                        <ul>
+                          <li class="text-muted small">Sua senha deve conter 10 caracteres</li>
+                          <li class="text-muted small">Sua senha deve conter maiúsculas e minúsculas</li>
+                          <li class="text-muted small">Sua senha deve conter caracteres especiais</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div class="row mt-1">
                       <div class="col-12">
                         <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
-                        <a href="{% url 'login' %}"><button class="btn btn-outline-primary w-100 mt-3" type="submit">Já tenho uma conta</button></a>
                       </div> 
                     </div>
-                      
-                    <div class="row mt-3">
-                      <div class="col-12">
-                          <ul>
-                            <li class="text-muted small">Sua senha deve conter 10 caracteres</li>
-                            <li class="text-muted small">Sua senha deve conter maiúsculas e minúsculas</li>
-                            <li class="text-muted small">Sua senha deve conter caracteres especiais</li>
-                          </ul>
-                        </div>
-                      </div>
-  
-  
-                    </form>
+
+                  </form>
+                    
+                  <div class="row mt-1">
+                    <div class="col-12">
+                      <a href="{% url 'login' %}"><button class="btn text-primary w-100" type="submit">Já tenho uma conta</button></a>
+                    </div> 
+                  </div>
+
                   
                 <form class="row g-3 needs-validation justify-content-center d-md-none" action="{% url 'new_register' %}" method="POST">
 
