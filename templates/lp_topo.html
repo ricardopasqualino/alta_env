@@ -59,37 +59,53 @@
 
   <main>
       <div class="container">
-          
-          <div class="row mt-3 justify-content-center">
-            <img src="{% static 'assets/img/logo.png' %}" class="img-fluid" style="width: 20%;" alt="ALTA">
-
-            <div class="d-flex justify-content-center">
-              <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 80%;" alt="Monitorar Produto">
+        
+        <div class="row mt-3 justify-content-center">
+          <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+              <img src="{% static 'assets/img/logo.png' %}" class="img-fluid m-3" style="width: 8%;" alt="ALTA">
             </div>
+          </div>
 
-            <div class="col-8 d-flex justify-content-center mx-auto mt-4">
-              <form class="w-100">
-                <div class="mb-3">
-                  <label for="inputNome" class="form-label">Nome</label>
-                  <input type="text" class="form-control" id="inputNome" name="nome" placeholder="Digite seu nome" required>
-                </div>
-                <div class="mb-3">
-                  <label for="inputTelefone" class="form-label">Telefone</label>
-                  <input type="tel" class="form-control" id="inputTelefone" name="telefone" placeholder="(99) 99999-9999" required>
-                </div>
-              </form>
-            </div>
-
+          <div class="row">
             <div class="col-8 d-flex justify-content-center mx-auto">
-              <h1 class="card-title fs-2 mb-1 text-center p-5">
+              <h1 class="card-title fs-3 mb-1 text-center p-3">
                   <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
-                Reduza em até 15% o custo com combustíveis <span class=" fs-2 text-primary">encontrando os postos com os menores preços</span> na sua região!
+                Reduza em 15% o custo com combustível <span class=" fs-2 text-primary">encontrando os postos com o menor preço</span> na sua região!
               </h1>
             </div>
+          </div>
+
+          <div class="d-flex justify-content-center">
+            <img src="{% static 'assets/img/home_1.jpg' %}" class="img-fluid mt-1" style="width: 40%;" alt="Monitorar Produto">
+        </div>
+
+          <div class="row">
+            <div class="col-6 d-flex justify-content-center mx-auto mt-4">
+              <form class="w-100">
+                <h2 class="card-title fs-5 mb-1 text-left p-1">Pegue o passo a passo de como implementar com o ALTA.bi</h2>
+                <div class="mb-3">
+                  <!-- <label for="inputNome" class="form-label">Nome</label> -->
+                  <input type="text" class="form-control form-control-lg" id="inputNome" name="nome" placeholder="Digite seu nome" required style="height: 60px; font-size: 1.5rem;">
+                </div>
+                <div class="mb-3">
+                  <!-- <label for="inputTelefone" class="form-label">Telefone</label> -->
+                  <input type="tel" class="form-control form-control-lg" id="inputTelefone" name="telefone" placeholder="(99) 99999-9999" required style="height: 60px; font-size: 1.5rem;">
+                </div>
+                <a href=""><button class="btn btn-primary btn-lg w-100 mb-3">Receba Agora!</button></a>
+              </form>
+            </div>
+          </div>
+
+
+          
+
+
+
+
 
             
 
-            <a href=""><button class="btn btn-primary btn-bg w-100">Criar conta Agora!</button></a>
 
           </div>
 
