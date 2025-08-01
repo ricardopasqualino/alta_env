@@ -16,6 +16,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 
 from .filters import MainFilter
 
@@ -466,6 +468,41 @@ def add_price(request):
         'current_page': page,
     }
     return render(request, 'p_adicionar.html', data)
+
+
+@require_http_methods(["GET"])
+def health_check(request):
+    """
+    Endpoint de health check para o Render
+    """
+    try:
+        # Verificar se o banco está funcionando
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        
+        # Verificar se o cache está funcionando
+        cache.set('health_check', 'ok', 10)
+        cache_value = cache.get('health_check')
+        
+        if cache_value == 'ok':
+            return JsonResponse({
+                'status': 'healthy',
+                'database': 'connected',
+                'cache': 'working',
+                'timestamp': timezone.now().isoformat()
+            })
+        else:
+            return JsonResponse({
+                'status': 'unhealthy',
+                'error': 'cache_not_working'
+            }, status=500)
+            
+    except Exception as e:
+        return JsonResponse({
+            'status': 'unhealthy',
+            'error': str(e)
+        }, status=500)
 
 
 @login_required

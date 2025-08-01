@@ -1,0 +1,15 @@
+INFO 2025-08-01 06:22:52,261 autoreload 15060 16580 Watching for file changes with StatReloader
+INFO 2025-08-01 06:22:55,679 autoreload 15060 16580 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\settings.py changed, reloading.
+INFO 2025-08-01 06:22:56,457 autoreload 1584 15124 Watching for file changes with StatReloader
+INFO 2025-08-01 06:24:26,214 autoreload 1584 15124 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:24:27,171 autoreload 11656 9568 Watching for file changes with StatReloader
+INFO 2025-08-01 06:24:49,423 autoreload 11656 9568 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:24:50,193 autoreload 10836 7864 Watching for file changes with StatReloader
+INFO 2025-08-01 06:25:23,930 autoreload 10836 7864 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:25:24,729 autoreload 17352 2360 Watching for file changes with StatReloader
+INFO 2025-08-01 06:25:49,183 autoreload 17352 2360 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\urls.py changed, reloading.
+INFO 2025-08-01 06:25:49,993 autoreload 16964 8948 Watching for file changes with StatReloader
+INFO 2025-08-01 06:26:14,517 autoreload 16964 8948 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\urls.py changed, reloading.
+INFO 2025-08-01 06:26:15,350 autoreload 6564 12788 Watching for file changes with StatReloader
+INFO 2025-08-01 06:26:52,446 autoreload 6564 12788 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:26:53,455 autoreload 9520 1592 Watching for file changes with StatReloader

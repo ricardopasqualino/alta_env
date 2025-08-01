@@ -11,7 +11,7 @@ services:
     name: alta_ai_env_prod
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn core.asgi:application -c gunicorn.conf.py"
+    startCommand: "gunicorn core.wsgi:application -c gunicorn.conf.py"
     healthCheckPath: /health/
     autoDeploy: true
     envVars:
@@ -26,10 +26,12 @@ services:
       - key: DEBUG
         value: false
       - key: PORT
-        value: 8000
+        value: 10000
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
       - key: PYTHONUNBUFFERED
         value: "1"
       - key: DJANGO_LOG_LEVEL
         value: INFO
+      - key: RENDER_EXTERNAL_URL
+        value: app.alta.bi

@@ -19,6 +19,7 @@ from alta.views import (
     p_radar_precos,
     p_faq,
     lp_topo,
+    health_check,
 )
 
 urlpatterns = [
@@ -46,6 +47,7 @@ urlpatterns = [
     path('radar-precos/', p_radar_precos, name='p_radar_precos'),
     path('faq/', p_faq, name='p_faq'),
     path('lp-topo/', lp_topo, name='lp_topo'),
+    path('health/', health_check, name='health_check'),
 ]
 
 LOGIN_URL = 'login'
