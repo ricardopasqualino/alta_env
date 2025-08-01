@@ -158,53 +158,7 @@
                   </tbody>
                 </table>
 
-                <!-- Paginação -->
-                {% if total_pages > 1 %}
-                <nav aria-label="Paginação de preços">
-                  <ul class="pagination justify-content-center">
-                    {% if prices.has_previous %}
-                      <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="Primeira">
-                          <span aria-hidden="true">&laquo;&laquo;</span>
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="?page={{ prices.previous_page_number }}" aria-label="Anterior">
-                          <span aria-hidden="true">&laquo;</span>
-                        </a>
-                      </li>
-                    {% endif %}
 
-                    {% for num in prices.paginator.page_range %}
-                      {% if num == current_page %}
-                        <li class="page-item active">
-                          <span class="page-link">{{ num }}</span>
-                        </li>
-                      {% elif num > current_page|add:'-3' and num < current_page|add:'3' %}
-                        <li class="page-item">
-                          <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                        </li>
-                      {% endif %}
-                    {% endfor %}
-
-                    {% if prices.has_next %}
-                      <li class="page-item">
-                        <a class="page-link" href="?page={{ prices.next_page_number }}" aria-label="Próxima">
-                          <span aria-hidden="true">&raquo;</span>
-                        </a>
-                      </li>
-                      <li class="page-item">
-                        <a class="page-link" href="?page={{ total_pages }}" aria-label="Última">
-                          <span aria-hidden="true">&raquo;&raquo;</span>
-                        </a>
-                      </li>
-                    {% endif %}
-                  </ul>
-                </nav>
-                <div class="text-center text-muted">
-                  <small>Mostrando {{ prices.start_index }} a {{ prices.end_index }} de {{ total_count }} registros</small>
-                </div>
-                {% endif %}
   
               </div>
             </div>

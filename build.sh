@@ -8,14 +8,8 @@ pip install -r requirements.txt
 # Create staticfiles directory if it doesn't exist
 mkdir -p staticfiles
 
-# Otimizar arquivos estáticos
-python manage.py optimize_static --force
+# Convert static asset files
+python manage.py collectstatic --no-input --clear
 
 # Apply any outstanding database migrations
 python manage.py migrate
-
-# Configurar cache
-python manage.py setup_cache
-
-# Verificar configurações
-python manage.py check --deploy

@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from django.shortcuts import render, redirect
 from django.db.models import Sum, Avg, Count, Max, Min, Q, F, ExpressionWrapper, DurationField
 from django.contrib import messages
@@ -15,10 +15,6 @@ from django.db.models.functions import ExtractMonth, ExtractYear
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.cache import cache
-from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-
 from .filters import MainFilter
 
 from .forms import NewPrice, CreateUserForm
@@ -373,136 +369,37 @@ def p_lista_preco(request):
 
 @login_required
 def add_price(request):
-    """
-    View otimizada para adicionar preços com cache e paginação
-    """
+
     try:
         user_profile = request.user.profile
     except Profile.DoesNotExist:
         user_profile = Profile.objects.create(user=request.user)
     
-    # Cache para o formulário - dados que não mudam frequentemente
-    cache_key = f'add_price_form:{request.user.id}:{user_profile.cidade_id if user_profile.cidade else "none"}'
-    cached_form_data = cache.get(cache_key)
-    
-    if cached_form_data:
-        form = NewPrice(request.POST or None)
-        form.fields['gasstation_id'].queryset = cached_form_data['gasstations']
-        form.fields['produto_id'].queryset = cached_form_data['produtos']
+    form = NewPrice(request.POST or None)
+    # Otimização: buscar primeiro a cidade da tabela Cidade (menor) e depois filtrar GasStation
+    if user_profile.cidade:
+        # Busca o nome da cidade da tabela Cidade (mais eficiente)
+        nome_cidade = user_profile.cidade.cidade
+        # Filtra GasStation usando o nome da cidade
+        form.fields['gasstation_id'].queryset = GasStation.objects.filter(cidade=nome_cidade)
     else:
-        form = NewPrice(request.POST or None)
-        
-        # Otimização: buscar primeiro a cidade da tabela Cidade (menor) e depois filtrar GasStation
-        if user_profile.cidade:
-            # Busca o nome da cidade da tabela Cidade (mais eficiente)
-            nome_cidade = user_profile.cidade.cidade
-            # Filtra GasStation usando o nome da cidade com select_related para otimizar
-            gasstations = GasStation.objects.filter(cidade=nome_cidade).only(
-                'id', 'cnpj', 'razao', 'fantasia', 'cidade', 'estado', 'bandeira'
-            )
-            form.fields['gasstation_id'].queryset = gasstations
-        else:
-            form.fields['gasstation_id'].queryset = GasStation.objects.none()
-        
-        # Cache dos dados do formulário por 30 minutos
-        cache_data = {
-            'gasstations': form.fields['gasstation_id'].queryset,
-            'produtos': form.fields['produto_id'].queryset,
-        }
-        cache.set(cache_key, cache_data, 1800)  # 30 minutos
+        form.fields['gasstation_id'].queryset = GasStation.objects.none()
     
-    # Paginação para a lista de preços - evita carregar todos os dados de uma vez
-    page = request.GET.get('page', 1)
-    try:
-        page = int(page)
-    except (TypeError, ValueError):
-        page = 1
-    
-    # Cache para a lista de preços paginada
-    prices_cache_key = f'user_prices:{request.user.id}:{page}'
-    cached_prices = cache.get(prices_cache_key)
-    
-    if cached_prices:
-        prices = cached_prices['prices']
-        total_pages = cached_prices['total_pages']
-        total_count = cached_prices['total_count']
-    else:
-        # Consulta otimizada com select_related para evitar N+1 queries
-        prices_queryset = AddPrice.objects.filter(user=request.user).select_related(
-            'gasstation_id', 'produto_id'
-        ).only(
-            'gasstation_id__cnpj',
-            'gasstation_id__razao', 
-            'gasstation_id__cidade',
-            'gasstation_id__estado',
-            'gasstation_id__bandeira',
-            'produto_id__produto',
+    prices = AddPrice.objects.filter(user=request.user).only(
+            'gasstation_id', 
+            'produto_id', 
             'preco_revenda', 
             'data_coleta'
         ).order_by('-data_coleta')
-        
-        # Paginação
-        paginator = Paginator(prices_queryset, 20)  # 20 itens por página
-        try:
-            prices = paginator.page(page)
-        except (EmptyPage, InvalidPage):
-            prices = paginator.page(paginator.num_pages)
-        
-        total_pages = paginator.num_pages
-        total_count = paginator.count
-        
-        # Cache por 5 minutos
-        cache.set(prices_cache_key, {
-            'prices': prices,
-            'total_pages': total_pages,
-            'total_count': total_count
-        }, 300)
-
-        
 
     data = {
         'form': form,
         'prices': prices,
-        'total_pages': total_pages,
-        'total_count': total_count,
-        'current_page': page,
     }
     return render(request, 'p_adicionar.html', data)
 
 
-@require_http_methods(["GET"])
-def health_check(request):
-    """
-    Endpoint de health check para o Render
-    """
-    try:
-        # Verificar se o banco está funcionando
-        from django.db import connection
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-        
-        # Verificar se o cache está funcionando
-        cache.set('health_check', 'ok', 10)
-        cache_value = cache.get('health_check')
-        
-        if cache_value == 'ok':
-            return JsonResponse({
-                'status': 'healthy',
-                'database': 'connected',
-                'cache': 'working',
-                'timestamp': timezone.now().isoformat()
-            })
-        else:
-            return JsonResponse({
-                'status': 'unhealthy',
-                'error': 'cache_not_working'
-            }, status=500)
-            
-    except Exception as e:
-        return JsonResponse({
-            'status': 'unhealthy',
-            'error': str(e)
-        }, status=500)
+
 
 
 @login_required

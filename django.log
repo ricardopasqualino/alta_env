@@ -13,3 +13,293 @@ INFO 2025-08-01 06:26:14,517 autoreload 16964 8948 C:\Users\User\Desktop\Projeto
 INFO 2025-08-01 06:26:15,350 autoreload 6564 12788 Watching for file changes with StatReloader
 INFO 2025-08-01 06:26:52,446 autoreload 6564 12788 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
 INFO 2025-08-01 06:26:53,455 autoreload 9520 1592 Watching for file changes with StatReloader
+ERROR 2025-08-01 06:28:46,318 log 9520 18068 Internal Server Error: /acompanhar-precos/
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py", line 386, in add_price
+    cached_form_data = cache.get(cache_key)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 53, in get
+    return self.get_many([key], version).get(key, default)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 69, in get_many
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        "SELECT %s, %s, %s FROM %s WHERE %s IN (%s)"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        list(key_map),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+WARNING 2025-08-01 06:28:46,404 middleware 9520 18068 View lenta detectada: /acompanhar-precos/ - 2.16s - User: admin@admin.com
+ERROR 2025-08-01 06:28:46,405 basehttp 9520 18068 "GET /acompanhar-precos/ HTTP/1.1" 500 145
+INFO 2025-08-01 06:29:27,499 autoreload 18132 19284 Watching for file changes with StatReloader
+ERROR 2025-08-01 06:29:34,961 log 18132 8512 Internal Server Error: /acompanhar-precos/
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py", line 386, in add_price
+    cached_form_data = cache.get(cache_key)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 53, in get
+    return self.get_many([key], version).get(key, default)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 69, in get_many
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        "SELECT %s, %s, %s FROM %s WHERE %s IN (%s)"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        list(key_map),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+WARNING 2025-08-01 06:29:34,971 middleware 18132 8512 View lenta detectada: /acompanhar-precos/ - 2.04s - User: admin@admin.com
+ERROR 2025-08-01 06:29:34,971 basehttp 18132 8512 "GET /acompanhar-precos/ HTTP/1.1" 500 145
+INFO 2025-08-01 06:29:58,774 autoreload 6248 18776 Watching for file changes with StatReloader
+ERROR 2025-08-01 06:30:05,883 log 6248 6832 Internal Server Error: /acompanhar-precos/
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py", line 386, in add_price
+    cached_form_data = cache.get(cache_key)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 53, in get
+    return self.get_many([key], version).get(key, default)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 69, in get_many
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        "SELECT %s, %s, %s FROM %s WHERE %s IN (%s)"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        list(key_map),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+WARNING 2025-08-01 06:30:05,895 middleware 6248 6832 View lenta detectada: /acompanhar-precos/ - 1.98s - User: admin@admin.com
+ERROR 2025-08-01 06:30:05,896 basehttp 6248 6832 "GET /acompanhar-precos/ HTTP/1.1" 500 145
+INFO 2025-08-01 06:30:33,718 autoreload 6248 18776 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\settings.py changed, reloading.
+INFO 2025-08-01 06:30:34,714 autoreload 3500 11560 Watching for file changes with StatReloader
+ERROR 2025-08-01 06:30:39,188 log 3500 4948 Internal Server Error: /acompanhar-precos/
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\contrib\auth\decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py", line 386, in add_price
+    cached_form_data = cache.get(cache_key)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 53, in get
+    return self.get_many([key], version).get(key, default)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\core\cache\backends\db.py", line 69, in get_many
+    cursor.execute(
+    ~~~~~~~~~~~~~~^
+        "SELECT %s, %s, %s FROM %s WHERE %s IN (%s)"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<8 lines>...
+        list(key_map),
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        sql, params, many=False, executor=self._execute
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\Users\User\Desktop\Projetos\Alta\alta_view\env\Lib\site-packages\django\db\backends\utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+django.db.utils.ProgrammingError: relation "cache_table" does not exist
+LINE 1: SELECT "cache_key", "value", "expires" FROM "cache_table" WH...
+                                                    ^
+
+WARNING 2025-08-01 06:30:39,197 middleware 3500 4948 View lenta detectada: /acompanhar-precos/ - 2.02s - User: admin@admin.com
+ERROR 2025-08-01 06:30:39,197 basehttp 3500 4948 "GET /acompanhar-precos/ HTTP/1.1" 500 145
+INFO 2025-08-01 06:31:02,572 autoreload 3500 11560 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\settings.py changed, reloading.
+INFO 2025-08-01 06:31:03,350 autoreload 8948 3848 Watching for file changes with StatReloader
+INFO 2025-08-01 06:31:10,339 basehttp 8948 10956 "GET /acompanhar-precos/ HTTP/1.1" 200 26302
+INFO 2025-08-01 06:31:10,367 basehttp 8948 10956 "GET /static/assets/vendor/bootstrap/css/bootstrap.min.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,367 basehttp 8948 12664 "GET /static/assets/vendor/quill/quill.snow.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,367 basehttp 8948 1784 "GET /static/assets/vendor/boxicons/css/boxicons.min.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,367 basehttp 8948 10492 "GET /static/assets/vendor/bootstrap-icons/bootstrap-icons.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,368 basehttp 8948 15756 "GET /static/assets/vendor/quill/quill.bubble.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,372 basehttp 8948 10956 "GET /static/assets/vendor/simple-datatables/style.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,373 basehttp 8948 15600 "GET /static/assets/vendor/remixicon/remixicon.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,374 basehttp 8948 12664 "GET /static/assets/css/style.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,382 basehttp 8948 15600 "GET /static/assets/vendor/apexcharts/apexcharts.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,382 basehttp 8948 12664 "GET /static/assets/img/logo.png HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,403 basehttp 8948 15600 "GET /static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,403 basehttp 8948 12664 "GET /static/assets/vendor/chart.js/chart.umd.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,407 basehttp 8948 15600 "GET /static/assets/vendor/quill/quill.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,407 basehttp 8948 12664 "GET /static/assets/vendor/echarts/echarts.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,413 basehttp 8948 15600 "GET /static/assets/vendor/simple-datatables/simple-datatables.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,413 basehttp 8948 12664 "GET /static/assets/vendor/tinymce/tinymce.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,418 basehttp 8948 12664 "GET /static/assets/vendor/php-email-form/validate.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,418 basehttp 8948 15600 "GET /static/assets/js/main.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:10,461 basehttp 8948 10492 "GET /static/assets/css/style-dashboard.css HTTP/1.1" 200 5103
+INFO 2025-08-01 06:31:10,496 basehttp 8948 15600 "GET /static/assets/js/dashboard.js HTTP/1.1" 200 3758
+INFO 2025-08-01 06:31:10,531 basehttp 8948 15600 "GET /static/assets/vendor/bootstrap-icons/fonts/bootstrap-icons.woff2?dd67030699838ea613ee6dbda90effa6 HTTP/1.1" 304 0
+INFO 2025-08-01 06:31:31,892 basehttp 8948 15600 "GET /listar-precos/ HTTP/1.1" 200 75641
+INFO 2025-08-01 06:31:36,410 basehttp 8948 15600 "GET /listar-precos/ HTTP/1.1" 200 75641
+INFO 2025-08-01 06:33:29,725 basehttp 8948 15600 "GET /acompanhar-precos/ HTTP/1.1" 200 26302
+INFO 2025-08-01 06:33:29,760 basehttp 8948 15600 "GET /static/assets/vendor/bootstrap/css/bootstrap.min.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,767 basehttp 8948 15600 "GET /static/assets/vendor/bootstrap-icons/bootstrap-icons.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,767 basehttp 8948 12664 "GET /static/assets/vendor/quill/quill.snow.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,768 basehttp 8948 15756 "GET /static/assets/vendor/remixicon/remixicon.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,768 basehttp 8948 1784 "GET /static/assets/vendor/simple-datatables/style.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,768 basehttp 8948 10492 "GET /static/assets/vendor/boxicons/css/boxicons.min.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,769 basehttp 8948 10956 "GET /static/assets/vendor/quill/quill.bubble.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,771 basehttp 8948 15600 "GET /static/assets/css/style.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,773 basehttp 8948 1784 "GET /static/assets/css/style-dashboard.css HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,775 basehttp 8948 15600 "GET /static/assets/img/logo.png HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,775 basehttp 8948 10956 "GET /static/assets/vendor/apexcharts/apexcharts.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,801 basehttp 8948 10956 "GET /static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,801 basehttp 8948 15600 "GET /static/assets/vendor/chart.js/chart.umd.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,814 basehttp 8948 10956 "GET /static/assets/vendor/echarts/echarts.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,815 basehttp 8948 12664 "GET /static/assets/js/main.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,815 basehttp 8948 15756 "GET /static/assets/vendor/php-email-form/validate.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,815 basehttp 8948 1784 "GET /static/assets/vendor/simple-datatables/simple-datatables.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,815 basehttp 8948 15600 "GET /static/assets/vendor/quill/quill.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,815 basehttp 8948 10492 "GET /static/assets/vendor/tinymce/tinymce.min.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:29,825 basehttp 8948 10492 "GET /static/assets/js/dashboard.js HTTP/1.1" 304 0
+INFO 2025-08-01 06:33:55,331 basehttp 8948 10492 "POST /adicionar-novo-preco/ HTTP/1.1" 302 0
+INFO 2025-08-01 06:33:58,860 basehttp 8948 10492 "GET /acompanhar-precos/ HTTP/1.1" 200 26992
+INFO 2025-08-01 06:38:13,554 autoreload 8948 3848 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:38:14,347 autoreload 11932 16576 Watching for file changes with StatReloader
+INFO 2025-08-01 06:39:12,383 autoreload 11932 16576 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:39:13,197 autoreload 11676 18176 Watching for file changes with StatReloader
+INFO 2025-08-01 06:39:29,079 autoreload 11676 18176 C:\Users\User\Desktop\Projetos\Alta\alta_view\alta\views.py changed, reloading.
+INFO 2025-08-01 06:39:29,829 autoreload 18724 10012 Watching for file changes with StatReloader
+INFO 2025-08-01 06:39:48,599 autoreload 18724 10012 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\settings.py changed, reloading.
+INFO 2025-08-01 06:39:49,327 autoreload 18708 12880 Watching for file changes with StatReloader
+INFO 2025-08-01 06:40:03,671 autoreload 18708 12880 C:\Users\User\Desktop\Projetos\Alta\alta_view\core\settings.py changed, reloading.

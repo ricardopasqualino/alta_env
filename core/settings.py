@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='default-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default='False').lower() == 'true'
+DEBUG = False
 
 ALLOWED_HOSTS = ['alta-env.onrender.com', 
                  'localhost', 
@@ -34,14 +34,12 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'alta.middleware.PerformanceMonitorMiddleware',  # Monitor de performance
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'alta.middleware.CacheMiddleware',  # Cache inteligente
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -176,13 +174,21 @@ else:
     EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
     DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ricardo.pasqualino@gmail.com')
     
-    # Logs silenciosos em produção para evitar spam
-    if not DEBUG:
-        print("📧 Modo de produção: usando SMTP Gmail")
-        if not EMAIL_HOST_PASSWORD:
-            print("⚠️ ATENÇÃO: EMAIL_HOST_PASSWORD não configurada!")
-        if not EMAIL_HOST_USER:
-            print("⚠️ ATENÇÃO: EMAIL_HOST_USER não configurada!")
+    print("📧 Modo de produção: usando SMTP Gmail")
+    print(f"📧 EMAIL_HOST_USER: {EMAIL_HOST_USER}")
+    print(f"📧 EMAIL_HOST_PASSWORD configurada: {'Sim' if EMAIL_HOST_PASSWORD else 'Não'}")
+    print(f"📧 DEFAULT_FROM_EMAIL: {DEFAULT_FROM_EMAIL}")
+    
+    # Verificar se as configurações de email estão corretas
+    if not EMAIL_HOST_PASSWORD:
+        print("⚠️ ATENÇÃO: EMAIL_HOST_PASSWORD não configurada!")
+        print("   Configure a variável de ambiente EMAIL_HOST_PASSWORD no Render")
+        print("   Use a senha de app do Gmail (não a senha normal)")
+    if not EMAIL_HOST_USER:
+        print("⚠️ ATENÇÃO: EMAIL_HOST_USER não configurada!")
+        print("   Configure a variável de ambiente EMAIL_HOST_USER no Render")
+    else:
+        print("✅ Configurações de email carregadas com sucesso")
 
 # Configurações de Webhook
 if DEBUG:
@@ -196,79 +202,13 @@ else:
         RENDER_EXTERNAL_URL = RENDER_EXTERNAL_URL.replace('http://', '')
 
 # Configuração de Cache
-if DEBUG:
-    # Cache local para desenvolvimento
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-            'TIMEOUT': 300,  # 5 minutos
-            'OPTIONS': {
-                'MAX_ENTRIES': 1000,
-            }
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,  # 5 minutos
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
         }
     }
-else:
-    # Cache otimizado para produção
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'cache_table',
-            'TIMEOUT': 600,  # 10 minutos
-            'OPTIONS': {
-                'MAX_ENTRIES': 2000,
-            }
-        }
-    }
-
-# Configuração de Logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': 'django.log',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'alta': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
 }
-
-# Configurações de segurança para produção
-if not DEBUG:
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
