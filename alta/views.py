@@ -628,14 +628,31 @@ def confirmacao_email_recuperacao(request):
     return render(request, 'registration/password_done.html')
 
 
-
-
 def lp_topo(request):
     if request.method == 'POST':
         form = NewLeadForm(request.POST)
         if form.is_valid():
             lead = form.save()
             messages.success(request, 'Lead cadastrado com sucesso!')
+            # Envia os dados do lead para o email ricardo@alta.bi
+            from django.core.mail import send_mail
+
+            assunto = "Novo Lead cadastrado no LP Topo"
+            mensagem = f"""
+            Novo lead cadastrado:
+
+            Nome: {lead.nome}
+            Telefone: {lead.telefone}
+            Data de Cadastro: {lead.data_cadastro.strftime('%d/%m/%Y %H:%M')}
+            """
+
+            send_mail(
+                assunto,
+                mensagem,
+                'nao-responda@alta.bi',  # Remetente
+                ['ricardo@alta.bi'],     # Destinatário
+                fail_silently=True,
+            )
             return redirect('lp_topo')
         else:
             messages.error(request, 'Erro ao cadastrar lead. Verifique os dados.')
