@@ -71,9 +71,12 @@
 
 </head>
 
+<body>
+
 <main class="d-flex flex-column min-vh-100">
 
   <div class="container flex-grow-1">
+
       <div class="d-flex justify-content-center py-4 mt-5">
         <a href="" class="logo d-flex align-items-center w-auto">
           <img src="{% static 'assets/img/logo.png'%}" alt="ALTA.bi" class="img-fluid">
@@ -83,18 +86,20 @@
       {% block main %}
             
       {% endblock %}
-  </div>
 
-
-  <footer id="footer" class="footer mt-auto py-3 bg-transparent w-100">
-    <div class="container text-center">
       <div class="row">
-        <div class="copyright">
-          &copy; Copyright <strong><span>ALTA.bi</span></strong>
+        <div class="col-12">
+          <footer id="footer" class="footer">
+            <div class="copyright">
+              &copy; Copyright <strong><span>ALTA.bi</span></strong>
+            </div>
+            <div class="credits">
+              Todos os direitos reservados.
+            </div>
+          </footer>
         </div>
-      <div class="credits">
-        Todos os direitos reservados..
       </div>
-    </div>
-  </footer><!-- End Footer -->
+  </div>
+  
 </main>
+</body>

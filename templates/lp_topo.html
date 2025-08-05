@@ -74,16 +74,16 @@
           </div>
         {% endif %}
         
-        <div class="row mt-3 justify-content-center">
+        <div class="row mt-1 justify-content-center">
           <div class="row">
             <div class="col-12 d-flex justify-content-center">
-              <img src="{% static 'assets/img/logo.png' %}" class="img-fluid m-3" style="width: 8%;" alt="ALTA">
+              <img src="{% static 'assets/img/logo.png' %}" class="img-fluid m-3" style="width: 10%;" alt="ALTA">
             </div>
           </div>
 
           <div class="row">
-            <div class="col-8 d-flex justify-content-center mx-auto">
-              <h1 class="card-title fs-4 mb-1 text-center p-3">
+            <div class="col-9 d-flex justify-content-center mx-auto">
+              <h1 class="card-title fs-4 mb-1 text-center p-2">
                   <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
                 Reduza em 15% o custo com combustível <span class=" fs-2 text-primary">encontrando os postos com o menor preço</span> na sua região!
               </h1>
@@ -91,13 +91,13 @@
           </div>
 
           <div class="d-flex justify-content-center">
-            <!-- <img src="{% static 'assets/img/home_1.jpg' %}" class="img-fluid mt-1" style="width: 40%;" alt="Monitorar Produto"> -->
+            <img src="{% static 'assets/img/home.png' %}" class="img-fluid mt-1" style="width: 60%;" alt="Monitorar Produto">
         </div>
 
           <div class="row">
             <div class="col-6 d-flex justify-content-center mx-auto mt-4">
               <form method="post" class="w-100">
-                <h2 class="card-title fs-5 mb-1 text-center p-1 mb-3 mt-1">Receba o passo a passo. Mande um contato!</h2>
+                <h2 class="card-title fs-5 mb-1 text-center p-1 mb-3 mt-1">Saiba como agora mesmo!</h2>
                 
                 {% csrf_token %}
                 <div class="mb-3">
@@ -110,7 +110,7 @@
                 <div class="mb-3">
                   <!-- <label for="inputTelefone" class="form-label">Telefone</label> -->
                   <input type="tel" name="telefone" inputmode="numeric" class="form-control form-control-lg" 
-                  placeholder="(99) 99999-9999" required="required" maxlength="13"
+                  placeholder="Digite o telefone (99) 99999-9999" required="required" maxlength="13"
                   oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
                   value="{{ form.telefone.value|default:'' }}"> 
                 
