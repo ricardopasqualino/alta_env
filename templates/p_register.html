@@ -65,9 +65,31 @@
         <div class="container">
 
           <div class="row justify-content-center">
-            <div class="col-lg-7 col-md-12 col-sm-12 mt-5">
+            <div class="col-lg-7 col-md-12 col-sm-12 mt-3">
 
-              <div class="row justify-content-left mt-3">
+              <div class="row justify-content-left mt-3 d-block d-lg-none">
+
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-1 d-flex justify-content-center">
+                  <!-- <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i> -->
+                  <img src="{% static 'assets/img/logo.png' %}" class="img-fluid justify-content-center" style="width:40%;" alt="ALTA">
+                </div>
+
+                <h1 class="card-title fs-3 mb-1 mt-3 p-3 text-center">
+                  <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
+                  Reduza em até 15% o custo com combustíveis <span class=" fs-2 text-primary">encontrando os postos com os menores preços</span> na sua região!
+                </h1>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-block d-lg-none">
+                  <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 100%;" alt="Monitorar Produto">
+                </div>
+
+                <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-none d-lg-block">
+                  <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 80%;" alt="Monitorar Produto">
+                </div>
+
+              </div>
+
+              <div class="row justify-content-left mt-3 d-none d-lg-block">
 
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3">
                   <!-- <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i> -->
@@ -287,11 +309,11 @@
 
                   </form>
                     
-                  <div class="row mt-1">
+                  <!-- <div class="row mt-1">
                     <div class="col-12">
                       <a href="{% url 'login' %}"><button class="btn text-primary w-100" type="submit">Já tenho uma conta</button></a>
                     </div> 
-                  </div>
+                  </div> -->
 
                   
                 <form class="row g-3 needs-validation justify-content-center d-md-none" action="{% url 'new_register' %}" method="POST">
@@ -345,9 +367,8 @@
 
                       <div class="col-12 mt-3">
                         <span class="form-label">Cidade</span>
-                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required">
-                          {{ form.cidade }}
-                        </select>
+                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
+                          {{ form.cidade }} </>
                         <div class="input-group">
                           {{ form.cidade.errors }}
                         </div>
@@ -355,9 +376,8 @@
 
                       <div class="col-12 mt-3">
                         <span class="form-label">Estado</span>
-                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required">
-                          {{ form.estado }}
-                        </select>
+                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
+                          {{ form.estado }} </>
                         <div class="input-group">
                           {{ form.estado.errors }}
                         </div>
@@ -412,14 +432,15 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-12 mt-3">
-                      <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
-                      <a href="{% url 'login' %}"><button class="btn btn-outline-primary w-100" type="submit">Já tenho uma conta</button></a>
-                    </div> 
+                  <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-8 mt-3 d-flex flex-column align-items-center">
+                      <button class="btn btn-primary w-100 mb-3" type="submit">Criar conta Agora!</button>
+                      <a href="{% url 'login' %}" class="w-100">
+                        <button class="btn btn-outline-primary w-100 d-flex justify-content-center" type="button">Já tenho uma conta</button>
+                      </a>
+                    </div>
                   </div>
-
-                    
+                </form>
                   <div class="row mt-3">
                     <div class="col-12">
                       <ul>
@@ -429,7 +450,6 @@
                       </ul>
                     </div>
                   </div>
-              </form>
             </div>
           </div>
         </div>

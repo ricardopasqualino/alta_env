@@ -52,68 +52,91 @@ def p_faq(request):
 
 @login_required
 def p_cartao_precos(request):
+    from datetime import datetime, timedelta
     
-    cidade = request.GET.get('cidade')
-    ano = request.GET.get('ano')
-    mes = request.GET.get('mes')
+    # Obter filtros da requisição
+    data_inicial = request.GET.get('data_inicial')
+    data_final = request.GET.get('data_final')
+    produto = request.GET.get('produto', 'Etanol')
     
-    # Gerar chave de cache baseada nos filtros
-    cache_key = f"cartao_precos:{cidade}:{ano}:{mes}:{str(sorted(request.GET.items()))}"
-    cached_result = cache.get(cache_key)
-    if cached_result:
-        # Recriar o filter para o template
-        base_queryset = AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True)
-        fil = MainFilter(request.GET, queryset=base_queryset)
-        cached_result['fil'] = fil
-        return render(request, 'p_cartao_precos.html', cached_result)
+    # Valores padrão se não foram fornecidos
+    if not data_inicial:
+        data_inicial = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+    if not data_final:
+        data_final = datetime.now().strftime('%Y-%m-%d')
     
-    # Query base otimizada usando values
-    base_query = AddPrice.objects.filter(
-        gasstation_id__cidade=cidade,
-        data_coleta__year=ano,
-        data_coleta__month=mes
-    ).exclude(produto_id=3).values(
-        'produto_id__produto',
-        'preco_revenda'
+    # Query base para os dados
+    base_queryset = AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True)
+    
+    # Filtros aplicados
+    queryset = base_queryset.filter(
+        data_coleta__gte=data_inicial,
+        data_coleta__lte=data_final
     )
     
-    # Calcular todos os valores em uma única query otimizada
-    precos_agregados = list(base_query.values(
-        'produto_id__produto'
-    ).annotate(
-        preco_minimo=Min('preco_revenda'),
-        preco_medio=Avg('preco_revenda'),
-        preco_maximo=Max('preco_revenda')
-    ))
+    if produto:
+        queryset = queryset.filter(produto_id__produto=produto)
     
-    # Separar os dados
-    preco_min = [{'produto_id__produto': item['produto_id__produto'], 'preco_minimo': item['preco_minimo']} for item in precos_agregados]
-    preco_avg = [{'produto_id__produto': item['produto_id__produto'], 'preco_medio': item['preco_medio']} for item in precos_agregados]
-    preco_max = [{'produto_id__produto': item['produto_id__produto'], 'preco_maximo': item['preco_maximo']} for item in precos_agregados]
-
-    # Query otimizada para última coleta
-    ultima_coleta = AddPrice.objects.values('data_coleta').aggregate(ultima_data_coleta=Max('data_coleta'))
-    ultima_data = ultima_coleta['ultima_data_coleta']
-
-    # Dados para cache (sem o objeto filter)
-    cache_data = {
-        'cidade': cidade,
-        'preco_min': preco_min,
-        'preco_max': preco_max,
-        'preco_avg': preco_avg,
-        'ultima_data': ultima_data,
-        'ano': ano,
-        'mes': mes
-    }
-    cache.set(cache_key, cache_data, 300)  # 5 minutos
+    # Pegar os dois primeiros postos com mais dados para comparação
+    postos_com_dados = queryset.values('gasstation_id', 'gasstation_id__razao').annotate(
+        total_registros=Count('id')
+    ).order_by('-total_registros')[:2]
     
-    # Dados completos para o template (incluindo o filter)
-    base_queryset = AddPrice.objects.exclude(produto_id=3, pesquisa_origem_id=2, produto_id__isnull=True)
+    primeiro_posto_precos = []
+    segundo_posto_precos = []
+    
+    if postos_com_dados:
+        # Dados do primeiro posto
+        if len(postos_com_dados) > 0:
+            primeiro_posto_id = postos_com_dados[0]['gasstation_id']
+            primeiro_posto_dados = queryset.filter(
+                gasstation_id=primeiro_posto_id
+            ).order_by('preco_revenda').values(
+                'preco_revenda', 'data_coleta'
+            )[:5]
+            
+            primeiro_posto_precos = [
+                {
+                    'preco': dados['preco_revenda'],
+                    'data_inicio': data_inicial,
+                    'data_fim': data_final,
+                    'diferenca_dias': (datetime.strptime(data_final, '%Y-%m-%d') - datetime.strptime(data_inicial, '%Y-%m-%d')).days
+                }
+                for dados in primeiro_posto_dados
+            ]
+        
+        # Dados do segundo posto
+        if len(postos_com_dados) > 1:
+            segundo_posto_id = postos_com_dados[1]['gasstation_id']
+            segundo_posto_dados = queryset.filter(
+                gasstation_id=segundo_posto_id
+            ).order_by('preco_revenda').values(
+                'preco_revenda', 'data_coleta'
+            )[:5]
+            
+            segundo_posto_precos = [
+                {
+                    'preco': dados['preco_revenda'],
+                    'data_inicio': data_inicial,
+                    'data_fim': data_final,
+                    'diferenca_dias': (datetime.strptime(data_final, '%Y-%m-%d') - datetime.strptime(data_inicial, '%Y-%m-%d')).days
+                }
+                for dados in segundo_posto_dados
+            ]
+    
+    # Filter para o formulário
     fil = MainFilter(request.GET, queryset=base_queryset)
     
+    # Dados para o template
     data = {
         'fil': fil,
-        **cache_data
+        'primeiro_posto_precos': primeiro_posto_precos,
+        'segundo_posto_precos': segundo_posto_precos,
+        'primeiro_posto_nome': postos_com_dados[0]['gasstation_id__razao'] if postos_com_dados else 'Posto Desvech',
+        'segundo_posto_nome': postos_com_dados[1]['gasstation_id__razao'] if len(postos_com_dados) > 1 else 'Posto Desvech',
+        'data_inicial': data_inicial,
+        'data_final': data_final,
+        'produto_selecionado': produto,
     }
 
     return render(request, 'p_cartao_precos.html', data)
