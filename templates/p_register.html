@@ -38,6 +38,9 @@
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
+   <!-- Select2 --> 
+   <link href="{% static 'assets/css/select2.min.css' %}" rel="stylesheet" />
+   <script src="{% static 'assets/js/select2.min.js' %}"></script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5G3B0KPJ4N"></script>
@@ -53,66 +56,58 @@
     
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <style>
+    .cidade-select-container .select2-container {
+        width: 300px;
+    }
+</style>
+
 </head>
 
 <body>
 
   <main>
     <div class="container-fluid px-0">
-
       <section class="section register d-flex align-items-center justify-content-center">
-
         <div class="container">
-
           <div class="row justify-content-center">
             <div class="col-lg-7 col-md-12 col-sm-12 mt-3">
-
               <div class="row justify-content-left mt-3 d-block d-lg-none">
-
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-1 d-flex justify-content-center">
                   <!-- <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i> -->
-                  <img src="{% static 'assets/img/logo.png' %}" class="img-fluid justify-content-center" style="width:40%;" alt="ALTA">
+                  <img src="{% static 'assets/img/logo.png' %}" class="img-fluid justify-content-center" style="width:30%;" alt="ALTA">
                 </div>
-
                 <h1 class="card-title fs-3 mb-1 mt-3 p-3 text-center">
                   <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
                   Reduza em até 15% o custo com combustíveis <span class=" fs-2 text-primary">encontrando os postos com os menores preços</span> na sua região!
                 </h1>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-block d-lg-none">
                   <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 100%;" alt="Monitorar Produto">
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-none d-lg-block">
                   <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 80%;" alt="Monitorar Produto">
                 </div>
-
               </div>
 
               <div class="row justify-content-left mt-3 d-none d-lg-block">
-
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3">
                   <!-- <i class="bi bi-graph-up-arrow text-primary mt-3" style="font-size: 2rem;"></i> -->
                   <img src="{% static 'assets/img/logo.png' %}" class="img-fluid" style="width: 20%;" alt="ALTA">
                 </div>
-
                 <h1 class="card-title fs-2 mb-1">
                   <!-- App on-line com mais de 7M de preços de combustíveis de postos em todo Brasil! -->
                   Reduza em até 15% o custo com combustíveis <span class=" fs-2 text-primary">encontrando os postos com os menores preços</span> na sua região!
                 </h1>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-block d-lg-none">
                   <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 100%;" alt="Monitorar Produto">
                 </div>
-
                 <div class="col-lg-12 col-md-12 col-sm-12 mb-3 d-none d-lg-block">
                   <img src="{% static 'assets/img/i_card_1.gif' %}" class="img-fluid" style="width: 80%;" alt="Monitorar Produto">
                 </div>
-
               </div>
 
             
-              <ul class="list-unstyled mt-4 d-none d-md-block">
+            <ul class="list-unstyled mt-4 d-none d-md-block">
               <li class="mb-2">
                 <i class="bi bi-check-circle-fill text-success me-2"></i>
                 Análise de preço médio, máximo e mínimo por produto e posto.
@@ -159,7 +154,7 @@
                   </div>
 
                   <!-- Formulário para desktops -->
-                  <form class="row g-3 needs-validation justify-content-center d-none d-md-block" action="{% url 'new_register' %}" method="POST">
+                  <form class="row g-3 needs-validation justify-content-center" action="{% url 'new_register' %}" method="POST">
 
                     {% csrf_token %}
 
@@ -234,23 +229,24 @@
                     </div>
   
                       <div class="row mt-3">
-                        <div class="col-lg-8 col-md-6 col-sm-12">
+                        <div class="col-lg-12 col-md-6 col-sm-12">
                           <span class="form-label">Cidade</span>
-                          <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
+                          <select class="form-select" id="searchDropdown" name="cidade" aria-label="Cidade" 
+                          aria-describedby="basic-addon1" required="required"
                             {{ form.cidade }} </>
                           <div class="input-group">
                             {{ form.cidade.errors }}
                           </div>
                         </div>
   
-                        <div class="col-lg-4 col-md-6 col-sm-12">
+                        <!-- <div class="col-lg-4 col-md-6 col-sm-12">
                           <span class="form-label">Estado</span>
                           <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
                             {{ form.estado }} </>
                           <div class="input-group">
                             {{ form.estado.errors }}
                           </div>
-                        </div>
+                        </div> -->
                       </div>
 
                     <div class="row mt-3">
@@ -291,7 +287,6 @@
                       </div>
                     </div>
                     
-                    
                     <div class="row mt-3">
                       <div class="col-12">
                         <ul>
@@ -304,153 +299,41 @@
 
                     <div class="row mt-1">
                       <div class="col-12">
-                        <button class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
+                        <button id="btn-criar-conta" class="btn btn-primary w-100" type="submit">Criar conta Agora!</button>
                       </div> 
                     </div>
+                    <!-- Overlay de loading centralizado -->
+                    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(255,255,255,0.8); z-index: 9999; justify-content: center; align-items: center;">
+                      <div class="text-center">
+                        <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+                          <span class="visually-hidden">Carregando...</span>
+                        </div>
+                        <div class="mt-3 fs-5 text-primary">Criando sua conta, aguarde...</div>
+                      </div>
+                    </div>
+                    <script>
+                      document.addEventListener('DOMContentLoaded', function() {
+                        const form = document.querySelector('form');
+                        const btnCriarConta = document.getElementById('btn-criar-conta');
+                        const loadingOverlay = document.getElementById('loading-overlay');
+                        if (form && btnCriarConta && loadingOverlay) {
+                          form.addEventListener('submit', function() {
+                            btnCriarConta.disabled = true;
+                            loadingOverlay.style.display = 'flex';
+                          });
+                        }
+                      });
+                    </script>
+                    </script>
 
                   </form>
                     
-                  <div class="row mt-1">
+                  <div class="row mt-1 d-none d-md-block">
                     <div class="col-12">
-                      <a href="{% url 'login' %}"><button class="btn text-primary w-100" type="submit">Já tenho uma conta</button></a>
+                      <a href="{% url 'login' %}"><button class="btn text-black w-100 mt-1" type="submit">Já tenho uma conta</button></a>
                     </div> 
                   </div>
 
-                  <!-- Formulário para dispositivos móveis -->
-                <form class="row g-3 needs-validation justify-content-center d-md-none" action="{% url 'new_register' %}" method="POST">
-
-                  {% csrf_token %}
-
-                  <div class="row mt-3">
-
-                    <div class="col-12">
-                      <span class="form-label">Nomesss</span>
-                      <input type="text" name="first_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      oninput="this.value = this.value.replace(/[0-9]/g, '');"
-                      placeholder="" required="required" maxlength="50"
-                      value="{{ form.first_name.value|default:'' }}">
-                      <div class="input-group">
-                        {{ form.first_name.errors }}
-                      </div>
-                    </div>
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">Sobrenome</span>
-                      <input type="text" name="last_name" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      oninput="this.value = this.value.replace(/[0-9]/g, '');"
-                      placeholder="" required="required" maxlength="50"
-                      value="{{ form.last_name.value|default:'' }}">
-                      <div class="input-group">
-                        {{ form.last_name.errors }}
-                      </div>
-                    </div>
-                  
-                    <div class="col-12 mt-3">
-                      <span class="form-label">DDD + Telefone</span>
-                      <input type="tel" name="telefone" inputmode="numeric" class="form-control" aria-label="Username" aria-describedby="basic-addon1" 
-                      placeholder="" required="required" maxlength="13"
-                      oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');"
-                      value="{{ form.telefone.value|default:'' }}">
-                      <div class="input-group">
-                        {{ form.telefone.errors }}
-                      </div>
-                    </div>
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">Empresa</span>
-                      <input type="text" name="empresa" class="form-control" aria-label="Empresa" aria-describedby="basic-addon1" 
-                      placeholder="" required="required" maxlength="50"
-                      value="{{ form.empresa.value|default:'' }}">
-                      <div class="text-danger">
-                        {{ form.empresa.errors }}
-                      </div>
-                    </div>
-
-                      <div class="col-12 mt-3">
-                        <span class="form-label">Cidade</span>
-                        <select class="form-select" name="cidade" aria-label="Cidade" aria-describedby="basic-addon1" required="required"
-                          {{ form.cidade }} </>
-                        <div class="input-group">
-                          {{ form.cidade.errors }}
-                        </div>
-                      </div>
-
-                      <div class="col-12 mt-3">
-                        <span class="form-label">Estado</span>
-                        <select class="form-select" name="estado" aria-label="Estado" aria-describedby="basic-addon1" required="required"
-                          {{ form.estado }} </>
-                        <div class="input-group">
-                          {{ form.estado.errors }}
-                        </div>
-                      </div>
-
-                      <div class="col-12 mt-3">
-                        <span class="form-label">Cargo</span>
-                        <select class="form-select" name="cargo" aria-label="Cargo" aria-describedby="basic-addon1" required="required">
-                          <option value="proprietario">Proprietário</option>
-                          <option value="diretor">Diretor</option>
-                          <option value="gerente">Gerente</option>
-                          <option value="supervisor/coordenador">Supervisor/Coordenador</option>
-                          <option value="operador">Operador</option>
-                          <option value="analista">Analista</option>
-                          <option value="administrador">Administrador</option>
-                          <option value="outro">Outro</option>
-                        </select>
-                        <div class="input-group">
-                          {{ form.cargo.errors }}
-                        </div>
-                      </div>
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">E-mail Corporativo</span>
-                      <input type="email" name="username" class="form-control" aria-label="E-mail Corporativo" aria-describedby="basic-addon1" 
-                      placeholder="" required="required" maxlength="50"
-                      value="{{ form.username.value|default:'' }}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-                      <div class="text-danger">
-                        {{ form.username.errors }}
-                      </div>
-                    </div>
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">Digite a senha</span>
-                      <input type="password" name="password1" class="form-control" aria-label="Username" 
-                      aria-describedby="basic-addon1" placeholder=""
-                      required="required" maxlength="10"
-                      value="{{ form.password1.value|default:'' }}">
-                      <div class="input-group">
-                        {{ form.password1.errors }}
-                      </div>
-                    </div>
-
-                    <div class="col-12 mt-3">
-                      <span class="form-label">Repita a senha</span>
-                      <input type="password" name="password2" class="form-control" aria-label="Username" 
-                      aria-describedby="basic-addon1" placeholder=""
-                      required="required" maxlength="10"
-                      value="{{ form.password2.value|default:'' }}">
-                      <div class="input-group">
-                        {{ form.password2.errors }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row justify-content-center">
-                    <div class="col-12 col-md-8 col-lg-8 mt-3 d-flex flex-column align-items-center">
-                      <button class="btn btn-primary w-100 mb-3" type="submit">Criar conta Agora!</button>
-                      <a href="{% url 'login' %}" class="w-100">
-                        <button class="btn btn-outline-primary w-100 d-flex justify-content-center" type="button">Já tenho uma conta</button>
-                      </a>
-                    </div>
-                  </div>
-                </form>
-                  <div class="row mt-3">
-                    <div class="col-12">
-                      <ul>
-                        <li class="text-muted small">Sua senha deve conter 10 caracteres</li>
-                        <li class="text-muted small">Sua senha deve conter maiúsculas e minúsculas</li>
-                        <li class="text-muted small">Sua senha deve conter caracteres especiais</li>
-                      </ul>
-                    </div>
-                  </div>
             </div>
           </div>
         </div>
@@ -770,3 +653,42 @@
     }
   }
 </style>
+
+<script>
+  $(document).ready(function() {
+      $('#searchDropdown').select2({
+          placeholder: 'Digite para buscar...',
+          allowClear: true,
+          language: {
+              noResults: function() {
+                  return "Nenhum resultado encontrado";
+              },
+              searching: function() {
+                  return "Buscando...";
+              }
+          },
+          matcher: function(params, data) {
+              // Se não há termo de busca, retorna todos os dados
+              if ($.trim(params.term) === '') {
+                  return data;
+              }
+
+              // Verifica se o texto corresponde usando regex
+              try {
+                  const regex = new RegExp(params.term, 'i');
+                  if (regex.test(data.text)) {
+                      return data;
+                  }
+              } catch (e) {
+                  // Se regex inválido, faz busca simples
+                  if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                      return data;
+                  }
+              }
+
+              // Retorna null se não encontrar correspondência
+              return null;
+          }
+      });
+  });
+</script>  

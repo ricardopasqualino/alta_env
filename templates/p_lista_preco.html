@@ -24,98 +24,43 @@
 
       <section class="section">
 
-
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-        
-        <script>
-            $(document).ready(function() {
-                $('#searchDropdown').select2({
-                    placeholder: 'Digite para buscar...',
-                    allowClear: true,
-                    language: {
-                        noResults: function() {
-                            return "Nenhum resultado encontrado";
-                        },
-                        searching: function() {
-                            return "Buscando...";
-                        }
-                    },
-                    matcher: function(params, data) {
-                        // Se não há termo de busca, retorna todos os dados
-                        if ($.trim(params.term) === '') {
-                            return data;
-                        }
-    
-                        // Verifica se o texto corresponde usando regex
-                        try {
-                            const regex = new RegExp(params.term, 'i');
-                            if (regex.test(data.text)) {
-                                return data;
-                            }
-                        } catch (e) {
-                            // Se regex inválido, faz busca simples
-                            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-                                return data;
-                            }
-                        }
-    
-                        // Retorna null se não encontrar correspondência
-                        return null;
-                    }
-                });
-            });
-        </script>        
-
         <div class="row">
-
           <div class="col-lg-12">
-
             <div class="card">
-
               <div class="card-body">
-
                 <form method="get">
+                  <div class="mt-3 mb-3">
+                    <div class="row">
+                      <div class="col-lg-2 mt-3">
+                        <div class="form-group">
+                          <label class="mb-2" for="postoSelect">Posto/Razão</label>
+                          <input type="text" class="form-control" id="postoSelect" name="posto" value="{{ filter.form.posto.value|default_if_none:'' }}">
+                        </div>                               
+                      </div>
 
-                <div class="mt-3 mb-3">
+                      <div class="col-lg-2 mt-3 cidade-select-container">
+                        <div class="form-group">
+                          <label class="mb-2"><strong>*Cidade</strong></label>
+                            <select class="form-select" id="searchDropdown" name="cidade" required
+                              {{ filter.form.cidade }} </>
+                            </select>
+                        </div>                               
+                      </div>
 
-                  <div class="row">
-
-                    <div class="col-lg-2 mt-3">
-                      <div class="form-group">
-                        <label class="mb-2" for="postoSelect">Posto/Razão</label>
-                        <input type="text" class="form-control" id="postoSelect" name="posto" value="{{ filter.form.posto.value|default_if_none:'' }}">
-                      </div>                               
-                    </div>
-
-
-                    <div class="col-lg-2 mt-3 cidade-select-container">
-                      <div class="form-group">
-                        <label class="mb-2"><strong>*Cidade</strong></label>
-                        <!-- <select class="form-select" id="cidadeSelect" required
-                          {{ filter.form.cidade }} </>
-                        </select> -->
-                        <select class="form-select" id="searchDropdown" name="cidade"  required>
-                          <option value="{{ filter.form.cidade }}</>
-                        </select>
-                      </div>                               
-                    </div>
-
-                    <div class="col-lg-2 mt-3">
-                      <div class="form-group">
-                        <label class="mb-2"><strong>*Produto</strong></label>
-                        <select class="form-select" id="produtoSelect" required 
-                          {{ filter.form.produto }} </>
-                        </select>
-                      </div>                                        
+                      <div class="col-lg-2 mt-3">
+                        <div class="form-group">
+                          <label class="mb-2"><strong>*Produto</strong></label>
+                          <select class="form-select" id="produtoSelect" required 
+                            {{ filter.form.produto }} </>
+                          </select>
+                        </div>                                        
                     </div>                                                                                          
                     
                     <div class="col-lg-2 mt-3">
                       <div class="form-group">
                         <label class="mb-2">Bandeira</label>
-                        <select class="form-select" id="bandeiraSelect"
+                        <select class="form-select" id="searchDropdown" name="bandeira"
                           {{ filter.form.bandeira }} </>
-                        </select>
                       </div>                                         
                     </div>
                     
@@ -231,100 +176,44 @@
           </div>
         </div>
     </section>
+
+    <script>
+      $(document).ready(function() {
+          $('#searchDropdown').select2({
+              placeholder: 'Digite para buscar...',
+              allowClear: true,
+              language: {
+                  noResults: function() {
+                      return "Nenhum resultado encontrado";
+                  },
+                  searching: function() {
+                      return "Buscando...";
+                  }
+              },
+              matcher: function(params, data) {
+                  // Se não há termo de busca, retorna todos os dados
+                  if ($.trim(params.term) === '') {
+                      return data;
+                  }
+
+                  // Verifica se o texto corresponde usando regex
+                  try {
+                      const regex = new RegExp(params.term, 'i');
+                      if (regex.test(data.text)) {
+                          return data;
+                      }
+                  } catch (e) {
+                      // Se regex inválido, faz busca simples
+                      if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                          return data;
+                      }
+                  }
+
+                  // Retorna null se não encontrar correspondência
+                  return null;
+              }
+          });
+      });
+  </script>  
 </main>
-
-{% endblock %}
-
-{% block extra_js %}
-
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-<!-- 
-    O bloco de código abaixo inicializa o componente Select2 para o elemento com id 'cidadeSelect'.
-    Ele configura o placeholder, permite limpar a seleção, define mensagens em português para "nenhum resultado encontrado"
-    e "buscando", além de implementar uma função matcher personalizada para busca insensível a maiúsculas/minúsculas.
-    Isso melhora a experiência do usuário ao buscar cidades em listas extensas.
--->
-
-<script>
-  $(document).ready(function() {
-    $('#cidadeSelect').select2({
-      placeholder: "Digite para buscar...",
-      allowClear: true,
-      language: {
-        noResults: function() {
-          return "Nenhum resultado encontrado";
-        }
-      },
-      matcher: function(params, data) {
-        // Se não houver termo de busca, retorna todos os resultados
-        if ($.trim(params.term) === '') {
-          return data;
-        }
-
-        // Converte o termo de busca e o texto do item para minúsculas
-        var searchStr = params.term.toLowerCase();
-        var text = data.text.toLowerCase();
-
-        // Verifica se o texto contém o termo de busca
-        if (text.indexOf(searchStr) > -1) {
-          return data;
-        }
-
-        // Se não encontrar correspondência, retorna null
-        return null;
-      }
-    });
-  });
-</script>
-
-<!-- 
-    O bloco de código abaixo inicializa o componente Select2 para o elemento com id 'cidadeSelect'.
-    Ele configura o placeholder, permite limpar a seleção, define mensagens em português para "nenhum resultado encontrado"
-    e "buscando", além de implementar uma função matcher personalizada para busca insensível a maiúsculas/minúsculas.
-    Isso melhora a experiência do usuário ao buscar cidades em listas extensas.
--->
-
-<script>
-        $(document).ready(function() {
-            $('#searchDropdown').select2({
-                placeholder: 'Digite para buscar...',
-                allowClear: true,
-                language: {
-                    noResults: function() {
-                        return "Nenhum resultado encontrado";
-                    },
-                    searching: function() {
-                        return "Buscando...";
-                    }
-                },
-                matcher: function(params, data) {
-                    // Se não há termo de busca, retorna todos os dados
-                    if ($.trim(params.term) === '') {
-                        return data;
-                    }
-
-                    // Verifica se o texto corresponde usando regex
-                    try {
-                        const regex = new RegExp(params.term, 'i');
-                        if (regex.test(data.text)) {
-                            return data;
-                        }
-                    } catch (e) {
-                        // Se regex inválido, faz busca simples
-                        if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-                            return data;
-                        }
-                    }
-
-                    // Retorna null se não encontrar correspondência
-                    return null;
-                }
-            });
-        });
-    </script>
-
 {% endblock %}

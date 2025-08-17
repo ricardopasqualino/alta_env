@@ -1,20 +1,58 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Cartão de Preços - ALTA VIEW{% endblock %}
 
 {% block main %}
 
 <main id="main" class="main">
 
-    <div class="pagetitle">
-      <h1>Cartão de Preços</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="#">Home</a></li>
-          <li class="breadcrumb-item active">Cartão de preços</li>
-        </ol>
-      </nav>
-    </div>  
+    <div class="row mt-5">
+      <div class="col-12 d-flex justify-content-center">
+        <img class="img-fluid m-3" src="{% static 'assets/img/home.png' %}" alt="Chamada Home!" width="60%">
+      </div>
+    </div>
+
+    <div class="row">
+      <h2 class="text-center card-title m-3">Conheça os nossos serviços!</h2>
+      <div class="col-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Cartão de Preços</h5>
+            <p class="card-text">Menor, maior e preço médio de cada produto em por cidade em todo Brasil.</p>
+            <a href="{% url 'p_cartao_precos' %}" class="btn btn-primary">Acessar</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Lista de Preços</h5>
+            <p class="card-text">Acesse a lista de preços de todos os postos de gasolina do Brasil.</p>
+            <a href="{% url 'p_lista_preco' %}" class="btn btn-primary">Acessar</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Monitorar Preços</h5>
+            <p class="card-text">Acesse a lista de preços de todos os postos de gasolina do Brasil.</p>
+            <a href="{% url 'p_monitorar_produtos' %}" class="btn btn-primary">Acessar</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Adicionar Preço</h5>
+            <p class="card-text">Adicione um novo preço de um produto em um posto em sua região.</p>
+            <a href="{% url 'p_acompanhar' %}" class="btn btn-primary">Acessar</a>
+          </div>
+        </div>
+      </div>
+    </div>
     
 </main>
 
