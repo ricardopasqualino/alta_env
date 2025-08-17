@@ -7,6 +7,29 @@
 {% block main %}
 
 <main id="main" class="main">
+  <style>
+      .cidade-select-container .select2-container {
+          width: 300px;
+      }
+      
+      /* Centralização do modal */
+      .modal-dialog-centered {
+          display: flex;
+          align-items: center;
+          min-height: calc(100% - 1rem);
+      }
+      
+      @media (min-width: 576px) {
+          .modal-dialog-centered {
+              min-height: calc(100% - 3.5rem);
+          }
+      }
+      
+      /* Garantir que o modal fique sempre no centro */
+      .modal.show .modal-dialog {
+          transform: none;
+      }
+  </style>
     <div class="pagetitle">
         <h1>Adicionar preços</h1>
         
@@ -51,10 +74,10 @@
 
         <!-- Modal -->
         <div class="modal fade" id="addPriceModal" tabindex="-1" aria-labelledby="addPriceModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
+          <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="addPriceModalLabel">Adicione um novo preço</h5>
+                <h5 class="modal-title fs-5" id="addPriceModalLabel">Adicione um novo preço</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
@@ -62,7 +85,7 @@
 
                   {% csrf_token %}
 
-                    <div class="col-md-12 mb-3">
+                    <div class="col-md-12 mb-3 cidade-select-container">
                       <label class="form-label">Selecione o posto</label>
                       <select class="form-select" id="postoSelect" name="gasstation_id" 
                       {{ form.gasstation_id }} </>
@@ -89,17 +112,6 @@
                           </span>
                         </div>
                       </div>
-                      
-                      <script type="text/javascript">
-                        $(function () {
-                          $('#datepicker').datepicker({
-                            format: 'dd/mm/yyyy',
-                            todayHighlight: true,
-                            autoclose: true
-                          });
-                        });
-                      </script>
-
                     </div>
 
                     <label class="form-label">Preço de Revenda (R$)</label>
@@ -120,52 +132,102 @@
             </div>
           </div>
         </div>
-  
-
       </div>
     </div>
 
-      <section class="section">
+    {% if not prices %}
+    <section>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <p class="mt-3">Nenhum preço inserido. Para inserir um novo preço, clique no botão "Novo Preço" acima.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% else %}
+
+    <!-- Mobile -->
+    <section class="section d-block d-lg-none">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Lista de preços inseridos</h5>
+              
+              {% for item in prices %}
+              <div class="card mt-3">
+                <div class="card-header">
+                  <strong>{{ item.data_coleta|date:'d/m/Y' }} - R$ {{ item.preco_revenda }}</strong>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <small>{{ item.gasstation_id.razao }}</small>
+                    <br><small class="text-muted">CNPJ: {{ item.gasstation_id.cnpj }}</small>
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Cidade/UF:</strong> {{ item.gasstation_id.cidade }}/{{ item.gasstation_id.estado }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Produto:</strong> {{ item.produto_id.produto }}
+                  </li>
+                  <li class="list-group-item">
+                    <strong>Bandeira:</strong> {{ item.gasstation_id.bandeira }}
+                  </li>
+                </ul>
+              </div>
+              {% empty %}
+              <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Nenhum preço inserido ainda.
+              </div>
+              {% endfor %}
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desktop -->
+      <section class="section d-none d-lg-block">
         <div class="row">
           <div class="col-lg-12">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Lista de preços inseridos</h5>
-
-
-                <table class="table">
-                  <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Posto</th>
-                        <th>Cidade/UF</th>
-                        <th>Produto</th>
-                        <th>Preço</th>
-                        <th>Bandeira</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for item in prices %}
+                  <table class="table">
+                    <thead>
                       <tr>
-                        <td>{{ item.data_coleta|date:'d/m/y' }}</td>
-                        <td><strong>{{ item.gasstation_id.cnpj }}</strong> | {{ item.gasstation_id.razao }}</td>
-                        <td>{{ item.gasstation_id.cidade }}/{{ item.gasstation_id.estado }}</td>
-                        <td>{{ item.produto_id.produto }}</td>
-                        <td>R$ {{ item.preco_revenda }}</td>
-                        <td>{{ item.gasstation_id.bandeira }}</td>
+                          <th>Data</th>
+                          <th>Posto</th>
+                          <th>Cidade/UF</th>
+                          <th>Produto</th>
+                          <th>Preço</th>
+                          <th>Bandeira</th>
                       </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-
-
-  
+                    </thead>
+                    <tbody>
+                      {% for item in prices %}
+                        <tr>
+                          <td>{{ item.data_coleta|date:'d/m/y' }}</td>
+                          <td><strong>{{ item.gasstation_id.cnpj }}</strong> | {{ item.gasstation_id.razao }}</td>
+                          <td>{{ item.gasstation_id.cidade }}/{{ item.gasstation_id.estado }}</td>
+                          <td>{{ item.produto_id.produto }}</td>
+                          <td>R$ {{ item.preco_revenda }}</td>
+                          <td>{{ item.gasstation_id.bandeira }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
               </div>
-            </div>
-  
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+    {% endif %}
 
     <script>
         $(function () {
@@ -173,11 +235,14 @@
         })
     </script>
 
-
     <script type="text/javascript">
-      $(function() {
-          $('#datepicker').datepicker();
-      })
+      $(function () {
+        $('#datepicker').datepicker({
+          format: 'dd/mm/yyyy',
+          todayHighlight: true,
+          autoclose: true
+        });
+      });
     </script>
 
     <script type="text/javascript">
