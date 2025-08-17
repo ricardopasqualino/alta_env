@@ -5,6 +5,12 @@
 {% block title %}Cartão de Preços - ALTA VIEW{% endblock %}
 
 {% block main %}
+<style>
+  .cidade-select-container .select2-container {
+      width: 300px;
+  }
+</style>
+
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>Cartão de Preços</h1>
@@ -23,9 +29,11 @@
               <div class="col-lg-4 mt-3">
                 <div class="form-group">
                   <label class="mb-2" for="cidadeSelect">Escolha a cidade:</label>
-                  <select class="form-select" id="cidadeSelect" name="cidade"
+                  <select class="form-select" id="searchDropdown" name="cidade" aria-label="Cidade" 
+                  aria-describedby="basic-addon1" required="required"
                     {{ fil.form.cidade }} </>
                 </div>
+
               </div>
 
               <div class="col-lg-2 mt-3">
@@ -165,5 +173,46 @@
         });
     });
   </script>
+
+<script>
+  $(document).ready(function() {
+      $('#searchDropdown').select2({
+          placeholder: 'Digite para buscar...',
+          allowClear: true,
+          language: {
+              noResults: function() {
+                  return "Nenhum resultado encontrado";
+              },
+              searching: function() {
+                  return "Buscando...";
+              }
+          },
+          matcher: function(params, data) {
+              // Se não há termo de busca, retorna todos os dados
+              if ($.trim(params.term) === '') {
+                  return data;
+              }
+
+              // Verifica se o texto corresponde usando regex
+              try {
+                  const regex = new RegExp(params.term, 'i');
+                  if (regex.test(data.text)) {
+                      return data;
+                  }
+              } catch (e) {
+                  // Se regex inválido, faz busca simples
+                  if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                      return data;
+                  }
+              }
+
+              // Retorna null se não encontrar correspondência
+              return null;
+          }
+      });
+  });
+</script>  
+
+
 </main>
 {% endblock %}
