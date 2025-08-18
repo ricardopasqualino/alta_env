@@ -23,7 +23,6 @@ class CreateUserForm(UserCreationForm):
     
     # Campos do GasStation
     cidade = forms.ModelChoiceField(queryset=Cidade.objects.all(), required=False)
-    estado = forms.ModelChoiceField(queryset=Estado.objects.all(), required=False)
 
     class Meta:
         model = User
@@ -35,6 +34,20 @@ class CreateUserForm(UserCreationForm):
             'password1',
             'password2',
         ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cidade = cleaned_data.get('cidade')
+        
+        # Se uma cidade foi selecionada, automaticamente define o estado correspondente
+        if cidade:
+            # Busca o estado relacionado à cidade através da ForeignKey
+            estado_relacionado = cidade.estado
+            if estado_relacionado:
+                # Armazena o estado internamente para uso no método save()
+                self.estado_automatico = estado_relacionado
+        
+        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -48,7 +61,8 @@ class CreateUserForm(UserCreationForm):
                 profile.cargo = self.cleaned_data.get('cargo')
                 profile.cpf = self.cleaned_data.get('cpf')
                 profile.cidade = self.cleaned_data.get('cidade')
-                profile.estado = self.cleaned_data.get('estado')
+                # Usa o estado automático se disponível, senão usa o estado do formulário (se existir)
+                profile.estado = getattr(self, 'estado_automatico', None) or self.cleaned_data.get('estado')
                 profile.save()
             except Profile.DoesNotExist:
                 # Fallback caso o signal não tenha funcionado
@@ -59,7 +73,7 @@ class CreateUserForm(UserCreationForm):
                     cargo=self.cleaned_data.get('cargo'),
                     cpf=self.cleaned_data.get('cpf'),
                     cidade=self.cleaned_data.get('cidade'),
-                    estado=self.cleaned_data.get('estado')
+                    estado=getattr(self, 'estado_automatico', None) or self.cleaned_data.get('estado')
                 )
         return user
 

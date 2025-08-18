@@ -648,4 +648,3 @@ def lp_topo(request):
         form = NewLeadForm()
     data = {'form': form}
     return render(request, 'lp_topo.html', data)
-
