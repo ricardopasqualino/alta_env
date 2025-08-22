@@ -1,5 +1,6 @@
 import os
 import json
+import profile
 import requests
 
 from datetime import datetime, timedelta, timezone
@@ -124,24 +125,29 @@ def p_monitorar_produtos(request):
         messages.warning(request, 'Por favor, configure sua cidade no perfil para visualizar os dados.')
         return redirect('p_profile')
 
-    # Gerar chave de cache baseada nos filtros e usuário
-    cache_key = f"monitorar_produtos:{request.user.id}:{str(sorted(request.GET.items()))}:{user_profile.cidade}"
+    # Gerar chave de cache baseada na cidade do usuário e filtros
+    cidade_usuario = user_profile.cidade.cidade if user_profile.cidade else 'sem_cidade'
+    cache_key = f"monitorar_produtos:{cidade_usuario}:{str(sorted(request.GET.items()))}"
     cached_result = cache.get(cache_key)
+    
     if cached_result:
-        # Recriar o filter para o template
+        # Recriar o filter para o template com dados da cidade do usuário
         base_queryset = AddPrice.objects.exclude(
             produto_id=3, 
             pesquisa_origem_id=2, 
             produto_id__isnull=True
         ).filter(
-            gasstation_id__cidade=user_profile.cidade
+            gasstation_id__cidade=cidade_usuario,
+            data_coleta__gte=datetime.now() - timedelta(days=90)
         )
         
-        # Aplicar filtros padrão se nenhum filtro específico for fornecido
-        if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
+        # Aplicar filtros específicos se fornecidos
+        if any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
+            # Se há filtros específicos, usar o queryset base sem filtros padrão
+            pass
+        else:
+            # Filtros padrão: últimos 90 dias, gasolina comum, pesquisa oficial
             base_queryset = base_queryset.filter(
-                data_coleta__gte=datetime.now() - timedelta(days=90),
-                gasstation_id__cidade=user_profile.cidade,
                 produto_id=1,
                 pesquisa_origem_id=1
             )
@@ -157,18 +163,19 @@ def p_monitorar_produtos(request):
     ]
     CAMPOS_PRECO = ['preco_revenda', 'data_coleta']
 
+    # Query base otimizada: sempre filtrar por cidade e últimos 90 dias
     base_queryset = AddPrice.objects.exclude(
         produto_id=3, 
         pesquisa_origem_id=2, 
         produto_id__isnull=True
     ).filter(
-        gasstation_id__cidade=user_profile.cidade
+        gasstation_id__cidade=cidade_usuario,
+        data_coleta__gte=datetime.now() - timedelta(days=90)
     )
 
     # Aplicar filtros padrão se nenhum filtro específico for fornecido
     if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
         base_queryset = base_queryset.filter(
-            data_coleta__gte=datetime.now() - timedelta(days=90),
             produto_id=1,
             pesquisa_origem_id=1
         )
@@ -178,7 +185,7 @@ def p_monitorar_produtos(request):
     cidade_usuario = user_profile.cidade
     uf_usuario = user_profile.estado
 
-    # Agregações principais
+    # Agregações principais (otimizadas)
     aggregates = filter.qs.aggregate(
         min_price=Min('preco_revenda'),
         min_date=Min('data_coleta'),
@@ -201,37 +208,40 @@ def p_monitorar_produtos(request):
         if media_preco and media_preco > 0:
             variance_percent = (variance / media_preco) * 100
 
-    # Preço médio mensal
+    # Preço médio mensal (otimizado)
     preco_medio_mensal = list(
         filter.qs.annotate(
             mes=ExtractMonth('data_coleta'),
             ano=ExtractYear('data_coleta')
         ).values('mes', 'ano').annotate(
             preco_medio=Avg('preco_revenda')
-        ).order_by('ano', 'mes')
+        ).order_by('ano', 'mes')[:12]  # Limitar a 12 meses
     )
     today = datetime.now()
 
-    # Top 10 postos mais baratos
+    # Top 10 postos mais baratos (otimizado)
     top_10_postos_mais_baratos = list(
-        filter.qs.values('gasstation_id__razao', 'gasstation_id__id')
+        filter.qs.select_related('gasstation_id')
+        .values('gasstation_id__razao', 'gasstation_id__id')
         .annotate(preco_medio=Avg('preco_revenda'))
         .order_by('preco_medio')[:10]
     )
-    # Top 10 postos mais caros
+    # Top 10 postos mais caros (otimizado)
     top_10_postos_mais_caros = list(
-        filter.qs.values('gasstation_id__razao', 'preco_revenda')
+        filter.qs.select_related('gasstation_id')
+        .values('gasstation_id__razao', 'preco_revenda')
         .order_by('-preco_revenda')[:10]
     )
-    # Preços por postos
+    # Preços por postos (otimizado)
     precos_por_postos = list(
         filter.qs.values('preco_revenda')
         .annotate(quantidade_postos=Count('gasstation_id', distinct=True))
         .order_by('-quantidade_postos')[:9]
     )
-    # Postos com preços
+    # Postos com preços (otimizado)
     postos_com_precos = list(
-        filter.qs.values(*CAMPOS_POSTO)
+        filter.qs.select_related('gasstation_id')
+        .values(*CAMPOS_POSTO)
         .annotate(
             preco_minimo=Min('preco_revenda'),
             preco_maximo=Max('preco_revenda'),
@@ -241,27 +251,54 @@ def p_monitorar_produtos(request):
             data_ultima=Max('data_coleta')
         ).order_by('gasstation_id__razao')
     )
-    # Postos por preço
+    
+    # Adicionar preços detalhados para cada posto (otimizado)
+    for posto in postos_com_precos:
+        precos_detalhados = list(
+            filter.qs.filter(
+                gasstation_id=posto['gasstation_id']
+            ).values('preco_revenda').annotate(
+                quantidade_vezes=Count('id'),
+                data_inicio=Min('data_coleta'),
+                data_fim=Max('data_coleta')
+            ).order_by('-data_fim')[:10]  # Limitar a 10 preços por posto
+        )
+        
+        posto['precos_detalhados'] = precos_detalhados
+
+        
+    # Postos por preço (otimizado)
     postos_por_preco = list(
-        filter.qs.values('gasstation_id', 'gasstation_id__razao', 'preco_revenda')
+        filter.qs.select_related('gasstation_id')
+        .values('gasstation_id', 'gasstation_id__razao', 'preco_revenda')
         .annotate(
             data_minima=Min('data_coleta'),
             data_maxima=Max('data_coleta'),
             data_preco=F('data_maxima') - F('data_minima'),
             quantidade_postos=Count('preco_revenda') * 7
-        ).order_by('gasstation_id__razao')
+        ).order_by('gasstation_id__razao')[:20]  # Limitar a 20 postos
     )
-    # Counts para menor e maior preço
+    # Counts para menor e maior preço (otimizado)
     menor_preco_count = 0
     data_menor_preco = None
     maior_preco_count = 0
     data_maior_preco = None
+    
     if menor_preco is not None:
-        menor_preco_count = filter.qs.filter(preco_revenda=menor_preco).count()
-        data_menor_preco = filter.qs.filter(preco_revenda=menor_preco).aggregate(min_date=Min('data_coleta'))['min_date']
+        menor_preco_data = filter.qs.filter(preco_revenda=menor_preco).aggregate(
+            count=Count('id'),
+            min_date=Min('data_coleta')
+        )
+        menor_preco_count = menor_preco_data['count']
+        data_menor_preco = menor_preco_data['min_date']
+    
     if maior_preco is not None:
-        maior_preco_count = filter.qs.filter(preco_revenda=maior_preco).count()
-        data_maior_preco = filter.qs.filter(preco_revenda=maior_preco).aggregate(max_date=Max('data_coleta'))['max_date']
+        maior_preco_data = filter.qs.filter(preco_revenda=maior_preco).aggregate(
+            count=Count('id'),
+            max_date=Max('data_coleta')
+        )
+        maior_preco_count = maior_preco_data['count']
+        data_maior_preco = maior_preco_data['max_date']
 
     # Dados para cache (sem o objeto filter que contém funções lambda)
     cache_data = {
@@ -287,7 +324,7 @@ def p_monitorar_produtos(request):
         'postos_por_preco': postos_por_preco,
         'postos_com_precos': postos_com_precos
     }
-    cache.set(cache_key, cache_data, 300)  # 5 minutos
+    cache.set(cache_key, cache_data, 600)  # 10 minutos - cache mais longo para melhor performance
     
     # Dados completos para o template (incluindo o filter)
     data = {
@@ -545,64 +582,130 @@ def new_register(request):
                     print(f"🔍 Mensagem completa: {str(e)}")
             
             user = form.save()
-            
-            # Atualiza o perfil com os dados adicionais se necessário
-            if hasattr(user, 'profile'):
-                user.profile.empresa = form.cleaned_data.get('empresa')
-                user.profile.save()
-            
-            # Enviar webhook (opcional - não quebra o cadastro se falhar)
+
+            # gravar novo contato no RD Station
             try:
-                # Usar HTTP para desenvolvimento local, HTTPS para produção
-                protocol = 'http' if settings.DEBUG else 'https'
+                print("🔄 Iniciando integração com RD Station...")
                 
-                # Limpar a URL para evitar duplicação de protocolo
-                clean_url = settings.RENDER_EXTERNAL_URL
-                if clean_url.startswith('https://'):
-                    clean_url = clean_url.replace('https://', '')
-                elif clean_url.startswith('http://'):
-                    clean_url = clean_url.replace('http://', '')
+                # Verificar se as configurações do RD Station estão disponíveis
+                if not hasattr(settings, 'RD_STATION_URL') or not hasattr(settings, 'RD_STATION_TOKEN'):
+                    print("⚠️ Configurações do RD Station não encontradas")
+                    messages.warning(request, 'Usuário cadastrado com sucesso, mas configurações do RD Station não encontradas. Faça login para acessar o sistema.')
+                    return redirect('login')
                 
-                webhook_url = f"{protocol}://{clean_url}/webhook-test/79725962-e3a4-491e-8c56-852ee30e8f47/"
+                if not settings.RD_STATION_URL or not settings.RD_STATION_TOKEN:
+                    print("⚠️ URL ou Token do RD Station não configurados")
+                    messages.warning(request, 'Usuário cadastrado com sucesso, mas configurações do RD Station incompletas. Faça login para acessar o sistema.')
+                    return redirect('login')
                 
-                if settings.DEBUG:
-                    print(f"🔗 DEBUG: Protocolo = {protocol}")
-                    print(f"🔗 DEBUG: RENDER_EXTERNAL_URL = {settings.RENDER_EXTERNAL_URL}")
-                    print(f"🔗 DEBUG: URL limpa = {clean_url}")
-                    print(f"🔗 DEBUG: URL completa = {webhook_url}")
+                url = f"{settings.RD_STATION_URL}?token={settings.RD_STATION_TOKEN}"
                 
-                webhook_data = {
-                    'nome': user.first_name,
-                    'sobrenome': user.last_name,
-                    'email': user.email,
-                    'empresa': getattr(user.profile, 'empresa', ''),
-                    'data_cadastro': user.date_joined.strftime('%d/%m/%Y %H:%M:%S')
-                }
+                # Validar dados antes de enviar
+                if not user.first_name or not user.last_name or not user.email:
+                    print("⚠️ Dados obrigatórios não encontrados para RD Station")
+                    print(f"   Nome: {user.first_name}")
+                    print(f"   Sobrenome: {user.last_name}")
+                    print(f"   Email: {user.email}")
+                    messages.warning(request, 'Usuário cadastrado com sucesso, mas dados obrigatórios não encontrados para integração. Faça login para acessar o sistema.')
+                    return redirect('login')
+
+                # Preparar payload básico com telefone no formato correto
+                payload = { "contact": {
+                        "name": f"{user.first_name} {user.last_name}",
+                        "emails": [{ "email": user.email }]
+                    } }
                 
-                response = requests.post(webhook_url, json=webhook_data, timeout=5)
-                if response.status_code == 200:
-                    print("✅ Webhook enviado com sucesso")
+                # Adicionar telefone se disponível (no formato correto)
+                telefone = form.cleaned_data.get('telefone', '')
+                if telefone and telefone.strip():
+                    # Limpar e formatar telefone (remover caracteres especiais)
+                    telefone_limpo = ''.join(filter(str.isdigit, telefone))
+                    if len(telefone_limpo) >= 10:  # Telefone deve ter pelo menos 10 dígitos
+                        payload["contact"]["phones"] = [
+                            {
+                                "phone": telefone_limpo
+                            }
+                        ]
+                        print(f"📞 Telefone adicionado: {telefone_limpo}")
+                    else:
+                        print(f"⚠️ Telefone inválido: {telefone} (muito curto)")
                 else:
-                    print(f"⚠️ Webhook retornou status {response.status_code}")
+                    print("⚠️ Telefone não fornecido")
+                
+                # Adicionar campos customizados do RD Station
+                custom_fields = {}
+                
+                try:
+                    # Tentar obter o profile do usuário
+                    profile = user.profile
                     
+                    # Adicionar empresa
+                    if profile.empresa:
+                        custom_fields["empresa"] = profile.empresa
+                        print(f"🏢 Empresa adicionada: {profile.empresa}")
+                    
+                    # Adicionar cargo
+                    if profile.cargo:
+                        custom_fields["cargo"] = profile.cargo
+                        print(f"💼 Cargo adicionado: {profile.cargo}")
+                    
+                    # Adicionar cidade
+                    if profile.cidade:
+                        custom_fields["cidade"] = profile.cidade.cidade
+                        print(f"🏙️ Cidade adicionada: {profile.cidade.cidade}")
+                    
+                    # Adicionar estado
+                    if profile.estado:
+                        custom_fields["estado"] = profile.estado.estado
+                        print(f"🗺️ Estado adicionado: {profile.estado.estado}")
+                        
+                except Profile.DoesNotExist:
+                    print("⚠️ Profile não encontrado para o usuário")
+                
+                # Adicionar campos customizados ao payload
+                if custom_fields:
+                    payload["contact"]["contact_custom_fields"] = custom_fields
+                    print(f"📋 Campos customizados adicionados: {list(custom_fields.keys())}")
+                
+                headers = {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                }
+
+                print(f"📤 Enviando dados para RD Station: {url}")
+                print(f"📋 Payload: {json.dumps(payload, indent=2)}")
+                
+                response = requests.post(url, json=payload, headers=headers, timeout=30)
+                
+                print(f"📥 Resposta do RD Station - Status: {response.status_code}")
+                print(f"📥 Resposta do RD Station - Conteúdo: {response.text}")
+                
+                if response.status_code == 200 or response.status_code == 201:
+                    print("✅ Contato criado com sucesso no RD Station")
+                    # Adicionar mensagem de sucesso para o usuário
+                    messages.success(request, 'Usuário cadastrado com sucesso e integrado ao RD Station! Faça login para acessar o sistema.')
+                else:
+                    print(f"❌ Erro ao criar contato no RD Station - Status: {response.status_code}")
+                    print(f"❌ Resposta de erro: {response.text}")
+                    # Adicionar mensagem de aviso (cadastro foi feito, mas RD Station falhou)
+                    messages.warning(request, 'Usuário cadastrado com sucesso, mas houve um problema na integração com o RD Station. Faça login para acessar o sistema.')
+                    
+            except requests.exceptions.Timeout:
+                print("⏰ Timeout na requisição para RD Station")
+                messages.warning(request, 'Usuário cadastrado com sucesso, mas houve timeout na integração com o RD Station. Faça login para acessar o sistema.')
+            except requests.exceptions.ConnectionError:
+                print("🔌 Erro de conexão com RD Station")
+                messages.warning(request, 'Usuário cadastrado com sucesso, mas houve erro de conexão com o RD Station. Faça login para acessar o sistema.')
+            except requests.exceptions.RequestException as e:
+                print(f"❌ Erro na requisição para RD Station: {str(e)}")
+                messages.warning(request, 'Usuário cadastrado com sucesso, mas houve erro na integração com o RD Station. Faça login para acessar o sistema.')
             except Exception as e:
-                print(f"⚠️ Erro ao enviar webhook: {str(e)}")
-                print("🔗 O cadastro foi realizado, mas o webhook falhou")
+                print(f"❌ Erro inesperado na integração com RD Station: {str(e)}")
+                print(f"❌ Tipo de erro: {type(e).__name__}")
+                messages.warning(request, 'Usuário cadastrado com sucesso, mas houve erro inesperado na integração com o RD Station. Faça login para acessar o sistema.')
             
-            messages.success(request, 'Conta criada com sucesso! Você já pode fazer login.')
+            # Redirecionar para a página de login após cadastro bem-sucedido
             return redirect('login')
-        else:
-            # Verifica especificamente os erros de cada campo
-            if 'username' in form.errors:
-                messages.error(request, 'Este email já está em uso. Por favor, escolha outro.')
-            elif 'email' in form.errors:
-                messages.error(request, 'Este email já está cadastrado. Por favor, use outro email ou faça login.')
-            elif 'empresa' in form.errors:
-                messages.error(request, 'Por favor, informe o nome da sua empresa.')
-            else:
-                for field, errors in form.errors.items():
-                    for error in errors:
-                        messages.error(request, f'Erro no campo {field}: {error}')
 
     data = {'form': form}
     return render(request, 'p_register.html', data)

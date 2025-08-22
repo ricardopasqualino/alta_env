@@ -41,14 +41,28 @@
                     </div>
                 </div> 
 
-                <div class="col-lg-3 col-sm-12 col-md-4 mt-2">
+                <div class="col-lg-2 col-sm-12 col-md-4 mt-2">
                     <div class="form-group">
                         <select class="form-select" id="produto" name="produto"
                             {{ filter.form.produto }} </>
                     </div>
                 </div>
+
+                <div class="col-lg-3 col-sm-12 col-md-4 mt-2">
+                    <div class="form-group">
+                        <select class="form-select" id="cidade" name="cidade"
+                            {{ filter.form.cidade }} </>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-sm-12 col-md-4 mt-2">
+                    <div class="form-group">
+                        <select class="form-select" id="bandeira" name="bandeira"
+                            {{ filter.form.bandeira }} </>
+                    </div>
+                </div>
                 
-                <div class="col-lg-2 d-none d-lg-block">
+                <div class="col-lg-1 d-none d-lg-block">
                     <button class="btn btn-primary m-1" type="submit">Filtrar</button>
                 </div>      
 
@@ -62,13 +76,8 @@
         </form>
     </div>
 
-    <div class="row mb-3">
-        <p class="mb-0 mt-3 text-muted small">Dados exibidos para a cidade de
-        <a href="{% url 'p_profile' %}" class="breadcrumb-item">{{ cidade_usuario }}/{{ uf_usuario }}</a></p>
-    </div>
 
-
-<section class="section contact">
+<section class="section contact mt-3">
     
     <div class="row d-flex d-none d-lg-flex">
         <div class="col-lg-2">
@@ -313,6 +322,7 @@
                                                 <li><strong>Total de Registros:</strong> {{ posto.total_registros }}</li>
                                             </ul>
                                         </div>
+
                                         <div class="col-md-6">
                                             <h6 class="text-muted">Resumo de Preços</h6>
                                             <ul class="list-unstyled">
@@ -328,12 +338,7 @@
                                             </ul>
                                         </div>
                                     </div>
-
-                                    {% if posto.total_registros == 1 %}
-                                    {% else %}
-                                    
                                     <div class="mt-3">
-                                        {% if posto.precos_distintos %}
                                         <h6 class="text-muted">Histórico de Preços</h6>
                                         <div class="table-responsive">
 
@@ -341,21 +346,21 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Preço (R$)</th>
-                                                        <th>Quantidade de Dias</th>
+                                                        <th>Quantidade de Vezes</th>
                                                         <th>Período</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {% for preco in posto.precos_distintos %}
+                                                    {% for preco in posto.precos_detalhados %}
                                                     <tr>
                                                         <td class="fw-bold">R$ {{ preco.preco_revenda|floatformat:2 }}</td>
                                                         
                                                         <td>
                                                             <span class="badge bg-secondary">
-                                                              {% if preco.quantidade_dias %}
-                                                                {{ preco.quantidade_dias.days|floatformat:0 }} dias
+                                                              {% if preco.quantidade_vezes == 1 %}
+                                                                1 vez
                                                               {% else %}
-                                                                1 dia
+                                                                {{ preco.quantidade_vezes }} vezes
                                                               {% endif %}
                                                             </span>
                                                         </td>
@@ -377,16 +382,9 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        {% endif %}
                                     </div>
-                                    {% endif %}
                                 </div>
                             </div>
-                        </div>
-                        {% empty %}
-                        <div class="text-center text-muted py-4">
-                            <i class="fas fa-info-circle fa-2x mb-3"></i>
-                            <p>Nenhum posto encontrado</p>
                         </div>
                         {% endfor %}
                     </div>
@@ -847,4 +845,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 </main>  
-{% endblock %} 
+{% endblock %}

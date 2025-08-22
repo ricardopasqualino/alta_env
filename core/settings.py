@@ -212,3 +212,11 @@ CACHES = {
         }
     }
 }
+
+# Configurações do RD Station
+RD_STATION_TOKEN = config('RD_STATION_TOKEN', default='68a660f164529900234c8bad')
+RD_STATION_URL = config('RD_STATION_URL', default='https://crm.rdstation.com/api/v1/contacts')
+
+print(f"🔧 Configurações do RD Station carregadas:")
+print(f"   URL: {RD_STATION_URL}")
+print(f"   Token configurado: {'Sim' if RD_STATION_TOKEN else 'Não'}")
