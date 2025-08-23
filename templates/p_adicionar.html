@@ -85,11 +85,13 @@
 
                   {% csrf_token %}
 
-                    <div class="col-md-12 mb-3 cidade-select-container">
-                      <label class="form-label">Selecione o posto</label>
-                      <select class="form-select" id="postoSelect" name="gasstation_id" 
-                      {{ form.gasstation_id }} </>
-                      </select>
+
+                    <div class="form-group">
+                      <label class="mb-2" for="postoSelect">Selecione o posto</label>
+                      <select class="form-select" id="searchDropdown" name="gasstation_id" aria-label="Posto" 
+                      aria-describedby="basic-addon1" required="required"
+                        {{ form.gasstation_id }} </>
+                        </select>
                     </div>
 
                     <div class="row">
@@ -269,6 +271,174 @@
           disableTouchKeyboard: true,
       });
     </script>
+
+
+<script>
+  $(document).ready(function() {
+      $('#searchDropdown').select2({
+          placeholder: 'Digite para buscar...',
+          allowClear: true,
+          language: {
+              noResults: function() {
+                  return "Nenhum resultado encontrado";
+              },
+              searching: function() {
+                  return "Buscando...";
+              }
+          },
+          matcher: function(params, data) {
+              // Se não há termo de busca, retorna todos os dados
+              if ($.trim(params.term) === '') {
+                  return data;
+              }
+
+              // Verifica se o texto corresponde usando regex
+              try {
+                  const regex = new RegExp(params.term, 'i');
+                  if (regex.test(data.text)) {
+                      return data;
+                  }
+              } catch (e) {
+                  // Se regex inválido, faz busca simples
+                  if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                      return data;
+                  }
+              }
+
+              // Retorna null se não encontrar correspondência
+              return null;
+          }
+      });
+  });
+</script>  
+
+
+<style>
+  /* Estilos para o select2 ficar igual ao campo empresa */
+.select2-container--default .select2-selection--single {
+  height: 38px;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  background-color: #fff;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #212529;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.select2-container--default .select2-selection--single:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 24px;
+  padding-left: 0;
+  color: #212529;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+  color: #6c757d;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 36px;
+  right: 8px;
+}
+
+.select2-container--default .select2-dropdown {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+  background-color: #0d6efd;
+}
+
+/* Cor do hover quando uma opção está selecionada */
+.select2-container--default .select2-results__option[aria-selected=true]:hover {
+  background-color: #0d6efd;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+  background-color: #e9ecef;
+  color: #000;
+}
+
+/* Garantir que o select2 tenha a mesma largura e comportamento do campo empresa */
+.select2-container {
+  width: 100% !important;
+}
+
+.select2-container--default .select2-selection--single {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Remover bordas duplas quando o select2 está focado */
+.select2-container--default.select2-container--focus .select2-selection--single {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Garantir que o dropdown apareça corretamente */
+.select2-dropdown {
+  z-index: 9999;
+}
+</style>
+
+<script>
+  $(document).ready(function() {
+      $('#searchDropdown').select2({
+          placeholder: 'Digite para buscar...',
+          allowClear: true,
+          width: '100%',
+          dropdownParent: $('body'),
+          language: {
+              noResults: function() {
+                  return "Nenhum resultado encontrado";
+              },
+              searching: function() {
+                  return "Buscando...";
+              }
+          },
+          matcher: function(params, data) {
+              // Se não há termo de busca, retorna todos os dados
+              if ($.trim(params.term) === '') {
+                  return data;
+              }
+
+              // Verifica se o texto corresponde usando regex
+              try {
+                  const regex = new RegExp(params.term, 'i');
+                  if (regex.test(data.text)) {
+                      return data;
+                  }
+              } catch (e) {
+                  // Se regex inválido, faz busca simples
+                  if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                      return data;
+                  }
+              }
+
+              // Retorna null se não encontrar correspondência
+              return null;
+          }
+      });
+  });
+</script>  
+
+
 
 </main>
 {% endblock %}

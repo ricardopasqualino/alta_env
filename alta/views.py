@@ -125,33 +125,48 @@ def p_monitorar_produtos(request):
         messages.warning(request, 'Por favor, configure sua cidade no perfil para visualizar os dados.')
         return redirect('p_profile')
 
-    # Gerar chave de cache baseada na cidade do usuário e filtros
-    cidade_usuario = user_profile.cidade.cidade if user_profile.cidade else 'sem_cidade'
-    cache_key = f"monitorar_produtos:{cidade_usuario}:{str(sorted(request.GET.items()))}"
+    # Verifica se o usuário está usando algum filtro
+    filtros_ativos = any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano'])
+
+    # Se não há filtros, filtra pela cidade do usuário e últimos 90 dias
+    if not filtros_ativos:
+        cidade_usuario = user_profile.cidade.cidade if user_profile.cidade else 'sem_cidade'
+        cache_key = f"monitorar_produtos:{cidade_usuario}:{str(sorted(request.GET.items()))}"
+    else:
+        # Se há filtros, busca para todo o Brasil (não filtra por cidade)
+        cidade_usuario = None
+        cache_key = f"monitorar_produtos:brasil:{str(sorted(request.GET.items()))}"
+
     cached_result = cache.get(cache_key)
     
     if cached_result:
-        # Recriar o filter para o template com dados da cidade do usuário
-        base_queryset = AddPrice.objects.exclude(
-            produto_id=3, 
-            pesquisa_origem_id=2, 
-            produto_id__isnull=True
-        ).filter(
-            gasstation_id__cidade=cidade_usuario,
-            data_coleta__gte=datetime.now() - timedelta(days=90)
-        )
-        
-        # Aplicar filtros específicos se fornecidos
-        if any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
-            # Se há filtros específicos, usar o queryset base sem filtros padrão
-            pass
-        else:
+        # Recria o filter para o template
+        if not filtros_ativos:
+            # Query base: cidade do usuário e últimos 90 dias
+            base_queryset = AddPrice.objects.exclude(
+                produto_id=3, 
+                pesquisa_origem_id=2, 
+                produto_id__isnull=True
+            ).filter(
+                gasstation_id__cidade=user_profile.cidade,
+                data_coleta__gte=datetime.now() - timedelta(days=90)
+            )
             # Filtros padrão: últimos 90 dias, gasolina comum, pesquisa oficial
             base_queryset = base_queryset.filter(
                 produto_id=1,
                 pesquisa_origem_id=1
             )
-        
+        else:
+            # Query base: todo o Brasil, últimos 90 dias
+            base_queryset = AddPrice.objects.exclude(
+                produto_id=3, 
+                pesquisa_origem_id=2, 
+                produto_id__isnull=True
+            ).filter(
+                data_coleta__gte=datetime.now() - timedelta(days=90)
+            )
+            # Não aplica filtro padrão, pois o usuário está filtrando
+
         filter = MainFilter(request.GET, queryset=base_queryset)
         cached_result['filter'] = filter
         return render(request, 'p_mapeei.html', cached_result)
@@ -163,22 +178,32 @@ def p_monitorar_produtos(request):
     ]
     CAMPOS_PRECO = ['preco_revenda', 'data_coleta']
 
-    # Query base otimizada: sempre filtrar por cidade e últimos 90 dias
-    base_queryset = AddPrice.objects.exclude(
-        produto_id=3, 
-        pesquisa_origem_id=2, 
-        produto_id__isnull=True
-    ).filter(
-        gasstation_id__cidade=cidade_usuario,
-        data_coleta__gte=datetime.now() - timedelta(days=90)
-    )
-
-    # Aplicar filtros padrão se nenhum filtro específico for fornecido
-    if not any(request.GET.get(param) for param in ['posto', 'cidade', 'produto', 'bandeira', 'mes', 'ano']):
+    # Monta a query base conforme filtros
+    if not filtros_ativos:
+        # Query base: cidade do usuário e últimos 90 dias
+        base_queryset = AddPrice.objects.exclude(
+            produto_id=3, 
+            pesquisa_origem_id=2, 
+            produto_id__isnull=True
+        ).filter(
+            gasstation_id__cidade=user_profile.cidade,
+            data_coleta__gte=datetime.now() - timedelta(days=90)
+        )
+        # Filtros padrão: últimos 90 dias, gasolina comum, pesquisa oficial
         base_queryset = base_queryset.filter(
             produto_id=1,
             pesquisa_origem_id=1
         )
+    else:
+        # Query base: todo o Brasil, últimos 90 dias
+        base_queryset = AddPrice.objects.exclude(
+            produto_id=3, 
+            pesquisa_origem_id=2, 
+            produto_id__isnull=True
+        ).filter(
+            data_coleta__gte=datetime.now() - timedelta(days=90)
+        )
+        # Não aplica filtro padrão, pois o usuário está filtrando
 
     filter = MainFilter(request.GET, queryset=base_queryset)
     profile = Profile.objects.all()
@@ -303,7 +328,7 @@ def p_monitorar_produtos(request):
     # Dados para cache (sem o objeto filter que contém funções lambda)
     cache_data = {
         'profile': profile,
-        'cidade_usuario': cidade_usuario,
+        'cidade_usuario': user_profile.cidade,
         'uf_usuario': uf_usuario,
         'menor_preco': menor_preco,
         'data_menor_preco': data_menor_preco,
@@ -556,30 +581,34 @@ def new_register(request):
 
                     Este é um email automático do sistema Alta.''',
                     settings.DEFAULT_FROM_EMAIL,
-                    ['ricardo.pasqualino@gmail.com', 'ricardo@alta.bi', 'joao@alta.bi'],
+                    ['ricardo.pasqualino@gmail.com', 'ricardo@alta.bi'],
                     fail_silently=False,
                 )
-                print("✅ Email de notificação enviado com sucesso")
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info("✅ Email de notificação enviado com sucesso")
             except Exception as e:
-                print(f"⚠️ Erro ao enviar email: {str(e)}")
-                print("📧 O cadastro foi realizado, mas o email de notificação falhou")
+                logger.error(f"⚠️ Erro ao enviar email: {str(e)}")
+                logger.error("📧 O cadastro foi realizado, mas o email de notificação falhou")
                 
-                # Análise detalhada do erro
+                # Análise detalhada do erro (apenas em logs, não exibir para o usuário)
+                import logging
+                logger = logging.getLogger(__name__)
                 if "535" in str(e):
-                    print("🔍 Erro 535: Problema de autenticação do Gmail")
-                    print("   - Verifique se a verificação em duas etapas está ativada")
-                    print("   - Gere uma nova senha de app em: https://myaccount.google.com/apppasswords")
-                    print("   - Configure EMAIL_HOST_PASSWORD no Render com a senha de app")
+                    logger.error("🔍 Erro 535: Problema de autenticação do Gmail")
+                    logger.error("   - Verifique se a verificação em duas etapas está ativada")
+                    logger.error("   - Gere uma nova senha de app em: https://myaccount.google.com/apppasswords")
+                    logger.error("   - Configure EMAIL_HOST_PASSWORD no Render com a senha de app")
                 elif "587" in str(e):
-                    print("🔍 Erro de conexão SMTP na porta 587")
+                    logger.error("🔍 Erro de conexão SMTP na porta 587")
                 elif "timeout" in str(e).lower():
-                    print("🔍 Timeout na conexão SMTP")
+                    logger.error("🔍 Timeout na conexão SMTP")
                 elif "authentication" in str(e).lower():
-                    print("🔍 Erro de autenticação SMTP")
-                    print("   - Verifique EMAIL_HOST_USER e EMAIL_HOST_PASSWORD no Render")
+                    logger.error("🔍 Erro de autenticação SMTP")
+                    logger.error("   - Verifique EMAIL_HOST_USER e EMAIL_HOST_PASSWORD no Render")
                 else:
-                    print(f"🔍 Outro tipo de erro: {type(e).__name__}")
-                    print(f"🔍 Mensagem completa: {str(e)}")
+                    logger.error(f"🔍 Outro tipo de erro: {type(e).__name__}")
+                    logger.error(f"🔍 Mensagem completa: {str(e)}")
             
             user = form.save()
 
