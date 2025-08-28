@@ -1,6 +1,5 @@
 import os
 import json
-import profile
 import requests
 
 from datetime import datetime, timedelta, timezone
@@ -712,7 +711,7 @@ def new_register(request):
                 if response.status_code == 200 or response.status_code == 201:
                     print("✅ Contato criado com sucesso no RD Station")
                     # Adicionar mensagem de sucesso para o usuário
-                    messages.success(request, 'Usuário cadastrado com sucesso e integrado ao RD Station! Faça login para acessar o sistema.')
+                    messages.success(request, 'Usuário criado com sucesso! Faça login agora mesmo.')
                 else:
                     print(f"❌ Erro ao criar contato no RD Station - Status: {response.status_code}")
                     print(f"❌ Resposta de erro: {response.text}")
@@ -735,24 +734,28 @@ def new_register(request):
             
             # Enviar os dados do formulário via webhook para N8N
             try:
+                print("🔄 Iniciando integração com webhook N8N...")
+                
+                # Obter dados do usuário e profile após salvar no banco
+                try:
+                    profile = user.profile
+                except Profile.DoesNotExist:
+                    print("⚠️ Profile não encontrado para o usuário")
+                    profile = None
+                
                 # Montar os dados do formulário no formato esperado pelo webhook
                 payload = {
-                    "nome": form.cleaned_data.get('first_name', ''),
-                    "sobrenome": form.cleaned_data.get('last_name', ''),
-                    "email": form.cleaned_data.get('username', ''),  # username é o email
-                    "telefone": form.cleaned_data.get('telefone', ''),
-                    "empresa": form.cleaned_data.get('empresa', ''),
-                    "cargo": form.cleaned_data.get('cargo', ''),
-                    "cidade": form.cleaned_data.get('cidade', ''),
-                    # O estado não é passado pelo usuário, então precisamos obter o estado a partir do objeto cidade
-                    "estado": str(form.cleaned_data.get('cidade').estado) if form.cleaned_data.get('cidade') and hasattr(form.cleaned_data.get('cidade'), 'estado') else '',
-                    "data_cadastro": user.date_joined.strftime('%d/%m/%Y') if hasattr(user, 'date_joined') else '',
+                    "nome": user.first_name or form.cleaned_data.get('first_name', ''),
+                    "sobrenome": user.last_name or form.cleaned_data.get('last_name', ''),
+                    "email": user.email or form.cleaned_data.get('username', ''),
+                    "telefone": profile.telefone if profile and profile.telefone else form.cleaned_data.get('telefone', ''),
+                    "empresa": profile.empresa if profile and profile.empresa else form.cleaned_data.get('empresa', ''),
+                    "cargo": profile.cargo if profile and profile.cargo else form.cleaned_data.get('cargo', ''),
+                    "cidade": profile.cidade.cidade if profile and profile.cidade else (form.cleaned_data.get('cidade').cidade if form.cleaned_data.get('cidade') else ''),
+                    "estado": profile.estado.estado if profile and profile.estado else (form.cleaned_data.get('cidade').estado.estado if form.cleaned_data.get('cidade') and form.cleaned_data.get('cidade').estado else ''),
+                    "data_cadastro": user.date_joined.strftime('%d/%m/%Y') if user.date_joined else '',
                     "plano": "Grátis",
                 }
-                
-                # Se cidade é um objeto Model, pegar apenas o nome
-                if hasattr(payload['cidade'], 'cidade'):
-                    payload['cidade'] = payload['cidade'].cidade
 
                 webhook_url = "https://n8n-webhook-cadastro.onrender.com:5678/webhook/03ab55a3-36a3-41c2-b585-082382181d7e"
                 headers = {
