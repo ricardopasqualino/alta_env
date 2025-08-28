@@ -608,6 +608,56 @@ def new_register(request):
                 else:
                     logger.error(f"🔍 Outro tipo de erro: {type(e).__name__}")
                     logger.error(f"🔍 Mensagem completa: {str(e)}")
+
+            # Enviar os dados do formulário via webhook para N8N
+            try:
+                print("🔄 Iniciando integração com webhook N8N...")
+                
+                # Obter dados do usuário e profile após salvar no banco
+                try:
+                    profile = user.profile
+                except Profile.DoesNotExist:
+                    print("⚠️ Profile não encontrado para o usuário")
+                    profile = None
+                
+                # Montar os dados do formulário no formato esperado pelo webhook
+                payload = {
+                    "nome": user.first_name or form.cleaned_data.get('first_name', ''),
+                    "sobrenome": user.last_name or form.cleaned_data.get('last_name', ''),
+                    "email": user.email or form.cleaned_data.get('username', ''),
+                    "telefone": profile.telefone if profile and profile.telefone else form.cleaned_data.get('telefone', ''),
+                    "empresa": profile.empresa if profile and profile.empresa else form.cleaned_data.get('empresa', ''),
+                    "cargo": profile.cargo if profile and profile.cargo else form.cleaned_data.get('cargo', ''),
+                    "cidade": profile.cidade.cidade if profile and profile.cidade else (form.cleaned_data.get('cidade').cidade if form.cleaned_data.get('cidade') else ''),
+                    "estado": profile.estado.estado if profile and profile.estado else (form.cleaned_data.get('cidade').estado.estado if form.cleaned_data.get('cidade') and form.cleaned_data.get('cidade').estado else ''),
+                    "data_cadastro": user.date_joined.strftime('%d/%m/%Y') if user.date_joined else '',
+                    "plano": "Grátis",
+                }
+
+                webhook_url = "https://n8n-webhook-cadastro.onrender.com:5678/webhook/03ab55a3-36a3-41c2-b585-082382181d7e"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "User-Agent": "Django-Alta-Webhook/1.0"
+                }
+
+                print(f"📤 Enviando dados do formulário para o webhook: {webhook_url}")
+                print(f"📋 Headers: {headers}")
+                print(f"📋 Payload: {payload}")
+
+                response = requests.post(webhook_url, json=payload, headers=headers, timeout=30)
+
+                print(f"📥 Resposta do webhook - Status: {response.status_code}")
+                print(f"📥 Resposta do webhook - Conteúdo: {response.text}")
+
+                if response.status_code == 200 or response.status_code == 201:
+                    print("✅ Dados enviados com sucesso para o webhook")
+                else:
+                    print(f"❌ Erro ao enviar dados para o webhook - Status: {response.status_code}")
+                    print(f"❌ Resposta de erro: {response.text}")
+            except Exception as e:
+                print(f"❌ Erro ao enviar dados para o webhook: {str(e)}")
+                print(f"❌ Tipo de erro: {type(e).__name__}")
             
             user = form.save()
 
@@ -732,55 +782,7 @@ def new_register(request):
                 print(f"❌ Tipo de erro: {type(e).__name__}")
                 messages.warning(request, 'Usuário cadastrado com sucesso, mas houve erro inesperado na integração com o RD Station. Faça login para acessar o sistema.')
             
-            # Enviar os dados do formulário via webhook para N8N
-            try:
-                print("🔄 Iniciando integração com webhook N8N...")
-                
-                # Obter dados do usuário e profile após salvar no banco
-                try:
-                    profile = user.profile
-                except Profile.DoesNotExist:
-                    print("⚠️ Profile não encontrado para o usuário")
-                    profile = None
-                
-                # Montar os dados do formulário no formato esperado pelo webhook
-                payload = {
-                    "nome": user.first_name or form.cleaned_data.get('first_name', ''),
-                    "sobrenome": user.last_name or form.cleaned_data.get('last_name', ''),
-                    "email": user.email or form.cleaned_data.get('username', ''),
-                    "telefone": profile.telefone if profile and profile.telefone else form.cleaned_data.get('telefone', ''),
-                    "empresa": profile.empresa if profile and profile.empresa else form.cleaned_data.get('empresa', ''),
-                    "cargo": profile.cargo if profile and profile.cargo else form.cleaned_data.get('cargo', ''),
-                    "cidade": profile.cidade.cidade if profile and profile.cidade else (form.cleaned_data.get('cidade').cidade if form.cleaned_data.get('cidade') else ''),
-                    "estado": profile.estado.estado if profile and profile.estado else (form.cleaned_data.get('cidade').estado.estado if form.cleaned_data.get('cidade') and form.cleaned_data.get('cidade').estado else ''),
-                    "data_cadastro": user.date_joined.strftime('%d/%m/%Y') if user.date_joined else '',
-                    "plano": "Grátis",
-                }
-
-                webhook_url = "https://n8n-webhook-cadastro.onrender.com:5678/webhook/03ab55a3-36a3-41c2-b585-082382181d7e"
-                headers = {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "User-Agent": "Django-Alta-Webhook/1.0"
-                }
-
-                print(f"📤 Enviando dados do formulário para o webhook: {webhook_url}")
-                print(f"📋 Headers: {headers}")
-                print(f"📋 Payload: {payload}")
-
-                response = requests.post(webhook_url, json=payload, headers=headers, timeout=30)
-
-                print(f"📥 Resposta do webhook - Status: {response.status_code}")
-                print(f"📥 Resposta do webhook - Conteúdo: {response.text}")
-
-                if response.status_code == 200 or response.status_code == 201:
-                    print("✅ Dados enviados com sucesso para o webhook")
-                else:
-                    print(f"❌ Erro ao enviar dados para o webhook - Status: {response.status_code}")
-                    print(f"❌ Resposta de erro: {response.text}")
-            except Exception as e:
-                print(f"❌ Erro ao enviar dados para o webhook: {str(e)}")
-                print(f"❌ Tipo de erro: {type(e).__name__}")
+            
             
             # Redirecionar para a página de login após cadastro bem-sucedido
             return redirect('login')
