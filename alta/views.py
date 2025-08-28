@@ -555,16 +555,19 @@ def new_register(request):
         form = CreateUserForm(request.POST)
 
         if form.is_valid():
+            # 1. PRIMEIRO: Salvar o usuário no banco de dados
             user = form.save(commit=False)
-            # Obtém o valor do email do formulário
             email_value = form.cleaned_data.get('username')
             user.username = email_value
-            user.email = email_value  # Garante que o email seja salvo corretamente
-
-            # Enviar email de notificação (com tratamento de erro)
+            user.email = email_value
+            user = form.save()  # Agora o usuário está salvo no banco
+            
+            print(f"✅ Usuário criado com sucesso: {user.username}")
+            
+            # 2. SEGUNDO: Enviar email de notificação
             try:
                 send_mail(
-                    f'O cliente {form.cleaned_data.get("first_name", "Não informado")} se cadastrou!',
+                    f'O cliente {user.first_name or "Não informado"} se cadastrou!',
                     f'''Novo lead/usuário cadastrado em app.alta.bi!
 
                     Dados do cliente:
@@ -583,48 +586,28 @@ def new_register(request):
                     ['ricardo.pasqualino@gmail.com', 'ricardo@alta.bi'],
                     fail_silently=False,
                 )
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.info("✅ Email de notificação enviado com sucesso")
+                print("✅ Email de notificação enviado com sucesso")
             except Exception as e:
-                logger.error(f"⚠️ Erro ao enviar email: {str(e)}")
-                logger.error("📧 O cadastro foi realizado, mas o email de notificação falhou")
-                
-                # Análise detalhada do erro (apenas em logs, não exibir para o usuário)
-                import logging
-                logger = logging.getLogger(__name__)
-                if "535" in str(e):
-                    logger.error("🔍 Erro 535: Problema de autenticação do Gmail")
-                    logger.error("   - Verifique se a verificação em duas etapas está ativada")
-                    logger.error("   - Gere uma nova senha de app em: https://myaccount.google.com/apppasswords")
-                    logger.error("   - Configure EMAIL_HOST_PASSWORD no Render com a senha de app")
-                elif "587" in str(e):
-                    logger.error("🔍 Erro de conexão SMTP na porta 587")
-                elif "timeout" in str(e).lower():
-                    logger.error("🔍 Timeout na conexão SMTP")
-                elif "authentication" in str(e).lower():
-                    logger.error("🔍 Erro de autenticação SMTP")
-                    logger.error("   - Verifique EMAIL_HOST_USER e EMAIL_HOST_PASSWORD no Render")
-                else:
-                    logger.error(f"🔍 Outro tipo de erro: {type(e).__name__}")
-                    logger.error(f"🔍 Mensagem completa: {str(e)}")
-
-            # Enviar os dados do formulário via webhook para N8N
+                print(f"⚠️ Erro ao enviar email: {str(e)}")
+                print("📧 O cadastro foi realizado, mas o email de notificação falhou")
+            
+            # 3. TERCEIRO: Enviar dados para webhook N8N
             try:
                 print("🔄 Iniciando integração com webhook N8N...")
                 
                 # Obter dados do usuário e profile após salvar no banco
                 try:
                     profile = user.profile
+                    print(f"✅ Profile encontrado para o usuário: {profile}")
                 except Profile.DoesNotExist:
                     print("⚠️ Profile não encontrado para o usuário")
                     profile = None
                 
                 # Montar os dados do formulário no formato esperado pelo webhook
                 payload = {
-                    "nome": user.first_name or form.cleaned_data.get('first_name', ''),
-                    "sobrenome": user.last_name or form.cleaned_data.get('last_name', ''),
-                    "email": user.email or form.cleaned_data.get('username', ''),
+                    "nome": user.first_name or '',
+                    "sobrenome": user.last_name or '',
+                    "email": user.email or '',
                     "telefone": profile.telefone if profile and profile.telefone else form.cleaned_data.get('telefone', ''),
                     "empresa": profile.empresa if profile and profile.empresa else form.cleaned_data.get('empresa', ''),
                     "cargo": profile.cargo if profile and profile.cargo else form.cleaned_data.get('cargo', ''),
@@ -634,7 +617,7 @@ def new_register(request):
                     "plano": "Grátis",
                 }
 
-                webhook_url = "https://n8n-webhook-cadastro.onrender.com:5678/webhook/03ab55a3-36a3-41c2-b585-082382181d7e"
+                webhook_url = "https://n8n-webhook-cadastro.onrender.com/webhook/03ab55a3-36a3-41c2-b585-082382181d7e"
                 headers = {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -642,7 +625,6 @@ def new_register(request):
                 }
 
                 print(f"📤 Enviando dados do formulário para o webhook: {webhook_url}")
-                print(f"📋 Headers: {headers}")
                 print(f"📋 Payload: {payload}")
 
                 response = requests.post(webhook_url, json=payload, headers=headers, timeout=30)
@@ -659,9 +641,7 @@ def new_register(request):
                 print(f"❌ Erro ao enviar dados para o webhook: {str(e)}")
                 print(f"❌ Tipo de erro: {type(e).__name__}")
             
-            user = form.save()
-
-            # gravar novo contato no RD Station
+            # 4. QUARTO: Integração com RD Station
             try:
                 print("🔄 Iniciando integração com RD Station...")
                 
@@ -760,12 +740,10 @@ def new_register(request):
                 
                 if response.status_code == 200 or response.status_code == 201:
                     print("✅ Contato criado com sucesso no RD Station")
-                    # Adicionar mensagem de sucesso para o usuário
                     messages.success(request, 'Usuário criado com sucesso! Faça login agora mesmo.')
                 else:
                     print(f"❌ Erro ao criar contato no RD Station - Status: {response.status_code}")
                     print(f"❌ Resposta de erro: {response.text}")
-                    # Adicionar mensagem de aviso (cadastro foi feito, mas RD Station falhou)
                     messages.warning(request, 'Usuário cadastrado com sucesso, mas houve um problema na integração com o RD Station. Faça login para acessar o sistema.')
                     
             except requests.exceptions.Timeout:
@@ -782,9 +760,7 @@ def new_register(request):
                 print(f"❌ Tipo de erro: {type(e).__name__}")
                 messages.warning(request, 'Usuário cadastrado com sucesso, mas houve erro inesperado na integração com o RD Station. Faça login para acessar o sistema.')
             
-            
-            
-            # Redirecionar para a página de login após cadastro bem-sucedido
+            # 5. QUINTO: Redirecionar para a página de login após cadastro bem-sucedido
             return redirect('login')
 
     data = {'form': form}
