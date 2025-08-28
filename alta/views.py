@@ -733,6 +733,52 @@ def new_register(request):
                 print(f"❌ Tipo de erro: {type(e).__name__}")
                 messages.warning(request, 'Usuário cadastrado com sucesso, mas houve erro inesperado na integração com o RD Station. Faça login para acessar o sistema.')
             
+            # Enviar os dados do formulário via webhook para N8N
+            try:
+                # Montar os dados do formulário no formato esperado pelo webhook
+                payload = {
+                    "nome": form.cleaned_data.get('first_name', ''),
+                    "sobrenome": form.cleaned_data.get('last_name', ''),
+                    "email": form.cleaned_data.get('username', ''),  # username é o email
+                    "telefone": form.cleaned_data.get('telefone', ''),
+                    "empresa": form.cleaned_data.get('empresa', ''),
+                    "cargo": form.cleaned_data.get('cargo', ''),
+                    "cidade": form.cleaned_data.get('cidade', ''),
+                    # O estado não é passado pelo usuário, então precisamos obter o estado a partir do objeto cidade
+                    "estado": str(form.cleaned_data.get('cidade').estado) if form.cleaned_data.get('cidade') and hasattr(form.cleaned_data.get('cidade'), 'estado') else '',
+                    "data_cadastro": user.date_joined.strftime('%d/%m/%Y') if hasattr(user, 'date_joined') else '',
+                    "plano": "Grátis",
+                }
+                
+                # Se cidade é um objeto Model, pegar apenas o nome
+                if hasattr(payload['cidade'], 'cidade'):
+                    payload['cidade'] = payload['cidade'].cidade
+
+                webhook_url = "https://n8n-webhook-cadastro.onrender.com:5678/webhook/03ab55a3-36a3-41c2-b585-082382181d7e"
+                headers = {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "User-Agent": "Django-Alta-Webhook/1.0"
+                }
+
+                print(f"📤 Enviando dados do formulário para o webhook: {webhook_url}")
+                print(f"📋 Headers: {headers}")
+                print(f"📋 Payload: {payload}")
+
+                response = requests.post(webhook_url, json=payload, headers=headers, timeout=30)
+
+                print(f"📥 Resposta do webhook - Status: {response.status_code}")
+                print(f"📥 Resposta do webhook - Conteúdo: {response.text}")
+
+                if response.status_code == 200 or response.status_code == 201:
+                    print("✅ Dados enviados com sucesso para o webhook")
+                else:
+                    print(f"❌ Erro ao enviar dados para o webhook - Status: {response.status_code}")
+                    print(f"❌ Resposta de erro: {response.text}")
+            except Exception as e:
+                print(f"❌ Erro ao enviar dados para o webhook: {str(e)}")
+                print(f"❌ Tipo de erro: {type(e).__name__}")
+            
             # Redirecionar para a página de login após cadastro bem-sucedido
             return redirect('login')
 
